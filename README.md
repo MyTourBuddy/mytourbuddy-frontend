@@ -1,6 +1,11 @@
+<center>
+<img src="./public/mytourbuddy.svg" alt="tourbuddylogo" height="100">
+
 # MyTourBuddy
 
 this is your tour buddy 🦧
+
+</center>
 
 ### Stacks
 
