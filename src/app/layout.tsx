@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { poppins } from "@/utils/fonts";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
   title: "MyTourBuddy",
@@ -14,7 +16,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${poppins.variable}`}>
-      <body className="antialiased">{children}</body>
+      <body className="flex flex-col min-h-screen antialiased">
+        <Navbar />
+        <main className="flex-1">{children}</main>
+        <Footer />
+      </body>
     </html>
   );
 }
