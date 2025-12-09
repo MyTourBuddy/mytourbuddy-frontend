@@ -16,7 +16,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${poppins.variable}`}>
-      <body className="flex flex-col min-h-screen antialiased">
+      <body className="flex flex-col bg-background dark:bg-primary-foreground min-h-screen antialiased">
         <Navbar />
         <main className="flex-1">{children}</main>
         <Footer />
