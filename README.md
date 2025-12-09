@@ -1,5 +1,7 @@
 <center>
+<div style="background:white; width:fit-content; padding:8px; border-radius:16px; margin-bottom: 20px">
 <img src="./public/mytourbuddy.svg" alt="tourbuddylogo" height="100">
+</div>
 
 # MyTourBuddy
 
