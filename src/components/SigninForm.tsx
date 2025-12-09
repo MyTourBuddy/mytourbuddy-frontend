@@ -19,7 +19,7 @@ const SigninForm = () => {
     // redirect to dashboard if username = "admin" and password = "admin"
   };
   return (
-    <Card className="w-full bg-primary-foreground">
+    <Card className="w-full">
       <CardHeader className="text-center mb-3 flex flex-col items-center gap-2 md:gap-4">
         <div className="w-24 h-24 md:w-32 md:h-32 mb-3 md:mb-4 relative mx-auto">
           <Image

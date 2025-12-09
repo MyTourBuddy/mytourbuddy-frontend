@@ -68,7 +68,7 @@ const GuideDetails = ({ stepUp, initialData }: StepProps) => {
 
   const isFormValid = useMemo(() => location.trim().length > 0, [location]);
   return (
-    <Card className="w-full bg-primary-foreground">
+    <Card className="w-full">
       <CardHeader className="text-center mb-3">
         <CardTitle className="text-xl md:text-2xl">Guide Details</CardTitle>
         <CardDescription className="text-sm md:text-base">

@@ -124,7 +124,7 @@ const AccountInfo = ({ stepUp, initialData }: StepProps) => {
     stepUp(formData);
   };
   return (
-    <Card className="w-full bg-primary-foreground">
+    <Card className="w-full">
       <CardHeader className="text-center mb-3">
         <CardTitle className="text-xl md:text-2xl">Account Info</CardTitle>
         <CardDescription className="text-sm md:text-base">
