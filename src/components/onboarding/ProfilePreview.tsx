@@ -36,7 +36,10 @@ interface StepProps {
 }
 
 const ProfilePreview = ({ stepUp, onEdit, profileData }: StepProps) => {
-  const isTourist = useMemo(() => profileData.role === "tourist", [profileData.role]);
+  const isTourist = useMemo(
+    () => profileData.role === "tourist",
+    [profileData.role]
+  );
 
   const isProfileComplete = useMemo(() => {
     const requiredFields = [
@@ -53,11 +56,11 @@ const ProfilePreview = ({ stepUp, onEdit, profileData }: StepProps) => {
       requiredFields.push(profileData.location);
     }
 
-    return requiredFields.every(field => field && field.trim());
+    return requiredFields.every((field) => field && field.trim());
   }, [profileData, isTourist]);
 
   return (
-    <Card className="w-full">
+    <Card className="w-full bg-primary-foreground">
       <CardHeader className="text-center mb-3">
         <CardTitle className="text-xl md:text-2xl">
           Review Your Profile
@@ -98,16 +101,28 @@ const ProfilePreview = ({ stepUp, onEdit, profileData }: StepProps) => {
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-2">
               <div>
-                <p className="text-xs md:text-xs text-muted-foreground">First Name</p>
-                <p className="text-sm md:text-base">{profileData.firstName || "-"}</p>
+                <p className="text-xs md:text-xs text-muted-foreground">
+                  First Name
+                </p>
+                <p className="text-sm md:text-base">
+                  {profileData.firstName || "-"}
+                </p>
               </div>
               <div>
-                <p className="text-xs md:text-xs text-muted-foreground">Last Name</p>
-                <p className="text-sm md:text-base">{profileData.lastName || "-"}</p>
+                <p className="text-xs md:text-xs text-muted-foreground">
+                  Last Name
+                </p>
+                <p className="text-sm md:text-base">
+                  {profileData.lastName || "-"}
+                </p>
               </div>
               <div>
-                <p className="text-xs md:text-xs text-muted-foreground">Email</p>
-                <p className="text-sm md:text-base">{profileData.email || "-"}</p>
+                <p className="text-xs md:text-xs text-muted-foreground">
+                  Email
+                </p>
+                <p className="text-sm md:text-base">
+                  {profileData.email || "-"}
+                </p>
               </div>
               <div className="md:col-span-2">
                 <p className="text-xs md:text-xs text-muted-foreground">Age</p>
@@ -135,8 +150,12 @@ const ProfilePreview = ({ stepUp, onEdit, profileData }: StepProps) => {
               Account
             </h3>
             <div>
-              <p className="text-xs md:text-xs text-muted-foreground">Username</p>
-              <p className="text-sm md:text-base">{profileData.username || "-"}</p>
+              <p className="text-xs md:text-xs text-muted-foreground">
+                Username
+              </p>
+              <p className="text-sm md:text-base">
+                {profileData.username || "-"}
+              </p>
             </div>
           </div>
           <Button
@@ -160,12 +179,20 @@ const ProfilePreview = ({ stepUp, onEdit, profileData }: StepProps) => {
                 Travel Details
               </h3>
               <div>
-                <p className="text-xs md:text-xs text-muted-foreground">Country</p>
-                <p className="text-sm md:text-base">{profileData.country || "-"}</p>
+                <p className="text-xs md:text-xs text-muted-foreground">
+                  Country
+                </p>
+                <p className="text-sm md:text-base">
+                  {profileData.country || "-"}
+                </p>
               </div>
               <div>
-                <p className="text-xs md:text-xs text-muted-foreground">Preferences</p>
-                <p className="text-sm md:text-base">{profileData.preferences || "-"}</p>
+                <p className="text-xs md:text-xs text-muted-foreground">
+                  Preferences
+                </p>
+                <p className="text-sm md:text-base">
+                  {profileData.preferences || "-"}
+                </p>
               </div>
             </div>
             <Button
@@ -185,15 +212,25 @@ const ProfilePreview = ({ stepUp, onEdit, profileData }: StepProps) => {
                 Guide Details
               </h3>
               <div>
-                <p className="text-xs md:text-xs text-muted-foreground">Location</p>
-                <p className="text-sm md:text-base">{profileData.location || "-"}</p>
+                <p className="text-xs md:text-xs text-muted-foreground">
+                  Location
+                </p>
+                <p className="text-sm md:text-base">
+                  {profileData.location || "-"}
+                </p>
               </div>
               <div>
-                <p className="text-xs md:text-xs text-muted-foreground">Languages</p>
-                <p className="text-sm md:text-base">{profileData.languages || "-"}</p>
+                <p className="text-xs md:text-xs text-muted-foreground">
+                  Languages
+                </p>
+                <p className="text-sm md:text-base">
+                  {profileData.languages || "-"}
+                </p>
               </div>
               <div>
-                <p className="text-xs md:text-xs text-muted-foreground">Experience</p>
+                <p className="text-xs md:text-xs text-muted-foreground">
+                  Experience
+                </p>
                 <p className="text-sm md:text-base">
                   {profileData.experience
                     ? `${profileData.experience} years`

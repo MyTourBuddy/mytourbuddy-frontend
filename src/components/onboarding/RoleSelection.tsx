@@ -20,7 +20,7 @@ interface StepProps {
 
 const RoleSelection = ({ onRoleSelect }: StepProps) => {
   return (
-    <Card className="w-full text-center">
+    <Card className="w-full text-center bg-primary-foreground">
       <CardHeader className="space-y-3 md:space-y-4">
         <div className="flex flex-col items-center text-center mb-2 md:mb-4">
           <div className="w-24 h-24 md:w-32 md:h-32 mb-3 md:mb-4 relative">
@@ -51,7 +51,7 @@ const RoleSelection = ({ onRoleSelect }: StepProps) => {
             className="flex-1 h-10 md:h-11 text-sm md:text-base"
             onClick={() => onRoleSelect("tourist")}
           >
-            <TbWorld/>
+            <TbWorld />
             <span>Tourist</span>
           </Button>
           <Button
@@ -59,7 +59,7 @@ const RoleSelection = ({ onRoleSelect }: StepProps) => {
             className="flex-1 h-10 md:h-11 text-sm md:text-base"
             onClick={() => onRoleSelect("guide")}
           >
-            <TbMap/>
+            <TbMap />
             <span>Guide</span>
           </Button>
         </ButtonGroup>

@@ -241,7 +241,8 @@ const TravelDetails = ({ stepUp, initialData }: StepProps) => {
   const [otherPreference, setOtherPreference] = useState("");
 
   const customPreferences = useMemo(
-    () => selectedPreferences.filter((pref) => !PRESET_PREFERENCES.includes(pref)),
+    () =>
+      selectedPreferences.filter((pref) => !PRESET_PREFERENCES.includes(pref)),
     [selectedPreferences]
   );
 

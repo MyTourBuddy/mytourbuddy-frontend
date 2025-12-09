@@ -168,7 +168,7 @@ const OnboardingFlow = () => {
         </div>
         <div className="w-full text-center">
           <p className="text-sm font-medium text-muted-foreground">
-            Step {step} of {TOTAL_STEPS} ({Math.round(progressPercentage)}%)
+            Step {step} of {TOTAL_STEPS}
           </p>
         </div>
       </div>

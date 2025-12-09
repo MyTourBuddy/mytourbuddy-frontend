@@ -14,13 +14,7 @@ import { useState, useCallback, useMemo } from "react";
 import { IoMdAdd, IoMdCheckmark, IoMdClose } from "react-icons/io";
 import { TbArrowRight } from "react-icons/tb";
 
-const PRESET_LANGUAGES = [
-  "English",
-  "Sinhala",
-  "Tamil",
-  "Hindi",
-  "Mandarin",
-];
+const PRESET_LANGUAGES = ["English", "Sinhala", "Tamil", "Hindi", "Mandarin"];
 
 interface StepProps {
   stepUp: (data: {
@@ -74,7 +68,7 @@ const GuideDetails = ({ stepUp, initialData }: StepProps) => {
 
   const isFormValid = useMemo(() => location.trim().length > 0, [location]);
   return (
-    <Card className="w-full">
+    <Card className="w-full bg-primary-foreground">
       <CardHeader className="text-center mb-3">
         <CardTitle className="text-xl md:text-2xl">Guide Details</CardTitle>
         <CardDescription className="text-sm md:text-base">

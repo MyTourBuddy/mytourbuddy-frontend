@@ -16,7 +16,11 @@ import { TbArrowRight, TbCheck, TbX } from "react-icons/tb";
 import { useState, useMemo } from "react";
 
 interface StepProps {
-  stepUp: (data: { username: string; password: string; confirmPassword: string }) => void;
+  stepUp: (data: {
+    username: string;
+    password: string;
+    confirmPassword: string;
+  }) => void;
   initialData?: { username: string; password: string; confirmPassword: string };
 }
 
@@ -54,7 +58,8 @@ const AccountInfo = ({ stepUp, initialData }: StepProps) => {
         if (!value.trim()) return "Username is required";
         if (value.length < 3) return "Must be at least 3 characters";
         if (value.length > 20) return "Must be at most 20 characters";
-        if (!/^[a-zA-Z0-9_]+$/.test(value)) return "Only letters, numbers, and underscores";
+        if (!/^[a-zA-Z0-9_]+$/.test(value))
+          return "Only letters, numbers, and underscores";
         return undefined;
       case "password":
         if (!value) return "Password is required";
@@ -74,7 +79,10 @@ const AccountInfo = ({ stepUp, initialData }: StepProps) => {
 
   const handleBlur = (field: string) => {
     setTouched({ ...touched, [field]: true });
-    const error = validateField(field, formData[field as keyof typeof formData]);
+    const error = validateField(
+      field,
+      formData[field as keyof typeof formData]
+    );
     setErrors({ ...errors, [field]: error });
   };
 
@@ -86,14 +94,17 @@ const AccountInfo = ({ stepUp, initialData }: StepProps) => {
     }
     // Re-validate confirm password when password changes
     if (field === "password" && touched.confirmPassword) {
-      const confirmError = formData.confirmPassword !== value ? "Passwords don't match" : undefined;
-      setErrors(prev => ({ ...prev, confirmPassword: confirmError }));
+      const confirmError =
+        formData.confirmPassword !== value
+          ? "Passwords don't match"
+          : undefined;
+      setErrors((prev) => ({ ...prev, confirmPassword: confirmError }));
     }
   };
 
   const isFormValid = useMemo(() => {
-    const hasAllFields = Object.values(formData).every(val => val.trim());
-    const hasNoErrors = Object.values(errors).every(err => !err);
+    const hasAllFields = Object.values(formData).every((val) => val.trim());
+    const hasNoErrors = Object.values(errors).every((err) => !err);
     return hasAllFields && hasNoErrors;
   }, [formData, errors]);
 
@@ -113,7 +124,7 @@ const AccountInfo = ({ stepUp, initialData }: StepProps) => {
     stepUp(formData);
   };
   return (
-    <Card className="w-full">
+    <Card className="w-full bg-primary-foreground">
       <CardHeader className="text-center mb-3">
         <CardTitle className="text-xl md:text-2xl">Account Info</CardTitle>
         <CardDescription className="text-sm md:text-base">
@@ -136,7 +147,9 @@ const AccountInfo = ({ stepUp, initialData }: StepProps) => {
               aria-describedby={errors.username ? "username-error" : undefined}
             />
             {errors.username && touched.username && (
-              <p id="username-error" className="text-xs text-red-500 mt-1">{errors.username}</p>
+              <p id="username-error" className="text-xs text-red-500 mt-1">
+                {errors.username}
+              </p>
             )}
           </Field>
           <Field>
@@ -150,10 +163,16 @@ const AccountInfo = ({ stepUp, initialData }: StepProps) => {
               onChange={(e) => handleChange("password", e.target.value)}
               onBlur={() => handleBlur("password")}
               aria-invalid={!!errors.password}
-              aria-describedby={errors.password ? "password-error password-strength" : "password-strength"}
+              aria-describedby={
+                errors.password
+                  ? "password-error password-strength"
+                  : "password-strength"
+              }
             />
             {errors.password && touched.password && (
-              <p id="password-error" className="text-xs text-red-500 mt-1">{errors.password}</p>
+              <p id="password-error" className="text-xs text-red-500 mt-1">
+                {errors.password}
+              </p>
             )}
             {formData.password && (
               <div id="password-strength" className="mt-2">
@@ -176,7 +195,8 @@ const AccountInfo = ({ stepUp, initialData }: StepProps) => {
                   ))}
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  {passwordStrength.label && `Strength: ${passwordStrength.label}`}
+                  {passwordStrength.label &&
+                    `Strength: ${passwordStrength.label}`}
                 </p>
               </div>
             )}
@@ -192,16 +212,25 @@ const AccountInfo = ({ stepUp, initialData }: StepProps) => {
               onChange={(e) => handleChange("confirmPassword", e.target.value)}
               onBlur={() => handleBlur("confirmPassword")}
               aria-invalid={!!errors.confirmPassword}
-              aria-describedby={errors.confirmPassword ? "confirmpassword-error" : undefined}
+              aria-describedby={
+                errors.confirmPassword ? "confirmpassword-error" : undefined
+              }
             />
             {errors.confirmPassword && touched.confirmPassword && (
-              <p id="confirmpassword-error" className="text-xs text-red-500 mt-1">{errors.confirmPassword}</p>
-            )}
-            {formData.confirmPassword && !errors.confirmPassword && formData.password === formData.confirmPassword && (
-              <p className="text-xs text-green-500 mt-1 flex items-center gap-1">
-                <TbCheck className="h-3 w-3" /> Passwords match
+              <p
+                id="confirmpassword-error"
+                className="text-xs text-red-500 mt-1"
+              >
+                {errors.confirmPassword}
               </p>
             )}
+            {formData.confirmPassword &&
+              !errors.confirmPassword &&
+              formData.password === formData.confirmPassword && (
+                <p className="text-xs text-green-500 mt-1 flex items-center gap-1">
+                  <TbCheck className="h-3 w-3" /> Passwords match
+                </p>
+              )}
           </Field>
         </FieldGroup>
       </CardContent>

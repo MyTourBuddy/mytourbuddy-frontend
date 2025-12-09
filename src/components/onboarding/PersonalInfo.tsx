@@ -16,8 +16,18 @@ import { TbArrowRight } from "react-icons/tb";
 import { useState, useMemo } from "react";
 
 interface StepProps {
-  stepUp: (data: { firstName: string; lastName: string; email: string; age: string }) => void;
-  initialData?: { firstName: string; lastName: string; email: string; age: string };
+  stepUp: (data: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    age: string;
+  }) => void;
+  initialData?: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    age: string;
+  };
 }
 
 interface ValidationErrors {
@@ -47,12 +57,14 @@ const PersonalInfo = ({ stepUp, initialData }: StepProps) => {
         return undefined;
       case "email":
         if (!value.trim()) return "Email is required";
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return "Invalid email format";
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value))
+          return "Invalid email format";
         return undefined;
       case "age":
         if (!value) return "Age is required";
         const ageNum = parseInt(value);
-        if (isNaN(ageNum) || ageNum < 13) return "Must be at least 13 years old";
+        if (isNaN(ageNum) || ageNum < 13)
+          return "Must be at least 13 years old";
         if (ageNum > 120) return "Please enter a valid age";
         return undefined;
       default:
@@ -62,7 +74,10 @@ const PersonalInfo = ({ stepUp, initialData }: StepProps) => {
 
   const handleBlur = (field: string) => {
     setTouched({ ...touched, [field]: true });
-    const error = validateField(field, formData[field as keyof typeof formData]);
+    const error = validateField(
+      field,
+      formData[field as keyof typeof formData]
+    );
     setErrors({ ...errors, [field]: error });
   };
 
@@ -75,8 +90,8 @@ const PersonalInfo = ({ stepUp, initialData }: StepProps) => {
   };
 
   const isFormValid = useMemo(() => {
-    const hasAllFields = Object.values(formData).every(val => val.trim());
-    const hasNoErrors = Object.values(errors).every(err => !err);
+    const hasAllFields = Object.values(formData).every((val) => val.trim());
+    const hasNoErrors = Object.values(errors).every((err) => !err);
     return hasAllFields && hasNoErrors;
   }, [formData, errors]);
 
@@ -96,7 +111,7 @@ const PersonalInfo = ({ stepUp, initialData }: StepProps) => {
     stepUp(formData);
   };
   return (
-    <Card className="w-full">
+    <Card className="w-full bg-primary-foreground">
       <CardHeader className="text-center mb-3">
         <CardTitle className="text-xl md:text-2xl">Personal Info</CardTitle>
         <CardDescription className="text-sm md:text-base">
@@ -120,7 +135,9 @@ const PersonalInfo = ({ stepUp, initialData }: StepProps) => {
                 aria-describedby={errors.firstName ? "fname-error" : undefined}
               />
               {errors.firstName && touched.firstName && (
-                <p id="fname-error" className="text-xs text-red-500 mt-1">{errors.firstName}</p>
+                <p id="fname-error" className="text-xs text-red-500 mt-1">
+                  {errors.firstName}
+                </p>
               )}
             </Field>
             <Field>
@@ -137,7 +154,9 @@ const PersonalInfo = ({ stepUp, initialData }: StepProps) => {
                 aria-describedby={errors.lastName ? "lname-error" : undefined}
               />
               {errors.lastName && touched.lastName && (
-                <p id="lname-error" className="text-xs text-red-500 mt-1">{errors.lastName}</p>
+                <p id="lname-error" className="text-xs text-red-500 mt-1">
+                  {errors.lastName}
+                </p>
               )}
             </Field>
           </div>
@@ -155,7 +174,9 @@ const PersonalInfo = ({ stepUp, initialData }: StepProps) => {
               aria-describedby={errors.email ? "email-error" : undefined}
             />
             {errors.email && touched.email && (
-              <p id="email-error" className="text-xs text-red-500 mt-1">{errors.email}</p>
+              <p id="email-error" className="text-xs text-red-500 mt-1">
+                {errors.email}
+              </p>
             )}
           </Field>
           <Field>
@@ -174,7 +195,9 @@ const PersonalInfo = ({ stepUp, initialData }: StepProps) => {
               aria-describedby={errors.age ? "age-error" : undefined}
             />
             {errors.age && touched.age && (
-              <p id="age-error" className="text-xs text-red-500 mt-1">{errors.age}</p>
+              <p id="age-error" className="text-xs text-red-500 mt-1">
+                {errors.age}
+              </p>
             )}
           </Field>
         </FieldGroup>
