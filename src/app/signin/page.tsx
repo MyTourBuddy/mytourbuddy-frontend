@@ -14,7 +14,7 @@ import SigninForm from "@/components/SigninForm";
 
 const SigninPage = () => {
   return (
-    <div className="max-w-lg w-full mx-auto px-4 md:px-8 py-4 md:py-8">
+    <div className="max-w-lg w-full mx-auto py-4 md:py-8">
       <SigninForm />
     </div>
   );
