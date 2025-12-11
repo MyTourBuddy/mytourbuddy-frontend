@@ -1,22 +1,21 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Tourist } from "@/models/User";
 
-const TouristProfileInfo = () => {
-  // Mock data - replace with actual user data
-  const personalData = {
-    name: "John Doe",
-    email: "john.doe@example.com",
-    age: "28",
-    phone: "+1 234 567 8900",
-    country: "United States",
-  };
+const TouristProfileInfo = ({ user }: { user: Tourist }) => {
+  const {
+    firstName,
+    lastName,
+    email,
+    age,
+    phone,
+    country,
+    preferredDestinations,
+    travelInterests,
+    languagesSpoken,
+  } = user;
 
-  const travelPreferences = {
-    preferredDestinations: ["Sri Lanka", "Thailand", "Japan", "Italy"],
-    travelInterests: ["Adventure", "Culture", "Food & Cuisine", "Photography"],
-    languages: ["English", "Spanish"],
-  };
+  const fullName = `${firstName} ${lastName}`;
 
   return (
     <div className="space-y-6">
@@ -31,23 +30,23 @@ const TouristProfileInfo = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <p className="text-sm text-muted-foreground">Name</p>
-              <p className="font-medium">{personalData.name}</p>
+              <p className="font-medium">{fullName}</p>
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Email</p>
-              <p className="font-medium">{personalData.email}</p>
+              <p className="font-medium">{email}</p>
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Age</p>
-              <p className="font-medium">{personalData.age}</p>
+              <p className="font-medium">{age}</p>
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Phone Number</p>
-              <p className="font-medium">{personalData.phone}</p>
+              <p className="font-medium">{phone}</p>
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Country</p>
-              <p className="font-medium">{personalData.country}</p>
+              <p className="font-medium">{country}</p>
             </div>
           </div>
         </CardContent>
@@ -67,7 +66,7 @@ const TouristProfileInfo = () => {
                 Preferred Destinations
               </p>
               <div className="flex flex-wrap gap-2">
-                {travelPreferences.preferredDestinations.map((destination) => (
+                {preferredDestinations?.map((destination) => (
                   <Badge key={destination} variant="secondary">
                     {destination}
                   </Badge>
@@ -79,7 +78,7 @@ const TouristProfileInfo = () => {
                 Travel Interests
               </p>
               <div className="flex flex-wrap gap-2">
-                {travelPreferences.travelInterests.map((interest) => (
+                {travelInterests?.map((interest) => (
                   <Badge key={interest} variant="secondary">
                     {interest}
                   </Badge>
@@ -91,7 +90,7 @@ const TouristProfileInfo = () => {
                 Languages Spoken
               </p>
               <div className="flex flex-wrap gap-2">
-                {travelPreferences.languages.map((lang) => (
+                {languagesSpoken?.map((lang) => (
                   <Badge key={lang} variant="secondary">
                     {lang}
                   </Badge>

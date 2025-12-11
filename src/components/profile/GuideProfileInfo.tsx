@@ -1,42 +1,36 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Guide } from "@/models/User";
 
-const GuideProfileInfo = () => {
-  // Mock data - replace with actual user data
-  const personalData = {
-    name: "Sasmitha Ashinsana",
-    email: "sasmitha@example.com",
-    age: "22",
-    phone: "+94 77 123 4567",
-    country: "Sri Lanka",
-  };
+const GuideProfileInfo = ({ user }: { user: Guide }) => {
+  const {
+    firstName,
+    lastName,
+    email,
+    age,
+    phone,
+    country,
+    bio,
+    serviceLocation,
+    languages,
+    experience,
+    specializations,
+    certifications,
+    hourlyRate,
+    dailyRate,
+    maxGroupSize,
+    ageGroups,
+    transportMode,
+    serviceAreas,
+    workingDays,
+    workingHours,
+    emergencyContact,
+    website,
+    socialMedia,
+  } = user;
 
-  const professionalData = {
-    bio: "Passionate tour guide with extensive knowledge of Sri Lankan culture and history.",
-    location: "Colombo",
-    languages: ["English", "Sinhala", "Tamil"],
-    experience: "5",
-    specializations: ["Culture", "Food & Cuisine", "Photography"],
-    certifications: "Licensed Tour Guide, First Aid Certified",
-  };
-
-  const serviceData = {
-    hourlyRate: "2500",
-    dailyRate: "15000",
-    maxGroupSize: "10",
-    ageGroups: ["Adults", "Seniors"],
-    transportMode: "Car",
-    serviceAreas: "Colombo, Galle, Kandy, Sigiriya",
-  };
-
-  const contactData = {
-    workingDays: "Monday - Saturday",
-    workingHours: "8:00 AM - 6:00 PM",
-    emergencyContact: "+94 77 987 6543",
-    website: "www.sasmithatours.com",
-    socialMedia: "@sasmithatours",
-  };
+  const fullName = `${firstName} ${lastName}`;
 
   return (
     <div className="space-y-6">
@@ -51,23 +45,23 @@ const GuideProfileInfo = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <p className="text-sm text-muted-foreground">Name</p>
-              <p className="font-medium">{personalData.name}</p>
+              <p className="font-medium">{fullName}</p>
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Email</p>
-              <p className="font-medium">{personalData.email}</p>
+              <p className="font-medium">{email}</p>
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Age</p>
-              <p className="font-medium">{personalData.age}</p>
+              <p className="font-medium">{age}</p>
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Phone Number</p>
-              <p className="font-medium">{personalData.phone}</p>
+              <p className="font-medium">{phone}</p>
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Country</p>
-              <p className="font-medium">{personalData.country}</p>
+              <p className="font-medium">{country}</p>
             </div>
           </div>
         </CardContent>
@@ -84,20 +78,20 @@ const GuideProfileInfo = () => {
           <div className="space-y-4">
             <div>
               <p className="text-sm text-muted-foreground">Bio</p>
-              <p className="font-medium">{professionalData.bio}</p>
+              <p className="font-medium">{bio}</p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <p className="text-sm text-muted-foreground">
                   Service Location
                 </p>
-                <p className="font-medium">{professionalData.location}</p>
+                <p className="font-medium">{serviceLocation}</p>
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">
                   Years of Experience
                 </p>
-                <p className="font-medium">{professionalData.experience}</p>
+                <p className="font-medium">{experience}</p>
               </div>
             </div>
             <div>
@@ -105,7 +99,7 @@ const GuideProfileInfo = () => {
                 Languages Spoken
               </p>
               <div className="flex flex-wrap gap-2">
-                {professionalData.languages.map((lang) => (
+                {languages?.map((lang) => (
                   <Badge key={lang} variant="secondary">
                     {lang}
                   </Badge>
@@ -117,7 +111,7 @@ const GuideProfileInfo = () => {
                 Specializations
               </p>
               <div className="flex flex-wrap gap-2">
-                {professionalData.specializations.map((spec) => (
+                {specializations?.map((spec) => (
                   <Badge key={spec} variant="secondary">
                     {spec}
                   </Badge>
@@ -126,7 +120,7 @@ const GuideProfileInfo = () => {
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Certifications</p>
-              <p className="font-medium">{professionalData.certifications}</p>
+              <p className="font-medium">{certifications}</p>
             </div>
           </div>
         </CardContent>
@@ -143,24 +137,24 @@ const GuideProfileInfo = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <p className="text-sm text-muted-foreground">Hourly Rate</p>
-              <p className="font-medium">LKR {serviceData.hourlyRate}</p>
+              <p className="font-medium">LKR {hourlyRate}</p>
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Daily Rate</p>
-              <p className="font-medium">LKR {serviceData.dailyRate}</p>
+              <p className="font-medium">LKR {dailyRate}</p>
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Max Group Size</p>
-              <p className="font-medium">{serviceData.maxGroupSize} people</p>
+              <p className="font-medium">{maxGroupSize} people</p>
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Transport Mode</p>
-              <p className="font-medium">{serviceData.transportMode}</p>
+              <p className="font-medium">{transportMode}</p>
             </div>
             <div className="md:col-span-2">
               <p className="text-sm text-muted-foreground mb-2">Age Groups</p>
               <div className="flex flex-wrap gap-2">
-                {serviceData.ageGroups.map((group) => (
+                {ageGroups?.map((group) => (
                   <Badge key={group} variant="secondary">
                     {group}
                   </Badge>
@@ -169,7 +163,7 @@ const GuideProfileInfo = () => {
             </div>
             <div className="md:col-span-2">
               <p className="text-sm text-muted-foreground">Service Areas</p>
-              <p className="font-medium">{serviceData.serviceAreas}</p>
+              <p className="font-medium">{serviceAreas}</p>
             </div>
           </div>
         </CardContent>
@@ -186,23 +180,23 @@ const GuideProfileInfo = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <p className="text-sm text-muted-foreground">Working Days</p>
-              <p className="font-medium">{contactData.workingDays}</p>
+              <p className="font-medium">{workingDays}</p>
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Working Hours</p>
-              <p className="font-medium">{contactData.workingHours}</p>
+              <p className="font-medium">{workingHours}</p>
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Emergency Contact</p>
-              <p className="font-medium">{contactData.emergencyContact}</p>
+              <p className="font-medium">{emergencyContact}</p>
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Website</p>
-              <p className="font-medium">{contactData.website}</p>
+              <p className="font-medium">{website}</p>
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Social Media</p>
-              <p className="font-medium">{contactData.socialMedia}</p>
+              <p className="font-medium">{socialMedia}</p>
             </div>
           </div>
         </CardContent>
