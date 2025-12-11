@@ -11,7 +11,10 @@ const HomePage = () => {
       <div className="flex flex-col gap-6">
         <Link href="/signin">Signin page</Link>
         <Link href="/signup">Signup onboarding</Link>
-        <Link href="/profile">User Profile</Link>
+        <Link href="/sarahguide">Test Guide Profile</Link>
+        <Link href="/johntourist">Test Tourist Profile</Link>
+        <Link href="/sasmitha">No User Profile</Link>
+
         <Link href="/admin">Admin Dashboard</Link>
         <Link href="/dashboard">Tourists and Guides Dashboard</Link>
       </div>
