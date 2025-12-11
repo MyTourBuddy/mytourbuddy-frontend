@@ -213,14 +213,6 @@ const ProfilePreview = ({ stepUp, onEdit, profileData }: StepProps) => {
               </h3>
               <div>
                 <p className="text-xs md:text-xs text-muted-foreground">
-                  Location
-                </p>
-                <p className="text-sm md:text-base">
-                  {profileData.location || "-"}
-                </p>
-              </div>
-              <div>
-                <p className="text-xs md:text-xs text-muted-foreground">
                   Languages
                 </p>
                 <p className="text-sm md:text-base">

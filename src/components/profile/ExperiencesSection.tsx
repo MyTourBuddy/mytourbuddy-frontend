@@ -7,8 +7,9 @@ import {
   CardDescription,
   CardTitle,
 } from "@/components/ui/card";
-import { Experience, User } from "@/models/User";
+import { User } from "@/models/User";
 import { getExperiences } from "@/lib/api";
+import { Experience } from "@/models/Experience";
 
 const ExperiencesSection = ({ user }: { user: User }) => {
   const [experiences, setExperiences] = useState<Experience[]>([]);

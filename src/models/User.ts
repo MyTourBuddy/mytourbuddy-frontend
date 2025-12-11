@@ -1,78 +1,41 @@
-export interface User {
+interface User {
   id: string;
   role: "tourist" | "guide";
-  // Personal Info
   firstName: string;
   lastName: string;
   email: string;
-  age: string;
-  // Account Info
+  age: number;
   username: string;
   password: string;
-  // Profile
-  avatar?: string;
+  avatar: string;
   memberSince: string;
-  phone?: string;
-  country?: string;
+  phone: string;
 }
 
-export interface Tourist extends User {
+interface Tourist extends User {
   role: "tourist";
-  // Travel Details
-  travelPreferences?: string[];
+  country: string;
+  travelPreferences: string[];
   preferredDestinations?: string[];
   travelInterests?: string[];
   languagesSpoken?: string[];
 }
 
-export interface Guide extends User {
+interface Guide extends User {
   role: "guide";
-  // Guide Details
-  serviceLocation: string;
   languages: string[];
-  experience: string;
-  // Professional Details
+  yearsOfExp: number;
   bio?: string;
-  specializations?: string[];
+  specializations: string[];
   certifications?: string;
-  // Service Information
-  hourlyRate?: string;
-  dailyRate?: string;
-  maxGroupSize?: string;
-  transportMode?: string;
-  ageGroups?: string[];
-  serviceAreas?: string;
-  // Contact & Availability
-  workingDays?: string;
-  workingHours?: string;
+  dailyRate: number;
+  maxGroupSize: number;
+  transportMode: string;
+  ageGroups: string[];
+  workingDays: string[];
   emergencyContact?: string;
   website?: string;
-  socialMedia?: string;
+  socialMedia?: string[];
 }
 
-export interface Package {
-  id: string;
-  guideId: string;
-  title: string;
-  description: string;
-  image?: string;
-}
-
-export interface Experience {
-  id: string;
-  guideId: string;
-  title: string;
-  description: string;
-  image?: string;
-}
-
-export interface Review {
-  id: string;
-  guideId: string;
-  touristId: string;
-  title: string;
-  description: string;
-  rating?: number;
-  image?: string;
-  createdAt: string;
-}
+export type { User, Tourist, Guide };

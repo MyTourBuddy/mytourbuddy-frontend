@@ -10,21 +10,16 @@ const GuideProfileInfo = ({ user }: { user: Guide }) => {
     email,
     age,
     phone,
-    country,
     bio,
-    serviceLocation,
     languages,
-    experience,
+    yearsOfExp,
     specializations,
     certifications,
-    hourlyRate,
     dailyRate,
     maxGroupSize,
     ageGroups,
     transportMode,
-    serviceAreas,
     workingDays,
-    workingHours,
     emergencyContact,
     website,
     socialMedia,
@@ -59,10 +54,6 @@ const GuideProfileInfo = ({ user }: { user: Guide }) => {
               <p className="text-sm text-muted-foreground">Phone Number</p>
               <p className="font-medium">{phone}</p>
             </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Country</p>
-              <p className="font-medium">{country}</p>
-            </div>
           </div>
         </CardContent>
       </Card>
@@ -83,15 +74,9 @@ const GuideProfileInfo = ({ user }: { user: Guide }) => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <p className="text-sm text-muted-foreground">
-                  Service Location
-                </p>
-                <p className="font-medium">{serviceLocation}</p>
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">
                   Years of Experience
                 </p>
-                <p className="font-medium">{experience}</p>
+                <p className="font-medium">{yearsOfExp}</p>
               </div>
             </div>
             <div>
@@ -136,10 +121,6 @@ const GuideProfileInfo = ({ user }: { user: Guide }) => {
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <p className="text-sm text-muted-foreground">Hourly Rate</p>
-              <p className="font-medium">LKR {hourlyRate}</p>
-            </div>
-            <div>
               <p className="text-sm text-muted-foreground">Daily Rate</p>
               <p className="font-medium">LKR {dailyRate}</p>
             </div>
@@ -161,10 +142,6 @@ const GuideProfileInfo = ({ user }: { user: Guide }) => {
                 ))}
               </div>
             </div>
-            <div className="md:col-span-2">
-              <p className="text-sm text-muted-foreground">Service Areas</p>
-              <p className="font-medium">{serviceAreas}</p>
-            </div>
           </div>
         </CardContent>
       </Card>
@@ -181,10 +158,6 @@ const GuideProfileInfo = ({ user }: { user: Guide }) => {
             <div>
               <p className="text-sm text-muted-foreground">Working Days</p>
               <p className="font-medium">{workingDays}</p>
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Working Hours</p>
-              <p className="font-medium">{workingHours}</p>
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Emergency Contact</p>

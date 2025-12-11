@@ -18,15 +18,13 @@ const PRESET_LANGUAGES = ["English", "Sinhala", "Tamil", "Hindi", "Mandarin"];
 
 interface StepProps {
   stepUp: (data: {
-    location: string;
     languages: string;
     experience: string;
   }) => void;
-  initialData?: { location: string; languages: string; experience: string };
+  initialData?: { languages: string; experience: string };
 }
 
 const GuideDetails = ({ stepUp, initialData }: StepProps) => {
-  const [location, setLocation] = useState(initialData?.location ?? "");
   const [selectedLanguages, setSelectedLanguages] = useState<string[]>(
     initialData?.languages ? initialData.languages.split(", ") : []
   );
@@ -58,15 +56,13 @@ const GuideDetails = ({ stepUp, initialData }: StepProps) => {
   }, [otherLanguage]);
 
   const handleSubmit = useCallback(() => {
-    if (!location.trim()) return;
     stepUp({
-      location,
       languages: selectedLanguages.join(", "),
       experience,
     });
-  }, [location, selectedLanguages, experience, stepUp]);
+  }, [selectedLanguages, experience, stepUp]);
 
-  const isFormValid = useMemo(() => location.trim().length > 0, [location]);
+  const isFormValid = useMemo(() => true, []);
   return (
     <Card className="w-full">
       <CardHeader className="text-center mb-3">
@@ -77,18 +73,6 @@ const GuideDetails = ({ stepUp, initialData }: StepProps) => {
       </CardHeader>
       <CardContent>
         <FieldGroup>
-          <Field>
-            <Label htmlFor="location">Service location (city)</Label>
-            <Input
-              type="text"
-              id="location"
-              name="location"
-              placeholder="e.g., Colombo, Kandy"
-              value={location}
-              onChange={(e) => setLocation(e.target.value)}
-              required
-            />
-          </Field>
           <Field>
             <Label>Languages</Label>
             <div className="flex flex-wrap gap-2 mt-2">

@@ -1,21 +1,21 @@
-import { Experience, Guide, Package, Review, Tourist } from "@/models/User";
+import { Experience } from "@/models/Experience";
+import { Package } from "@/models/Package";
+import { Review } from "@/models/Review";
+import { Guide, Tourist } from "@/models/User";
 
 export const touristUser: Tourist = {
   id: "tourist-001",
   role: "tourist",
-  // Personal Info
   firstName: "John",
   lastName: "Doe",
   email: "john.tourist@test.com",
-  age: "28",
-  // Account Info
+  avatar: "",
+  age: 28,
   username: "johntourist",
   password: "Tourist123",
-  // Profile
   memberSince: "2025-12-01",
   phone: "+1 234 567 8900",
   country: "United States",
-  // Travel Details
   preferredDestinations: ["Sri Lanka", "Thailand", "Japan", "Italy"],
   travelInterests: ["Adventure", "Culture", "Food & Cuisine", "Photography"],
   languagesSpoken: ["English", "Spanish"],
@@ -25,39 +25,28 @@ export const touristUser: Tourist = {
 export const guideUser: Guide = {
   id: "guide-001",
   role: "guide",
-  // Personal Info
   firstName: "Sarah",
   lastName: "Silva",
   email: "sarah.guide@test.com",
-  age: "32",
-  // Account Info
+  avatar: "",
+  age: 32,
   username: "sarahguide",
   password: "Guide123",
-  // Profile
   memberSince: "2025-11-15",
   phone: "+94 77 123 4567",
-  country: "Sri Lanka",
-  // Guide Details
-  serviceLocation: "Colombo",
   languages: ["English", "Sinhala", "Tamil"],
-  experience: "5",
-  // Professional Details
+  yearsOfExp: 5,
   bio: "Passionate tour guide with extensive knowledge of Sri Lankan culture and history. Specializing in cultural tours and authentic local experiences.",
   specializations: ["Culture", "Food & Cuisine", "Photography"],
   certifications: "Licensed Tour Guide, First Aid Certified",
-  // Service Information
-  hourlyRate: "2500",
-  dailyRate: "15000",
-  maxGroupSize: "10",
+  dailyRate: 15000,
+  maxGroupSize: 10,
   transportMode: "Car",
   ageGroups: ["Adults", "Seniors"],
-  serviceAreas: "Colombo, Galle, Kandy, Sigiriya",
-  // Contact & Availability
-  workingDays: "Monday - Saturday",
-  workingHours: "8:00 AM - 6:00 PM",
+  workingDays: ["Monday", "Saturday"],
   emergencyContact: "+94 77 987 6543",
   website: "www.sarahtours.com",
-  socialMedia: "@sarahtours",
+  socialMedia: ["@sarahtours"],
 };
 
 export const packages: Package[] = [
@@ -132,7 +121,7 @@ export const reviews: Review[] = [
   {
     id: "rev-003",
     guideId: "guide-001",
-    touristId: "tourist-003",
+    touristId: "tourist-001",
     title: "Wildlife Safari Adventure",
     description:
       "We spotted 3 leopards in Yala! The guide knew exactly where to go. Beach time in Mirissa was the perfect way to end our adventure.",

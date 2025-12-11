@@ -40,7 +40,7 @@ const UserProfile = async ({
       </div>
 
       <ProfileHeader user={user} />
-      <ProfileCompletion />
+      <ProfileCompletion user={user as Guide | Tourist} />
 
       <Tabs defaultValue="account" className="w-full">
         {role === "tourist" && (
