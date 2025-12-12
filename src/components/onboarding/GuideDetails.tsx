@@ -13,24 +13,31 @@ import {
 import { useState, useCallback, useMemo } from "react";
 import { IoMdAdd, IoMdCheckmark, IoMdClose } from "react-icons/io";
 import { TbArrowRight } from "react-icons/tb";
+import {
+  GuideDetailsInput,
+  guideDetailsSchema,
+} from "@/schemas/onboarding.schema";
+import { z } from "zod";
 
 const PRESET_LANGUAGES = ["English", "Sinhala", "Tamil", "Hindi", "Mandarin"];
 
 interface StepProps {
-  stepUp: (data: {
-    languages: string;
-    experience: string;
-  }) => void;
-  initialData?: { languages: string; experience: string };
+  stepUp: (data: GuideDetailsInput) => void;
+  initialData?: GuideDetailsInput;
 }
+
+type ValidationErrors = Partial<Record<keyof GuideDetailsInput, string>>;
 
 const GuideDetails = ({ stepUp, initialData }: StepProps) => {
   const [selectedLanguages, setSelectedLanguages] = useState<string[]>(
-    initialData?.languages ? initialData.languages.split(", ") : []
+    initialData?.languages ?? []
   );
-  const [experience, setExperience] = useState(initialData?.experience ?? "");
+  const [yearsOfExp, setYearsOfExp] = useState<string>(
+    initialData?.yearsOfExp?.toString() ?? ""
+  );
   const [showOtherInput, setShowOtherInput] = useState(false);
   const [otherLanguage, setOtherLanguage] = useState("");
+  const [errors, setErrors] = useState<ValidationErrors>({});
 
   const customLanguages = useMemo(
     () => selectedLanguages.filter((lang) => !PRESET_LANGUAGES.includes(lang)),
@@ -41,6 +48,7 @@ const GuideDetails = ({ stepUp, initialData }: StepProps) => {
     setSelectedLanguages((prev) =>
       prev.includes(lang) ? prev.filter((l) => l !== lang) : [...prev, lang]
     );
+    setErrors((prev) => ({ ...prev, languages: undefined }));
   }, []);
 
   const removeCustomLanguage = useCallback((lang: string) => {
@@ -56,13 +64,29 @@ const GuideDetails = ({ stepUp, initialData }: StepProps) => {
   }, [otherLanguage]);
 
   const handleSubmit = useCallback(() => {
-    stepUp({
-      languages: selectedLanguages.join(", "),
-      experience,
+    if (yearsOfExp.trim() === "") {
+      setErrors({ yearsOfExp: "Years of experience is required" });
+      return;
+    }
+    const result = guideDetailsSchema.safeParse({
+      languages: selectedLanguages,
+      yearsOfExp: Number(yearsOfExp),
     });
-  }, [selectedLanguages, experience, stepUp]);
+    if (result.success) {
+      setErrors({});
+      stepUp(result.data);
+    } else {
+      const formattedErrors: ValidationErrors = {};
+      result.error.issues.forEach((issue: z.ZodError["issues"][number]) => {
+        const field = issue.path[0] as keyof GuideDetailsInput;
+        if (!formattedErrors[field]) {
+          formattedErrors[field] = issue.message;
+        }
+      });
+      setErrors(formattedErrors);
+    }
+  }, [selectedLanguages, yearsOfExp, stepUp]);
 
-  const isFormValid = useMemo(() => true, []);
   return (
     <Card className="w-full">
       <CardHeader className="text-center mb-3">
@@ -152,24 +176,33 @@ const GuideDetails = ({ stepUp, initialData }: StepProps) => {
                 </div>
               )}
             </div>
+            {errors.languages && (
+              <p className="text-xs text-red-500 mt-1">{errors.languages}</p>
+            )}
           </Field>
           <Field>
-            <Label htmlFor="experience">Years of experience</Label>
+            <Label htmlFor="yearsOfExp">Years of experience</Label>
             <Input
               type="number"
-              id="experience"
-              name="experience"
+              id="yearsOfExp"
+              name="yearsOfExp"
               placeholder="Years"
-              value={experience}
-              onChange={(e) => setExperience(e.target.value)}
+              value={yearsOfExp}
+              onChange={(e) => {
+                setYearsOfExp(e.target.value);
+                setErrors((prev) => ({ ...prev, yearsOfExp: undefined }));
+              }}
+              min="0"
             />
+            {errors.yearsOfExp && (
+              <p className="text-xs text-red-500 mt-1">{errors.yearsOfExp}</p>
+            )}
           </Field>
         </FieldGroup>
       </CardContent>
       <CardFooter>
         <Button
           onClick={handleSubmit}
-          disabled={!isFormValid}
           className="w-full h-10 md:h-11 text-sm md:text-base group"
         >
           <span>Next</span>

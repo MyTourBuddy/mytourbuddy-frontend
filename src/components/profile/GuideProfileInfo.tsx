@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Guide } from "@/models/User";
+import { Guide } from "@/schemas/user.schema";
 
 const GuideProfileInfo = ({ user }: { user: Guide }) => {
   const {

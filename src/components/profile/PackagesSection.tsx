@@ -7,9 +7,9 @@ import {
   CardDescription,
   CardTitle,
 } from "@/components/ui/card";
-import { Guide } from "@/models/User";
+import { Guide } from "@/schemas/user.schema";
 import { getPackages } from "@/lib/api";
-import { Package } from "@/models/Package";
+import { Package } from "@/schemas/package.schema";
 
 const PackagesSection = ({ user }: { user: Guide }) => {
   const [packages, setPackages] = useState<Package[]>([]);

@@ -8,8 +8,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { getReviews, getUsers } from "@/lib/api";
-import { User } from "@/models/User";
-import { Review } from "@/models/Review";
+import { User } from "@/schemas/user.schema";
+import { Review } from "@/schemas/review.schema";
 
 const ReviewsSection = ({ user }: { user: User }) => {
   const [reviews, setReviews] = useState<Review[]>([]);

@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/card";
 import { User } from "@/models/User";
 import { getExperiences } from "@/lib/api";
-import { Experience } from "@/models/Experience";
+import { Experience } from "@/schemas/experience.schema";
 
 const ExperiencesSection = ({ user }: { user: User }) => {
   const [experiences, setExperiences] = useState<Experience[]>([]);

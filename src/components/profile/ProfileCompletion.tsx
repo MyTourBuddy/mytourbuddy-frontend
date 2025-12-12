@@ -1,7 +1,7 @@
 import React from "react";
 import { Badge } from "../ui/badge";
 import { Card, CardContent } from "../ui/card";
-import { Guide, Tourist } from "@/models/User";
+import { Guide, Tourist } from "@/schemas/user.schema";
 
 interface ProfileCompletionProps {
   user: Guide | Tourist;

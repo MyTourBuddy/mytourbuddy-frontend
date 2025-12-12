@@ -8,7 +8,7 @@ import TouristProfileInfo from "@/components/profile/TouristProfileInfo";
 import UserNotFound from "@/components/profile/UserNotFound";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getUsers } from "@/lib/api";
-import { Guide, Tourist } from "@/models/User";
+import { Guide, Tourist } from "@/schemas/user.schema";
 
 const UserProfile = async ({
   params,

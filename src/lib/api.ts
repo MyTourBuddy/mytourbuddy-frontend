@@ -1,4 +1,7 @@
-import { Experience, Package, Review, User } from "@/models/User";
+import { Experience } from "@/schemas/experience.schema";
+import { Package } from "@/schemas/package.schema";
+import { Review } from "@/schemas/review.schema";
+import { User, Guide, Tourist } from "@/schemas/user.schema";
 
 export async function getUsers(): Promise<User[]> {
   const res = await fetch("http://localhost:3000/api/users", {
@@ -41,9 +44,12 @@ export async function getExperiences(guideId?: string): Promise<Experience[]> {
   return res.json();
 }
 
-export async function getReviews(userId?: string, role?: "guide" | "tourist"): Promise<Review[]> {
+export async function getReviews(
+  userId?: string,
+  role?: "guide" | "tourist"
+): Promise<Review[]> {
   let url = "http://localhost:3000/api/reviews";
-  
+
   if (userId && role) {
     const param = role === "guide" ? "guideId" : "touristId";
     url = `${url}?${param}=${userId}`;

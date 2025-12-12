@@ -3,7 +3,7 @@ import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { Card, CardContent } from "../ui/card";
 import Link from "next/link";
-import { User } from "@/models/User";
+import { User } from "@/schemas/user.schema";
 
 const ProfileHeader = ({ user }: { user: User }) => {
   const { firstName, lastName, role, username, memberSince } = user;

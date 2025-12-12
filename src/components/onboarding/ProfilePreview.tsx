@@ -12,22 +12,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { TbCheck, TbPencil } from "react-icons/tb";
 import { useMemo } from "react";
-
-interface ProfileData {
-  role: "tourist" | "guide";
-  firstName?: string;
-  lastName?: string;
-  email?: string;
-  age?: string;
-  username?: string;
-  // Tourist specific
-  country?: string;
-  preferences?: string;
-  // Guide specific
-  location?: string;
-  languages?: string;
-  experience?: string;
-}
+import { ProfileData } from "@/schemas/onboarding.schema";
 
 interface StepProps {
   stepUp: () => void;
@@ -42,21 +27,36 @@ const ProfilePreview = ({ stepUp, onEdit, profileData }: StepProps) => {
   );
 
   const isProfileComplete = useMemo(() => {
-    const requiredFields = [
-      profileData.firstName,
-      profileData.lastName,
-      profileData.email,
-      profileData.age,
-      profileData.username,
-    ];
+    // Common required fields (Steps 1-3)
+    const hasCommonFields = !!(
+      profileData.firstName &&
+      profileData.lastName &&
+      profileData.email &&
+      profileData.age &&
+      profileData.username &&
+      profileData.password &&
+      profileData.confirmPassword
+    );
 
+    if (!hasCommonFields) return false;
+
+    // Role-specific validation (Step 4)
     if (isTourist) {
-      requiredFields.push(profileData.country);
+      return (
+        "country" in profileData &&
+        "travelPreferences" in profileData &&
+        !!profileData.country &&
+        profileData.travelPreferences.length > 0
+      );
     } else {
-      requiredFields.push(profileData.location);
+      return (
+        "languages" in profileData &&
+        "yearsOfExp" in profileData &&
+        profileData.languages.length > 0 &&
+        profileData.yearsOfExp !== undefined &&
+        profileData.yearsOfExp >= 0
+      );
     }
-
-    return requiredFields.every((field) => field && field.trim());
   }, [profileData, isTourist]);
 
   return (
@@ -183,7 +183,7 @@ const ProfilePreview = ({ stepUp, onEdit, profileData }: StepProps) => {
                   Country
                 </p>
                 <p className="text-sm md:text-base">
-                  {profileData.country || "-"}
+                  {"country" in profileData ? profileData.country || "-" : "-"}
                 </p>
               </div>
               <div>
@@ -191,7 +191,10 @@ const ProfilePreview = ({ stepUp, onEdit, profileData }: StepProps) => {
                   Preferences
                 </p>
                 <p className="text-sm md:text-base">
-                  {profileData.preferences || "-"}
+                  {"travelPreferences" in profileData &&
+                  profileData.travelPreferences.length > 0
+                    ? profileData.travelPreferences.join(", ")
+                    : "-"}
                 </p>
               </div>
             </div>
@@ -216,7 +219,10 @@ const ProfilePreview = ({ stepUp, onEdit, profileData }: StepProps) => {
                   Languages
                 </p>
                 <p className="text-sm md:text-base">
-                  {profileData.languages || "-"}
+                  {"languages" in profileData &&
+                  profileData.languages.length > 0
+                    ? profileData.languages.join(", ")
+                    : "-"}
                 </p>
               </div>
               <div>
@@ -224,8 +230,11 @@ const ProfilePreview = ({ stepUp, onEdit, profileData }: StepProps) => {
                   Experience
                 </p>
                 <p className="text-sm md:text-base">
-                  {profileData.experience
-                    ? `${profileData.experience} years`
+                  {"yearsOfExp" in profileData &&
+                  profileData.yearsOfExp !== undefined
+                    ? `${profileData.yearsOfExp} year${
+                        profileData.yearsOfExp !== 1 ? "s" : ""
+                      }`
                     : "-"}
                 </p>
               </div>

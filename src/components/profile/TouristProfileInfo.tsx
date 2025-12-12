@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Tourist } from "@/models/User";
+import { Tourist } from "@/schemas/user.schema";
 
 const TouristProfileInfo = ({ user }: { user: Tourist }) => {
   const {

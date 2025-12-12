@@ -20,11 +20,17 @@ import {
 import { useState, useCallback, useMemo } from "react";
 import { IoMdAdd, IoMdCheckmark, IoMdClose } from "react-icons/io";
 import { TbArrowRight } from "react-icons/tb";
+import {
+  TouristDetailsInput,
+  touristDetailsSchema,
+} from "@/schemas/onboarding.schema";
 
 interface StepProps {
-  stepUp: (data: { country: string; preferences: string }) => void;
-  initialData?: { country: string; preferences: string };
+  stepUp: (data: TouristDetailsInput) => void;
+  initialData?: TouristDetailsInput;
 }
+
+type ValidationErrors = Partial<Record<keyof TouristDetailsInput, string>>;
 
 const PRESET_PREFERENCES = [
   "Adventure",
@@ -235,10 +241,12 @@ const COUNTRIES = [
 const TravelDetails = ({ stepUp, initialData }: StepProps) => {
   const [country, setCountry] = useState(initialData?.country ?? "");
   const [selectedPreferences, setSelectedPreferences] = useState<string[]>(
-    initialData?.preferences ? initialData.preferences.split(", ") : []
+    initialData?.travelPreferences ?? []
   );
   const [showOtherInput, setShowOtherInput] = useState(false);
   const [otherPreference, setOtherPreference] = useState("");
+
+  const [errors, setErrors] = useState<ValidationErrors>({});
 
   const customPreferences = useMemo(
     () =>
@@ -246,30 +254,65 @@ const TravelDetails = ({ stepUp, initialData }: StepProps) => {
     [selectedPreferences]
   );
 
-  const togglePreference = useCallback((pref: string) => {
-    setSelectedPreferences((prev) =>
-      prev.includes(pref) ? prev.filter((p) => p !== pref) : [...prev, pref]
-    );
-  }, []);
+  const validateForm = () => {
+    const result = touristDetailsSchema.safeParse({
+      country,
+      travelPreferences: selectedPreferences,
+    });
+    if (result.success) {
+      setErrors({});
+      return true;
+    } else {
+      const formattedErrors: ValidationErrors = {};
+      result.error.issues.forEach((issue) => {
+        const field = issue.path[0] as keyof TouristDetailsInput;
+        if (!formattedErrors[field]) {
+          formattedErrors[field] = issue.message;
+        }
+      });
+      setErrors(formattedErrors);
+      return false;
+    }
+  };
 
-  const removeCustomPreference = useCallback((pref: string) => {
-    setSelectedPreferences((prev) => prev.filter((p) => p !== pref));
-  }, []);
+  const togglePreference = useCallback(
+    (pref: string) => {
+      setSelectedPreferences((prev) =>
+        prev.includes(pref) ? prev.filter((p) => p !== pref) : [...prev, pref]
+      );
+      if (errors.travelPreferences) {
+        setErrors({ ...errors, travelPreferences: undefined });
+      }
+    },
+    [errors]
+  );
+
+  const removeCustomPreference = useCallback(
+    (pref: string) => {
+      setSelectedPreferences((prev) => prev.filter((p) => p !== pref));
+      if (errors.travelPreferences) {
+        setErrors({ ...errors, travelPreferences: undefined });
+      }
+    },
+    [errors]
+  );
 
   const addOtherPreference = useCallback(() => {
     if (otherPreference.trim()) {
       setSelectedPreferences((prev) => [...prev, otherPreference.trim()]);
       setOtherPreference("");
       setShowOtherInput(false);
+      if (errors.travelPreferences) {
+        setErrors({ ...errors, travelPreferences: undefined });
+      }
     }
-  }, [otherPreference]);
+  }, [otherPreference, errors]);
 
   const handleSubmit = useCallback(() => {
-    if (!country.trim()) return;
-    stepUp({ country, preferences: selectedPreferences.join(", ") });
-  }, [country, selectedPreferences, stepUp]);
-
-  const isFormValid = useMemo(() => country.trim().length > 0, [country]);
+    if (validateForm()) {
+      stepUp({ country, travelPreferences: selectedPreferences });
+    }
+  }, [country, selectedPreferences, stepUp, validateForm]);
 
   return (
     <Card className="w-full">
@@ -283,7 +326,15 @@ const TravelDetails = ({ stepUp, initialData }: StepProps) => {
         <FieldGroup>
           <Field>
             <Label htmlFor="country">Country</Label>
-            <Select value={country} onValueChange={setCountry}>
+            <Select
+              value={country}
+              onValueChange={(value) => {
+                setCountry(value);
+                if (errors.country) {
+                  setErrors({ ...errors, country: undefined });
+                }
+              }}
+            >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select a country" />
               </SelectTrigger>
@@ -295,6 +346,9 @@ const TravelDetails = ({ stepUp, initialData }: StepProps) => {
                 ))}
               </SelectContent>
             </Select>
+            {errors.country && (
+              <p className="text-red-500 text-sm mt-1">{errors.country}</p>
+            )}
           </Field>
           <Field>
             <Label>Travel Preferences</Label>
@@ -375,13 +429,17 @@ const TravelDetails = ({ stepUp, initialData }: StepProps) => {
                 </div>
               )}
             </div>
+            {errors.travelPreferences && (
+              <p className="text-red-500 text-sm mt-2">
+                {errors.travelPreferences}
+              </p>
+            )}
           </Field>
         </FieldGroup>
       </CardContent>
       <CardFooter>
         <Button
           onClick={handleSubmit}
-          disabled={!isFormValid}
           className="w-full h-10 md:h-11 text-sm md:text-base group"
         >
           <span>Next</span>

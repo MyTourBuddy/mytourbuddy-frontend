@@ -1,7 +1,7 @@
-import { Experience } from "@/models/Experience";
-import { Package } from "@/models/Package";
-import { Review } from "@/models/Review";
-import { Guide, Tourist } from "@/models/User";
+import { Experience } from "@/schemas/experience.schema";
+import { Package } from "@/schemas/package.schema";
+import { Review } from "@/schemas/review.schema";
+import { Guide, Tourist } from "@/schemas/user.schema";
 
 export const touristUser: Tourist = {
   id: "tourist-001",
@@ -9,17 +9,17 @@ export const touristUser: Tourist = {
   firstName: "John",
   lastName: "Doe",
   email: "john.tourist@test.com",
-  avatar: "",
   age: 28,
   username: "johntourist",
   password: "Tourist123",
+  avatar: "",
   memberSince: "2025-12-01",
   phone: "+1 234 567 8900",
   country: "United States",
+  travelPreferences: ["Adventure", "Culture", "Photography"],
   preferredDestinations: ["Sri Lanka", "Thailand", "Japan", "Italy"],
   travelInterests: ["Adventure", "Culture", "Food & Cuisine", "Photography"],
   languagesSpoken: ["English", "Spanish"],
-  travelPreferences: ["Adventure", "Culture", "Photography"],
 };
 
 export const guideUser: Guide = {
@@ -28,10 +28,10 @@ export const guideUser: Guide = {
   firstName: "Sarah",
   lastName: "Silva",
   email: "sarah.guide@test.com",
-  avatar: "",
   age: 32,
   username: "sarahguide",
   password: "Guide123",
+  avatar: "",
   memberSince: "2025-11-15",
   phone: "+94 77 123 4567",
   languages: ["English", "Sinhala", "Tamil"],
