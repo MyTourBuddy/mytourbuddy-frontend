@@ -34,9 +34,6 @@ const UserProfile = async ({
         <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground text-balance">
           My Profile
         </h1>
-        <p className="text-sm sm:text-base text-muted-foreground mt-2">
-          Manage your account and profile information
-        </p>
       </div>
 
       <ProfileHeader user={user} />

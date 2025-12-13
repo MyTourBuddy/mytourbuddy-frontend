@@ -12,6 +12,7 @@ const baseUserSchema = z.object({
   avatar: z.string(),
   memberSince: z.string(),
   phone: z.string(),
+  isProfileComplete: z.boolean().default(false),
 });
 
 const touristSchema = baseUserSchema.extend({
