@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import SelectableButtons from "@/components/SelectableButtons";
 import { Button } from "@/components/ui/button";
@@ -18,8 +18,10 @@ interface User {
   specializations: string[];
 }
 
+// Passionate tour guide with extensive knowledge of Sri Lankan culture and history. Specializing in cultural tours and authentic local experiences.
+
 const initialUser: User = {
-  bio: "Passionate tour guide with extensive knowledge of Sri Lankan culture and history. Specializing in cultural tours and authentic local experiences.",
+  bio: "",
   yearsOfExp: 5,
   languages: ["English", "Sinhala"],
   certifications: [],
@@ -101,61 +103,75 @@ const ProfessionalDetailsForm = () => {
       <FieldGroup className="max-w-md">
         <Field>
           <FieldLabel htmlFor="bio">Bio</FieldLabel>
-          <Textarea
-            id="bio"
-            cols={5}
-            value={draft.bio}
-            readOnly={!isEditing}
-            onChange={isEditing ? handleBioChange : undefined}
-          />
+          {draft.bio.length === 0 && !isEditing ? (
+            "--"
+          ) : (
+            <Textarea
+              id="bio"
+              cols={5}
+              value={draft.bio}
+              readOnly={!isEditing}
+              onChange={isEditing ? handleBioChange : undefined}
+            />
+          )}
         </Field>
         <Field>
           <FieldLabel htmlFor="yearsOfExp">Years of Experience</FieldLabel>
-          <Input
-            id="yearsOfExp"
-            type="number"
-            value={draft.yearsOfExp}
-            readOnly={!isEditing}
-            onChange={isEditing ? handleYearsOfExpChange : undefined}
-          />
+          {draft.yearsOfExp < 0 && !isEditing ? (
+            "--"
+          ) : (
+            <Input
+              id="yearsOfExp"
+              type="number"
+              value={draft.yearsOfExp}
+              readOnly={!isEditing}
+              onChange={isEditing ? handleYearsOfExpChange : undefined}
+            />
+          )}
         </Field>
         <Field>
           <FieldLabel>Languages</FieldLabel>
-          <p>{user.languages.length === 0 && !isEditing && "--"}</p>
-          <SelectableButtons
-            options={[
-              "English",
-              "Sinhala",
-              "Tamil",
-              "Hindi",
-              "French",
-              "German",
-            ]}
-            selected={draft.languages}
-            onChange={(v) => handleChange("languages", v)}
-            allowAddMore
-            placeholder="Add language..."
-            disabled={!isEditing}
-          />
+          {draft.languages.length === 0 && !isEditing ? (
+            "--"
+          ) : (
+            <SelectableButtons
+              options={[
+                "English",
+                "Sinhala",
+                "Tamil",
+                "Hindi",
+                "French",
+                "German",
+              ]}
+              selected={draft.languages}
+              onChange={(v) => handleChange("languages", v)}
+              allowAddMore
+              placeholder="Add language..."
+              disabled={!isEditing}
+            />
+          )}
         </Field>
 
         <Field>
           <FieldLabel>Specializations</FieldLabel>
-          <p>{user.specializations.length === 0 && !isEditing && "--"}</p>
-          <SelectableButtons
-            options={[
-              "Culture",
-              "Food & Cuisine",
-              "Photography",
-              "Wildlife",
-              "Adventure",
-            ]}
-            selected={draft.specializations}
-            onChange={(v) => handleChange("specializations", v)}
-            allowAddMore
-            placeholder="Add Specialization..."
-            disabled={!isEditing}
-          />
+          {draft.specializations.length === 0 && !isEditing ? (
+            "--"
+          ) : (
+            <SelectableButtons
+              options={[
+                "Culture",
+                "Food & Cuisine",
+                "Photography",
+                "Wildlife",
+                "Adventure",
+              ]}
+              selected={draft.specializations}
+              onChange={(v) => handleChange("specializations", v)}
+              allowAddMore
+              placeholder="Add Specialization..."
+              disabled={!isEditing}
+            />
+          )}
         </Field>
         <Field>
           <FieldLabel>Certifications</FieldLabel>

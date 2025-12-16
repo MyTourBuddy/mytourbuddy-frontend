@@ -141,7 +141,7 @@ const ServiceInfoForm = () => {
         </Field>
         <Field>
           <FieldLabel>Age Groups</FieldLabel>
-          <p>{user.ageGroups.length === 0 && !isEditing && "--"}</p>
+          <p>{draft.ageGroups.length === 0 && !isEditing && "--"}</p>
           <SelectableButtons
             options={["Childs", "Adults", "Seniors"]}
             selected={draft.ageGroups}

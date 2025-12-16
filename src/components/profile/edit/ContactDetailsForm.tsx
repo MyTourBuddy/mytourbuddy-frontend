@@ -88,21 +88,24 @@ const ContactDetailsForm = () => {
         {/* Working Days */}
         <Field>
           <FieldLabel>Working Days</FieldLabel>
-          <p>{user.workingDays.length === 0 && !isEditing && "--"}</p>
-          <SelectableButtons
-            options={[
-              "Monday",
-              "Tuesday",
-              "Wednesday",
-              "Thursday",
-              "Friday",
-              "Saturday",
-              "Sunday",
-            ]}
-            selected={draft.workingDays}
-            onChange={(v) => handleChange("workingDays", v)}
-            disabled={!isEditing}
-          />
+          {draft.workingDays.length === 0 && !isEditing ? (
+            "--"
+          ) : (
+            <SelectableButtons
+              options={[
+                "Monday",
+                "Tuesday",
+                "Wednesday",
+                "Thursday",
+                "Friday",
+                "Saturday",
+                "Sunday",
+              ]}
+              selected={draft.workingDays}
+              onChange={(v) => handleChange("workingDays", v)}
+              disabled={!isEditing}
+            />
+          )}
         </Field>
 
         {/* Emergency Contact */}

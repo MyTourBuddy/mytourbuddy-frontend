@@ -84,7 +84,7 @@ const PersonalInfoForm = () => {
               <Field>
                 <FieldLabel htmlFor="firstname">Firstname</FieldLabel>
 
-                {user.firstname.length === 0 && !isEditing ? (
+                {draft.firstname.length === 0 && !isEditing ? (
                   "--"
                 ) : (
                   <Input
@@ -99,7 +99,7 @@ const PersonalInfoForm = () => {
               </Field>
               <Field>
                 <FieldLabel htmlFor="lastname">Lastname</FieldLabel>
-                {user.lastname.length === 0 && !isEditing ? (
+                {draft.lastname.length === 0 && !isEditing ? (
                   "--"
                 ) : (
                   <Input
@@ -116,7 +116,7 @@ const PersonalInfoForm = () => {
 
             <Field>
               <FieldLabel htmlFor="age">Age</FieldLabel>
-              {user.age < 1 && !isEditing ? (
+              {draft.age < 1 && !isEditing ? (
                 "--"
               ) : (
                 <Input
@@ -132,7 +132,7 @@ const PersonalInfoForm = () => {
 
             <Field>
               <FieldLabel htmlFor="phone">Phone Number</FieldLabel>
-              {user.phone.length === 0 && !isEditing ? (
+              {draft.phone.length === 0 && !isEditing ? (
                 "--"
               ) : (
                 <Input
@@ -148,7 +148,7 @@ const PersonalInfoForm = () => {
 
             <Field>
               <FieldLabel htmlFor="country">Country</FieldLabel>
-              {user.country.length === 0 && !isEditing ? (
+              {draft.country.length === 0 && !isEditing ? (
                 "--"
               ) : (
                 <Select

@@ -27,7 +27,7 @@ const EditProfile = () => {
       </div>
 
       {/* common */}
-      <Card>
+      <Card className="py-2">
         <CardContent>
           <Accordion type="single" defaultValue="card1" collapsible>
             <AccordionItem value="card1">
