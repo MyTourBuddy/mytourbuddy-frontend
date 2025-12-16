@@ -1,7 +1,6 @@
 "use client";
 
 import PersonalInfoForm from "@/components/profile/edit/PersonalInfoForm";
-import EditableCard from "@/components/profile/edit/EditableCard";
 import TravelPrefForm from "@/components/profile/edit/TravelPrefForm";
 import ProfessionalDetailsForm from "@/components/profile/edit/ProfessionalDetailsForm";
 import ServiceInfoForm from "@/components/profile/edit/ServiceInfoForm";
@@ -9,6 +8,13 @@ import ContactDetailsForm from "@/components/profile/edit/ContactDetailsForm";
 import ReviewsForm from "@/components/profile/edit/ReviewsForm";
 import PackageInfoForm from "@/components/profile/edit/PackageInfoForm";
 import ExperienceForm from "@/components/profile/edit/ExperienceForm";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { Card, CardContent } from "@/components/ui/card";
 
 const sampleUser = {
   id: "1",
@@ -43,34 +49,66 @@ const EditProfile = () => {
       </div>
 
       {/* common */}
-      <EditableCard title="Personal Information">
-        <PersonalInfoForm />
-      </EditableCard>
-      <EditableCard title="Reviews">
-        <ReviewsForm />
-      </EditableCard>
+      <Card>
+        <CardContent>
+          <Accordion type="single" defaultValue="card1" collapsible>
+            <AccordionItem value="card1">
+              <AccordionTrigger>Personal Information</AccordionTrigger>
+              <AccordionContent>
+                <PersonalInfoForm />
+              </AccordionContent>
+            </AccordionItem>
 
-      {/* tourist */}
-      <EditableCard title="Travel Preferences">
-        <TravelPrefForm />
-      </EditableCard>
+            {/* tourist only */}
+            <AccordionItem value="card2">
+              <AccordionTrigger>Travel Preferences</AccordionTrigger>
+              <AccordionContent>
+                <TravelPrefForm />
+              </AccordionContent>
+            </AccordionItem>
 
-      {/* guide */}
-      <EditableCard title="Professional Details">
-        <ProfessionalDetailsForm />
-      </EditableCard>
-      <EditableCard title="Service Information">
-        <ServiceInfoForm />
-      </EditableCard>
-      <EditableCard title="Contact & Availability">
-        <ContactDetailsForm />
-      </EditableCard>
-      <EditableCard title="My Packages">
-        <PackageInfoForm />
-      </EditableCard>
-      <EditableCard title="My Experieces">
-        <ExperienceForm />
-      </EditableCard>
+            {/* guide only */}
+            <AccordionItem value="card3">
+              <AccordionTrigger>Professional Details</AccordionTrigger>
+              <AccordionContent>
+                <ProfessionalDetailsForm />
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="card4">
+              <AccordionTrigger>Service Information</AccordionTrigger>
+              <AccordionContent>
+                <ServiceInfoForm />
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="card5">
+              <AccordionTrigger>Contact & Availability</AccordionTrigger>
+              <AccordionContent>
+                <ContactDetailsForm />
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="card6">
+              <AccordionTrigger>My Packages</AccordionTrigger>
+              <AccordionContent>
+                <PackageInfoForm />
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="card7">
+              <AccordionTrigger>My Experieces</AccordionTrigger>
+              <AccordionContent>
+                <ExperienceForm />
+              </AccordionContent>
+            </AccordionItem>
+
+            {/* common */}
+            <AccordionItem value="card8">
+              <AccordionTrigger>Reviews</AccordionTrigger>
+              <AccordionContent>
+                <ReviewsForm />
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        </CardContent>
+      </Card>
     </section>
   );
 };

@@ -10,16 +10,21 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useState, useCallback, useMemo } from "react";
-import { IoMdAdd, IoMdCheckmark, IoMdClose } from "react-icons/io";
+import { useState, useCallback } from "react";
 import { TbArrowRight } from "react-icons/tb";
+import SelectableButtons from "@/components/SelectableButtons";
 import {
   GuideDetailsInput,
   guideDetailsSchema,
 } from "@/schemas/onboarding.schema";
-import { z } from "zod";
 
-const PRESET_LANGUAGES = ["English", "Sinhala", "Tamil", "Hindi", "Mandarin"];
+const PRESET_LANGUAGES: string[] = [
+  "English",
+  "Sinhala",
+  "Tamil",
+  "Hindi",
+  "Mandarin",
+];
 
 interface StepProps {
   stepUp: (data: GuideDetailsInput) => void;
@@ -30,62 +35,45 @@ type ValidationErrors = Partial<Record<keyof GuideDetailsInput, string>>;
 
 const GuideDetails = ({ stepUp, initialData }: StepProps) => {
   const [selectedLanguages, setSelectedLanguages] = useState<string[]>(
-    initialData?.languages ?? []
+    initialData?.languages ?? [] // Starts empty if no initial data
   );
+
   const [yearsOfExp, setYearsOfExp] = useState<string>(
     initialData?.yearsOfExp?.toString() ?? ""
   );
-  const [showOtherInput, setShowOtherInput] = useState(false);
-  const [otherLanguage, setOtherLanguage] = useState("");
+
   const [errors, setErrors] = useState<ValidationErrors>({});
 
-  const customLanguages = useMemo(
-    () => selectedLanguages.filter((lang) => !PRESET_LANGUAGES.includes(lang)),
-    [selectedLanguages]
-  );
+  const validateForm = useCallback(() => {
+    const parsedYears = yearsOfExp.trim() === "" ? null : Number(yearsOfExp);
 
-  const toggleLanguage = useCallback((lang: string) => {
-    setSelectedLanguages((prev) =>
-      prev.includes(lang) ? prev.filter((l) => l !== lang) : [...prev, lang]
-    );
-    setErrors((prev) => ({ ...prev, languages: undefined }));
-  }, []);
-
-  const removeCustomLanguage = useCallback((lang: string) => {
-    setSelectedLanguages((prev) => prev.filter((l) => l !== lang));
-  }, []);
-
-  const addOtherLanguage = useCallback(() => {
-    if (otherLanguage.trim()) {
-      setSelectedLanguages((prev) => [...prev, otherLanguage.trim()]);
-      setOtherLanguage("");
-      setShowOtherInput(false);
-    }
-  }, [otherLanguage]);
-
-  const handleSubmit = useCallback(() => {
-    if (yearsOfExp.trim() === "") {
-      setErrors({ yearsOfExp: "Years of experience is required" });
-      return;
-    }
     const result = guideDetailsSchema.safeParse({
       languages: selectedLanguages,
-      yearsOfExp: Number(yearsOfExp),
+      yearsOfExp: parsedYears,
     });
+
     if (result.success) {
       setErrors({});
-      stepUp(result.data);
+      return result.data;
     } else {
       const formattedErrors: ValidationErrors = {};
-      result.error.issues.forEach((issue: z.ZodError["issues"][number]) => {
+      result.error.issues.forEach((issue) => {
         const field = issue.path[0] as keyof GuideDetailsInput;
         if (!formattedErrors[field]) {
           formattedErrors[field] = issue.message;
         }
       });
       setErrors(formattedErrors);
+      return null;
     }
-  }, [selectedLanguages, yearsOfExp, stepUp]);
+  }, [selectedLanguages, yearsOfExp]);
+
+  const handleSubmit = useCallback(() => {
+    const validatedData = validateForm();
+    if (validatedData) {
+      stepUp(validatedData);
+    }
+  }, [validateForm, stepUp]);
 
   return (
     <Card className="w-full">
@@ -95,97 +83,32 @@ const GuideDetails = ({ stepUp, initialData }: StepProps) => {
           Tell us about your services
         </CardDescription>
       </CardHeader>
+
       <CardContent>
         <FieldGroup>
           <Field>
             <Label>Languages</Label>
-            <div className="flex flex-wrap gap-2 mt-2">
-              {PRESET_LANGUAGES.map((lang) => (
-                <button
-                  key={lang}
-                  type="button"
-                  onClick={() => toggleLanguage(lang)}
-                  className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                    selectedLanguages.includes(lang)
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
-                  }`}
-                >
-                  {lang}
-                </button>
-              ))}
-              {customLanguages.map((lang) => (
-                <button
-                  key={lang}
-                  type="button"
-                  onClick={() => removeCustomLanguage(lang)}
-                  className="px-4 py-2 rounded-full text-sm font-medium bg-primary text-primary-foreground flex items-center gap-1"
-                  aria-label={`Remove ${lang} language`}
-                >
-                  {lang}
-                  <IoMdClose className="w-3 h-3" />
-                </button>
-              ))}
-              {!showOtherInput ? (
-                <button
-                  type="button"
-                  onClick={() => setShowOtherInput(true)}
-                  className="px-4 py-2 rounded-full text-sm font-medium bg-secondary text-secondary-foreground hover:bg-secondary/80 flex items-center gap-1"
-                  aria-label="Add custom language"
-                >
-                  <IoMdAdd className="w-4 h-4" />
-                  Other
-                </button>
-              ) : (
-                <div className="flex items-center gap-2 w-full mt-2">
-                  <Input
-                    type="text"
-                    placeholder="Enter language"
-                    value={otherLanguage}
-                    onChange={(e) => setOtherLanguage(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        e.preventDefault();
-                        addOtherLanguage();
-                      }
-                    }}
-                    className="flex-1"
-                  />
-                  <Button
-                    type="button"
-                    size="icon"
-                    variant="secondary"
-                    onClick={addOtherLanguage}
-                    disabled={!otherLanguage.trim()}
-                    aria-label="Add custom language"
-                  >
-                    <IoMdCheckmark />
-                  </Button>
-                  <Button
-                    type="button"
-                    size="icon"
-                    variant="outline"
-                    onClick={() => {
-                      setShowOtherInput(false);
-                      setOtherLanguage("");
-                    }}
-                    aria-label="Cancel"
-                  >
-                    <IoMdClose />
-                  </Button>
-                </div>
-              )}
+            <div className="mt-3">
+              <SelectableButtons
+                options={PRESET_LANGUAGES}
+                selected={selectedLanguages}
+                onChange={setSelectedLanguages}
+                allowAddMore={true}
+                addMoreLabel="Other"
+                placeholder="Enter language (e.g., French, Spanish)"
+                className="space-y-4"
+              />
             </div>
             {errors.languages && (
               <p className="text-xs text-red-500 mt-1">{errors.languages}</p>
             )}
           </Field>
+
           <Field>
             <Label htmlFor="yearsOfExp">Years of experience</Label>
             <Input
               type="number"
               id="yearsOfExp"
-              name="yearsOfExp"
               placeholder="Years"
               value={yearsOfExp}
               onChange={(e) => {
@@ -193,6 +116,7 @@ const GuideDetails = ({ stepUp, initialData }: StepProps) => {
                 setErrors((prev) => ({ ...prev, yearsOfExp: undefined }));
               }}
               min="0"
+              className="mt-2"
             />
             {errors.yearsOfExp && (
               <p className="text-xs text-red-500 mt-1">{errors.yearsOfExp}</p>
@@ -200,6 +124,7 @@ const GuideDetails = ({ stepUp, initialData }: StepProps) => {
           </Field>
         </FieldGroup>
       </CardContent>
+
       <CardFooter>
         <Button
           onClick={handleSubmit}

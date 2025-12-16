@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Field, FieldGroup } from "@/components/ui/field";
 import {
@@ -17,20 +16,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useState, useCallback, useMemo } from "react";
-import { IoMdAdd, IoMdCheckmark, IoMdClose } from "react-icons/io";
+import { useState, useCallback } from "react";
 import { TbArrowRight } from "react-icons/tb";
+import SelectableButtons from "@/components/SelectableButtons";
 import {
   TouristDetailsInput,
   touristDetailsSchema,
 } from "@/schemas/onboarding.schema";
-
-interface StepProps {
-  stepUp: (data: TouristDetailsInput) => void;
-  initialData?: TouristDetailsInput;
-}
-
-type ValidationErrors = Partial<Record<keyof TouristDetailsInput, string>>;
 
 const PRESET_PREFERENCES = [
   "Adventure",
@@ -43,7 +35,7 @@ const PRESET_PREFERENCES = [
   "Relaxation",
 ];
 
-const COUNTRIES = [
+const COUNTRIES: string[] = [
   "Afghanistan",
   "Albania",
   "Algeria",
@@ -238,27 +230,27 @@ const COUNTRIES = [
   "Zimbabwe",
 ];
 
+interface StepProps {
+  stepUp: (data: TouristDetailsInput) => void;
+  initialData?: TouristDetailsInput;
+}
+
+type ValidationErrors = Partial<Record<keyof TouristDetailsInput, string>>;
+
 const TravelDetails = ({ stepUp, initialData }: StepProps) => {
   const [country, setCountry] = useState(initialData?.country ?? "");
   const [selectedPreferences, setSelectedPreferences] = useState<string[]>(
     initialData?.travelPreferences ?? []
   );
-  const [showOtherInput, setShowOtherInput] = useState(false);
-  const [otherPreference, setOtherPreference] = useState("");
 
   const [errors, setErrors] = useState<ValidationErrors>({});
 
-  const customPreferences = useMemo(
-    () =>
-      selectedPreferences.filter((pref) => !PRESET_PREFERENCES.includes(pref)),
-    [selectedPreferences]
-  );
-
-  const validateForm = () => {
+  const validateForm = useCallback(() => {
     const result = touristDetailsSchema.safeParse({
       country,
       travelPreferences: selectedPreferences,
     });
+
     if (result.success) {
       setErrors({});
       return true;
@@ -273,40 +265,7 @@ const TravelDetails = ({ stepUp, initialData }: StepProps) => {
       setErrors(formattedErrors);
       return false;
     }
-  };
-
-  const togglePreference = useCallback(
-    (pref: string) => {
-      setSelectedPreferences((prev) =>
-        prev.includes(pref) ? prev.filter((p) => p !== pref) : [...prev, pref]
-      );
-      if (errors.travelPreferences) {
-        setErrors({ ...errors, travelPreferences: undefined });
-      }
-    },
-    [errors]
-  );
-
-  const removeCustomPreference = useCallback(
-    (pref: string) => {
-      setSelectedPreferences((prev) => prev.filter((p) => p !== pref));
-      if (errors.travelPreferences) {
-        setErrors({ ...errors, travelPreferences: undefined });
-      }
-    },
-    [errors]
-  );
-
-  const addOtherPreference = useCallback(() => {
-    if (otherPreference.trim()) {
-      setSelectedPreferences((prev) => [...prev, otherPreference.trim()]);
-      setOtherPreference("");
-      setShowOtherInput(false);
-      if (errors.travelPreferences) {
-        setErrors({ ...errors, travelPreferences: undefined });
-      }
-    }
-  }, [otherPreference, errors]);
+  }, [country, selectedPreferences]);
 
   const handleSubmit = useCallback(() => {
     if (validateForm()) {
@@ -331,7 +290,7 @@ const TravelDetails = ({ stepUp, initialData }: StepProps) => {
               onValueChange={(value) => {
                 setCountry(value);
                 if (errors.country) {
-                  setErrors({ ...errors, country: undefined });
+                  setErrors((prev) => ({ ...prev, country: undefined }));
                 }
               }}
             >
@@ -350,84 +309,18 @@ const TravelDetails = ({ stepUp, initialData }: StepProps) => {
               <p className="text-red-500 text-sm mt-1">{errors.country}</p>
             )}
           </Field>
+
           <Field>
             <Label>Travel Preferences</Label>
-            <div className="flex flex-wrap gap-2 mt-2">
-              {PRESET_PREFERENCES.map((pref) => (
-                <button
-                  key={pref}
-                  type="button"
-                  onClick={() => togglePreference(pref)}
-                  className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                    selectedPreferences.includes(pref)
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
-                  }`}
-                >
-                  {pref}
-                </button>
-              ))}
-              {customPreferences.map((pref) => (
-                <button
-                  key={pref}
-                  type="button"
-                  onClick={() => removeCustomPreference(pref)}
-                  className="px-4 py-2 rounded-full text-sm font-medium bg-primary text-primary-foreground flex items-center gap-1"
-                  aria-label={`Remove ${pref} preference`}
-                >
-                  {pref}
-                  <IoMdClose className="w-3 h-3" />
-                </button>
-              ))}
-              {!showOtherInput ? (
-                <button
-                  type="button"
-                  onClick={() => setShowOtherInput(true)}
-                  className="px-4 py-2 rounded-full text-sm font-medium bg-secondary text-secondary-foreground hover:bg-secondary/80 flex items-center gap-1"
-                  aria-label="Add custom preference"
-                >
-                  <IoMdAdd className="w-4 h-4" />
-                  Other
-                </button>
-              ) : (
-                <div className="flex items-center gap-2 w-full mt-2">
-                  <Input
-                    type="text"
-                    placeholder="Enter custom preference"
-                    value={otherPreference}
-                    onChange={(e) => setOtherPreference(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        e.preventDefault();
-                        addOtherPreference();
-                      }
-                    }}
-                    className="flex-1"
-                  />
-                  <Button
-                    type="button"
-                    size="icon"
-                    variant="secondary"
-                    onClick={addOtherPreference}
-                    disabled={!otherPreference.trim()}
-                    aria-label="Add custom preference"
-                  >
-                    <IoMdCheckmark />
-                  </Button>
-                  <Button
-                    type="button"
-                    size="icon"
-                    variant="outline"
-                    onClick={() => {
-                      setShowOtherInput(false);
-                      setOtherPreference("");
-                    }}
-                    aria-label="Cancel"
-                  >
-                    <IoMdClose />
-                  </Button>
-                </div>
-              )}
+            <div className="mt-3">
+              <SelectableButtons
+                options={PRESET_PREFERENCES}
+                selected={selectedPreferences}
+                onChange={setSelectedPreferences}
+                allowAddMore={true}
+                addMoreLabel="Other"
+                placeholder="Enter custom preference"
+              />
             </div>
             {errors.travelPreferences && (
               <p className="text-red-500 text-sm mt-2">
