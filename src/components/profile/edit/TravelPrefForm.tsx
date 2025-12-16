@@ -6,11 +6,12 @@ import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import SelectableButtons from "@/components/SelectableButtons";
 import { Separator } from "@/components/ui/separator";
 import { TbPencil } from "react-icons/tb";
+import { ButtonGroup } from "@/components/ui/button-group";
 
 const initialUser = {
-  preferredDestinations: ["Colombo", "Galle", "Kandy"],
+  preferredDestinations: [],
   travelInterests: [],
-  languagesSpoken: ["English", "Hindi"],
+  languagesSpoken: [],
 };
 
 const TravelPrefForm = () => {
@@ -42,11 +43,6 @@ const TravelPrefForm = () => {
     }));
   };
 
-  const isDraftEmpty =
-    draft.preferredDestinations.length === 0 &&
-    draft.travelInterests.length === 0 &&
-    draft.languagesSpoken.length === 0;
-
   return (
     <div className="flex flex-col gap-4 w-full">
       <div className="flex items-center justify-between">
@@ -67,66 +63,78 @@ const TravelPrefForm = () => {
       <FieldGroup>
         <Field>
           <FieldLabel>Preferred Destinations</FieldLabel>
-          <SelectableButtons
-            options={[
-              "Colombo",
-              "Galle",
-              "Kandy",
-              "Jaffna",
-              "Sigiriya",
-              "Ella",
-              "Nuwara Eliya",
-            ]}
-            selected={draft.preferredDestinations}
-            onChange={(v) => handleChange("preferredDestinations", v)}
-            allowAddMore
-            placeholder="Add destination..."
-            disabled={!isEditing}
-          />
+          {draft.preferredDestinations.length === 0 && !isEditing ? (
+            "--"
+          ) : (
+            <SelectableButtons
+              options={[
+                "Colombo",
+                "Galle",
+                "Kandy",
+                "Jaffna",
+                "Sigiriya",
+                "Ella",
+                "Nuwara Eliya",
+              ]}
+              selected={draft.preferredDestinations}
+              onChange={(v) => handleChange("preferredDestinations", v)}
+              allowAddMore
+              placeholder="Add destination..."
+              disabled={!isEditing}
+            />
+          )}
         </Field>
 
         <Field>
           <FieldLabel>Travel Interests</FieldLabel>
-          <SelectableButtons
-            options={[
-              "Adventure",
-              "Culture",
-              "Sports",
-              "Nature",
-              "Food",
-              "Relaxation",
-            ]}
-            selected={draft.travelInterests}
-            onChange={(v) => handleChange("travelInterests", v)}
-            allowAddMore
-            placeholder="Add interest..."
-            disabled={!isEditing}
-          />
+          {draft.travelInterests.length === 0 && !isEditing ? (
+            "--"
+          ) : (
+            <SelectableButtons
+              options={[
+                "Adventure",
+                "Culture",
+                "Sports",
+                "Nature",
+                "Food",
+                "Relaxation",
+              ]}
+              selected={draft.travelInterests}
+              onChange={(v) => handleChange("travelInterests", v)}
+              allowAddMore
+              placeholder="Add interest..."
+              disabled={!isEditing}
+            />
+          )}
         </Field>
 
         <Field>
           <FieldLabel>Languages Spoken</FieldLabel>
-          <SelectableButtons
-            options={[
-              "English",
-              "Sinhala",
-              "Tamil",
-              "Hindi",
-              "French",
-              "German",
-            ]}
-            selected={draft.languagesSpoken}
-            onChange={(v) => handleChange("languagesSpoken", v)}
-            allowAddMore
-            placeholder="Add language..."
-            disabled={!isEditing}
-          />
+          {draft.languagesSpoken.length === 0 && !isEditing ? (
+            "--"
+          ) : (
+            <SelectableButtons
+              options={[
+                "English",
+                "Sinhala",
+                "Tamil",
+                "Hindi",
+                "French",
+                "German",
+              ]}
+              selected={draft.languagesSpoken}
+              onChange={(v) => handleChange("languagesSpoken", v)}
+              allowAddMore
+              placeholder="Add language..."
+              disabled={!isEditing}
+            />
+          )}
         </Field>
       </FieldGroup>
 
       {/* actions */}
       {isEditing && (
-        <div className="flex justify-end gap-3 pt-4 border-t">
+        <ButtonGroup className="ml-auto">
           <Button variant="outline" onClick={handleCancel}>
             Cancel
           </Button>
@@ -140,7 +148,7 @@ const TravelPrefForm = () => {
           >
             Save
           </Button>
-        </div>
+        </ButtonGroup>
       )}
     </div>
   );

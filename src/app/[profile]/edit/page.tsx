@@ -1,5 +1,3 @@
-"use client";
-
 import PersonalInfoForm from "@/components/profile/edit/PersonalInfoForm";
 import TravelPrefForm from "@/components/profile/edit/TravelPrefForm";
 import ProfessionalDetailsForm from "@/components/profile/edit/ProfessionalDetailsForm";
@@ -15,26 +13,6 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Card, CardContent } from "@/components/ui/card";
-
-const sampleUser = {
-  id: "1",
-  role: "tourist" as const,
-  firstName: "Jane",
-  lastName: "Smith",
-  email: "jane.smith@example.com",
-  age: 25,
-  username: "janesmith",
-  password: "password123",
-  avatar: "https://via.placeholder.com/150",
-  memberSince: "2023-01-01",
-  phone: "+1234567890",
-  isProfileComplete: false,
-  country: "USA",
-  travelPreferences: ["Adventure", "Culture"],
-  preferredDestinations: ["Europe", "Asia"],
-  travelInterests: ["Hiking", "Photography"],
-  languagesSpoken: ["English", "French"],
-};
 
 const EditProfile = () => {
   return (

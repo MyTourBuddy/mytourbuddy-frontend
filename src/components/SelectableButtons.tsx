@@ -132,7 +132,7 @@ const SelectableButtons: React.FC<SelectableButtonsProps> = ({
 
       {/* Add input */}
       {allowAddMore && showInput && !disabled && (
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 max-w-md">
           <Input
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}

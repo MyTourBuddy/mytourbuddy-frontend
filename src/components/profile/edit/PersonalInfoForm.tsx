@@ -4,9 +4,18 @@ import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
+import { COUNTRIES } from "@/data/constants";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { TbPencil } from "react-icons/tb";
+import { ButtonGroup } from "@/components/ui/button-group";
 
 interface User {
   firstname: string;
@@ -21,9 +30,9 @@ const initialUser: User = {
   firstname: "Sasmitha",
   lastname: "Perera",
   age: 22,
-  phone: "+94719077818",
-  country: "Sri Lanka",
-  avatar: "https://github.com/shadcn.png",
+  phone: "",
+  country: "",
+  avatar: "",
 };
 
 const PersonalInfoForm = () => {
@@ -48,8 +57,7 @@ const PersonalInfoForm = () => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleSave = () => {
     setUser(draft);
     setIsEditing(false);
     console.log("Profile saved:", draft);
@@ -69,60 +77,97 @@ const PersonalInfoForm = () => {
       </div>
       <Separator />
 
-      <form onSubmit={handleSubmit}>
+      <form>
         <div className="grid md:text-base text-xs grid-cols-1 md:grid-cols-3 gap-6">
           <div className="md:col-span-2 space-y-4 md:order-1 order-2">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <Field>
                 <FieldLabel htmlFor="firstname">Firstname</FieldLabel>
-                <Input
-                  id="firstname"
-                  value={draft.firstname}
-                  readOnly={!isEditing}
-                  onChange={(e) => handleChange("firstname", e.target.value)}
-                />
+
+                {user.firstname.length === 0 && !isEditing ? (
+                  "--"
+                ) : (
+                  <Input
+                    id="firstname"
+                    type="text"
+                    placeholder="Enter Firstname"
+                    value={draft.firstname}
+                    readOnly={!isEditing}
+                    onChange={(e) => handleChange("firstname", e.target.value)}
+                  />
+                )}
               </Field>
               <Field>
                 <FieldLabel htmlFor="lastname">Lastname</FieldLabel>
-                <Input
-                  id="lastname"
-                  value={draft.lastname}
-                  readOnly={!isEditing}
-                  onChange={(e) => handleChange("lastname", e.target.value)}
-                />
+                {user.lastname.length === 0 && !isEditing ? (
+                  "--"
+                ) : (
+                  <Input
+                    id="lastname"
+                    type="text"
+                    placeholder="Enter Lastname"
+                    value={draft.lastname}
+                    readOnly={!isEditing}
+                    onChange={(e) => handleChange("lastname", e.target.value)}
+                  />
+                )}
               </Field>
             </div>
 
             <Field>
               <FieldLabel htmlFor="age">Age</FieldLabel>
-              <Input
-                id="age"
-                type="number"
-                value={draft.age}
-                readOnly={!isEditing}
-                onChange={(e) => handleChange("age", Number(e.target.value))}
-              />
+              {user.age < 1 && !isEditing ? (
+                "--"
+              ) : (
+                <Input
+                  id="age"
+                  type="number"
+                  placeholder="Enter Age"
+                  value={draft.age}
+                  readOnly={!isEditing}
+                  onChange={(e) => handleChange("age", Number(e.target.value))}
+                />
+              )}
             </Field>
 
             <Field>
               <FieldLabel htmlFor="phone">Phone Number</FieldLabel>
-              <Input
-                id="phone"
-                type="tel"
-                value={draft.phone}
-                readOnly={!isEditing}
-                onChange={(e) => handleChange("phone", e.target.value)}
-              />
+              {user.phone.length === 0 && !isEditing ? (
+                "--"
+              ) : (
+                <Input
+                  id="phone"
+                  type="tel"
+                  placeholder="Enter Phone No."
+                  value={draft.phone}
+                  readOnly={!isEditing}
+                  onChange={(e) => handleChange("phone", e.target.value)}
+                />
+              )}
             </Field>
 
             <Field>
               <FieldLabel htmlFor="country">Country</FieldLabel>
-              <Input
-                id="country"
-                value={draft.country}
-                readOnly={!isEditing}
-                onChange={(e) => handleChange("country", e.target.value)}
-              />
+              {user.country.length === 0 && !isEditing ? (
+                "--"
+              ) : (
+                <Select
+                  value={draft.country}
+                  onValueChange={(value) => handleChange("country", value)}
+                  disabled={!isEditing}
+                >
+                  <SelectTrigger id="country" className="w-full">
+                    <SelectValue placeholder="Select Country" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {COUNTRIES.map((country) => (
+                      <SelectItem key={country} value={country}>
+                        {country}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
             </Field>
           </div>
 
@@ -149,12 +194,24 @@ const PersonalInfoForm = () => {
         </div>
 
         {isEditing && (
-          <div className="flex justify-end gap-3 pt-4 border-t">
-            <Button type="button" variant="outline" onClick={handleCancel}>
+          <ButtonGroup className="ml-auto">
+            <Button variant="outline" onClick={handleCancel}>
               Cancel
             </Button>
-            <Button type="submit">Save</Button>
-          </div>
+            <Button
+              onClick={handleSave}
+              disabled={
+                draft.firstname.length === 0 ||
+                draft.lastname.length === 0 ||
+                draft.age < 1 ||
+                draft.country.length === 0 ||
+                draft.phone.length === 0 ||
+                draft.avatar.length === 0
+              }
+            >
+              Save
+            </Button>
+          </ButtonGroup>
         )}
       </form>
     </div>
