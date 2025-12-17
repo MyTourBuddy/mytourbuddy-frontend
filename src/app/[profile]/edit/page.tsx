@@ -3,9 +3,6 @@ import TravelPrefForm from "@/components/profile/edit/TravelPrefForm";
 import ProfessionalDetailsForm from "@/components/profile/edit/ProfessionalDetailsForm";
 import ServiceInfoForm from "@/components/profile/edit/ServiceInfoForm";
 import ContactDetailsForm from "@/components/profile/edit/ContactDetailsForm";
-import ReviewsForm from "@/components/profile/edit/ReviewsForm";
-import PackageInfoForm from "@/components/profile/edit/PackageInfoForm";
-import ExperienceForm from "@/components/profile/edit/ExperienceForm";
 import {
   Accordion,
   AccordionContent,
@@ -62,26 +59,6 @@ const EditProfile = () => {
               <AccordionTrigger>Contact & Availability</AccordionTrigger>
               <AccordionContent>
                 <ContactDetailsForm />
-              </AccordionContent>
-            </AccordionItem>
-            <AccordionItem value="card6">
-              <AccordionTrigger>My Packages</AccordionTrigger>
-              <AccordionContent>
-                <PackageInfoForm />
-              </AccordionContent>
-            </AccordionItem>
-            <AccordionItem value="card7">
-              <AccordionTrigger>My Experieces</AccordionTrigger>
-              <AccordionContent>
-                <ExperienceForm />
-              </AccordionContent>
-            </AccordionItem>
-
-            {/* common */}
-            <AccordionItem value="card8">
-              <AccordionTrigger>Reviews</AccordionTrigger>
-              <AccordionContent>
-                <ReviewsForm />
               </AccordionContent>
             </AccordionItem>
           </Accordion>
