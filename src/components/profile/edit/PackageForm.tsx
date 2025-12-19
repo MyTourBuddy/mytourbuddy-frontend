@@ -1,121 +1,85 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { ButtonGroup } from "@/components/ui/button-group";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Package } from "@/schemas/package.schema";
-import { useState } from "react";
 
-interface PackageFormProps {
-  onClose: () => void;
-  onSubmit: (data: Omit<Package, "id" | "guideId">) => void;
-}
-
-export const PackageCreateForm = ({ onClose, onSubmit }: PackageFormProps) => {
-  const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    price: 0,
-    duration: "",
-    location: "",
-    image: "",
-  });
-
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: name === "price" ? Number(value) : value,
-    }));
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSubmit(formData);
+export const PackageCreateForm = () => {
+  const createPackage = async (formData: FormData) => {
     console.log(formData);
-    onClose();
   };
 
   return (
-    <form
-      method="post"
-      onSubmit={handleSubmit}
-      className="flex flex-col gap-4 md:gap-6"
-    >
-      <FieldGroup className="flex flex-col gap-2 md:gap-3">
+    <form action={createPackage} className="flex flex-col gap-4 md:gap-6">
+      <FieldGroup>
         <Field>
           <FieldLabel htmlFor="title" className="text-sm md:text-balance">
-            Title
+            Package Title <span className="text-red-500">*</span>
           </FieldLabel>
           <Input
             type="text"
             name="title"
-            value={formData.title}
-            onChange={handleChange}
-            placeholder="Package title.."
+            placeholder="e.g. 3-Day Ella Adventure"
             className="text-sm md:text-balance h-9 md:h-10"
             required
           />
         </Field>
+
         <Field>
           <FieldLabel htmlFor="description" className="text-sm md:text-balance">
-            Description
+            Package Description <span className="text-red-500">*</span>
           </FieldLabel>
           <Textarea
             rows={3}
             name="description"
-            value={formData.description}
-            onChange={handleChange}
-            placeholder="Package description..."
+            placeholder="Brief overview of the tour"
             className="text-sm md:text-balance"
             required
           />
         </Field>
+
         <Field>
           <FieldLabel htmlFor="price" className="text-sm md:text-balance">
-            Price
+            Price (LKR) <span className="text-red-500">*</span>
           </FieldLabel>
           <Input
             type="number"
             name="price"
-            value={formData.price}
-            onChange={handleChange}
-            placeholder="Package price.. LKR"
+            placeholder="e.g. 45,000"
             className="text-sm md:text-balance h-9 md:h-10"
             required
             min="0"
           />
         </Field>
+
         <Field>
           <FieldLabel htmlFor="duration" className="text-sm md:text-balance">
-            Duration
+            Duration <span className="text-red-500">*</span>
           </FieldLabel>
           <Input
             type="text"
             name="duration"
-            value={formData.duration}
-            onChange={handleChange}
-            placeholder="Package duration.."
+            placeholder="e.g. 3 Days / 2 Nights"
             className="text-sm md:text-balance h-9 md:h-10"
             required
           />
         </Field>
+
         <Field>
           <FieldLabel htmlFor="location" className="text-sm md:text-balance">
-            Location
+            Location <span className="text-red-500">*</span>
           </FieldLabel>
           <Input
             type="text"
             name="location"
-            value={formData.location}
-            onChange={handleChange}
-            placeholder="Package location.."
+            placeholder="e.g. Ella, Sri Lanka"
             className="text-sm md:text-balance h-9 md:h-10"
             required
           />
         </Field>
+
         <Field>
           <FieldLabel htmlFor="image" className="text-sm md:text-balance">
             Image URL
@@ -123,139 +87,129 @@ export const PackageCreateForm = ({ onClose, onSubmit }: PackageFormProps) => {
           <Input
             type="text"
             name="image"
-            value={formData.image}
-            onChange={handleChange}
-            placeholder="Image url.."
+            placeholder="https://example.com/image.jpg"
             className="text-sm md:text-balance h-9 md:h-10"
+          />
+        </Field>
+
+        <Field>
+          <FieldLabel htmlFor="included" className="text-sm md:text-balance">
+            What’s Included <span className="text-red-500">*</span>
+          </FieldLabel>
+          <Textarea
+            rows={3}
+            name="includes"
+            placeholder="Meals, transport, guide, accommodation"
+            className="text-sm md:text-balance"
+            required
+          />
+        </Field>
+
+        <Field>
+          <FieldLabel htmlFor="notIncluded" className="text-sm md:text-balance">
+            What’s Not Included
+          </FieldLabel>
+          <Textarea
+            rows={3}
+            name="notIncluded"
+            placeholder="Personal expenses, tickets, tips"
+            className="text-sm md:text-balance"
+          />
+        </Field>
+
+        <Field>
+          <FieldLabel htmlFor="note" className="text-sm md:text-balance">
+            Additional Notes
+          </FieldLabel>
+          <Textarea
+            rows={3}
+            name="note"
+            placeholder="Important notes for travelers"
+            className="text-sm md:text-balance"
           />
         </Field>
       </FieldGroup>
 
       <ButtonGroup className="ml-auto">
-        <Button type="button" variant="outline" onClick={onClose}>
+        <Button type="button" variant="outline">
           Cancel
         </Button>
-        <Button type="submit">Create</Button>
+        <Button type="submit">Create Package</Button>
       </ButtonGroup>
     </form>
   );
 };
 
-interface PackageEditFormProps {
-  onClose: () => void;
-  onSubmit: (data: Omit<Package, "id" | "guideId">) => void;
-  initialData: Package;
-}
-
-export const PackageEditForm = ({
-  onClose,
-  onSubmit,
-  initialData,
-}: PackageEditFormProps) => {
-  const [formData, setFormData] = useState({
-    title: initialData.title,
-    description: initialData.description,
-    price: initialData.price,
-    duration: initialData.duration,
-    location: initialData.location,
-    image: initialData.image,
-  });
-
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: name === "price" ? Number(value) : value,
-    }));
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSubmit(formData);
-    console.log(formData);
-    onClose();
-  };
-
+export const PackageEditForm = () => {
   return (
-    <form
-      method="post"
-      onSubmit={handleSubmit}
-      className="flex flex-col gap-4 md:gap-6"
-    >
-      <FieldGroup className="flex flex-col gap-2 md:gap-3">
+    <form className="flex flex-col gap-4 md:gap-6">
+      <FieldGroup>
         <Field>
           <FieldLabel htmlFor="title" className="text-sm md:text-balance">
-            Title
+            Package Title <span className="text-red-500">*</span>
           </FieldLabel>
           <Input
             type="text"
             name="title"
-            value={formData.title}
-            onChange={handleChange}
-            placeholder="Package title.."
+            placeholder="e.g. 3-Day Ella Adventure"
             className="text-sm md:text-balance h-9 md:h-10"
             required
           />
         </Field>
+
         <Field>
           <FieldLabel htmlFor="description" className="text-sm md:text-balance">
-            Description
+            Package Description <span className="text-red-500">*</span>
           </FieldLabel>
           <Textarea
             rows={3}
             name="description"
-            value={formData.description}
-            onChange={handleChange}
-            placeholder="Package description..."
+            placeholder="Brief overview of the tour"
             className="text-sm md:text-balance"
             required
           />
         </Field>
+
         <Field>
           <FieldLabel htmlFor="price" className="text-sm md:text-balance">
-            Price
+            Price (LKR) <span className="text-red-500">*</span>
           </FieldLabel>
           <Input
             type="number"
             name="price"
-            value={formData.price}
-            onChange={handleChange}
-            placeholder="Package price.. LKR"
+            placeholder="e.g. 45,000"
             className="text-sm md:text-balance h-9 md:h-10"
             required
             min="0"
           />
         </Field>
+
         <Field>
           <FieldLabel htmlFor="duration" className="text-sm md:text-balance">
-            Duration
+            Duration <span className="text-red-500">*</span>
           </FieldLabel>
           <Input
             type="text"
             name="duration"
-            value={formData.duration}
-            onChange={handleChange}
-            placeholder="Package duration.."
+            placeholder="e.g. 3 Days / 2 Nights"
             className="text-sm md:text-balance h-9 md:h-10"
             required
           />
         </Field>
+
         <Field>
           <FieldLabel htmlFor="location" className="text-sm md:text-balance">
-            Location
+            Location <span className="text-red-500">*</span>
           </FieldLabel>
           <Input
             type="text"
             name="location"
-            value={formData.location}
-            onChange={handleChange}
-            placeholder="Package location.."
+            placeholder="e.g. Ella, Sri Lanka"
             className="text-sm md:text-balance h-9 md:h-10"
             required
           />
         </Field>
+
         <Field>
           <FieldLabel htmlFor="image" className="text-sm md:text-balance">
             Image URL
@@ -263,19 +217,54 @@ export const PackageEditForm = ({
           <Input
             type="text"
             name="image"
-            value={formData.image}
-            onChange={handleChange}
-            placeholder="Image url.."
+            placeholder="https://example.com/image.jpg"
             className="text-sm md:text-balance h-9 md:h-10"
+          />
+        </Field>
+
+        <Field>
+          <FieldLabel htmlFor="included" className="text-sm md:text-balance">
+            What’s Included <span className="text-red-500">*</span>
+          </FieldLabel>
+          <Textarea
+            rows={3}
+            name="includes"
+            placeholder="Meals, transport, guide, accommodation"
+            className="text-sm md:text-balance"
+            required
+          />
+        </Field>
+
+        <Field>
+          <FieldLabel htmlFor="notIncluded" className="text-sm md:text-balance">
+            What’s Not Included
+          </FieldLabel>
+          <Textarea
+            rows={3}
+            name="notIncluded"
+            placeholder="Personal expenses, tickets, tips"
+            className="text-sm md:text-balance"
+          />
+        </Field>
+
+        <Field>
+          <FieldLabel htmlFor="note" className="text-sm md:text-balance">
+            Additional Notes
+          </FieldLabel>
+          <Textarea
+            rows={3}
+            name="note"
+            placeholder="Important notes for travelers"
+            className="text-sm md:text-balance"
           />
         </Field>
       </FieldGroup>
 
       <ButtonGroup className="ml-auto">
-        <Button type="button" variant="outline" onClick={onClose}>
+        <Button type="button" variant="outline">
           Cancel
         </Button>
-        <Button type="submit">Update</Button>
+        <Button type="submit">Update Package</Button>
       </ButtonGroup>
     </form>
   );

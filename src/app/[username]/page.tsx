@@ -13,28 +13,26 @@ import { Guide, Tourist } from "@/schemas/user.schema";
 const UserProfile = async ({
   params,
 }: {
-  params: Promise<{ profile: string }>;
+  params: Promise<{ username: string }>;
 }) => {
-  const { profile } = await params;
+  const { username } = await params;
 
   const users = await getUsers();
-  const user = users.find((u) => u.username === profile);
+  const user = users.find((u) => u.username === username);
 
-  console.log(profile);
+  console.log(username);
 
   if (!user) {
-    return <UserNotFound username={profile} />;
+    return <UserNotFound username={username} />;
   }
 
   const role = user.role;
 
   return (
     <section className="max-w-5xl w-full mx-auto flex flex-col gap-6 md:gap-8">
-      <div>
-        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground text-balance">
-          My Profile
-        </h1>
-      </div>
+      <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-balance">
+        My Profile
+      </h1>
 
       <ProfileHeader user={user} />
       <ProfileCompletion user={user as Guide | Tourist} />

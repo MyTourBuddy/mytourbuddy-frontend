@@ -54,24 +54,69 @@ export const guideUser: Guide = {
 export const packages: Package[] = [
   {
     id: "pkg-001",
-    guideId: "guide-001",
+    username: "sarahguide",
     title: "Ancient Cities & Cultural Heritage",
     description:
       "5-day tour covering Anuradhapura, Polonnaruwa, and Sigiriya. Explore ancient kingdoms, climb the iconic Rock Fortress, and immerse yourself in Sri Lanka's rich history.",
+    price: 450000, // in LKR cents or just as number
+    duration: "5 days / 4 nights",
+    location: "Anuradhapura, Polonnaruwa, Sigiriya",
+    image: "",
+    included: [
+      "Accommodation (4 nights)",
+      "Daily breakfast",
+      "Private transport",
+      "English-speaking guide",
+      "Entrance fees to sites",
+    ],
+    notIncluded: [
+      "International flights",
+      "Travel insurance",
+      "Personal expenses",
+    ],
+    note: "Moderate fitness required for Sigiriya climb. Best time: December–April.",
+    createdAt: new Date("2025-01-15"),
   },
   {
     id: "pkg-002",
-    guideId: "guide-001",
+    username: "sarahguide",
     title: "Hill Country Tea Trail",
     description:
       "3-day journey through Nuwara Eliya and Ella. Visit tea plantations, scenic train rides, waterfalls, and experience the cool climate of Sri Lanka's highlands.",
+    price: 280000,
+    duration: "3 days / 2 nights",
+    location: "Nuwara Eliya, Ella",
+    image: "",
+    included: [
+      "Train tickets (Kandy to Ella)",
+      "Tea factory tour",
+      "Accommodation",
+      "Transport",
+      "Guide",
+    ],
+    notIncluded: ["Meals except breakfast", "Tips"],
+    note: "Pack warm clothes — nights can be cold!",
+    createdAt: new Date("2025-02-20"),
   },
   {
     id: "pkg-003",
-    guideId: "guide-001",
+    username: "arunaguide",
     title: "Wildlife & Beach Paradise",
     description:
       "7-day adventure combining Yala Safari for leopard spotting and relaxing beach time in Mirissa. Perfect blend of wildlife and coastal experiences.",
+    price: 650000,
+    duration: "7 days / 6 nights",
+    location: "Yala National Park, Mirissa",
+    image: "",
+    included: [
+      "2x Jeep safaris in Yala",
+      "Beachfront accommodation",
+      "Whale watching tour (seasonal)",
+      "All transport",
+    ],
+    notIncluded: ["Alcohol", "Water sports"],
+    note: "Best for leopard sightings: May–August",
+    createdAt: new Date("2025-03-10"),
   },
 ];
 
