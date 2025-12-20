@@ -174,7 +174,7 @@ const PackagePage = () => {
 
                 {/* Note */}
                 {pkgDetails.note && (
-                  <Alert>
+                  <Alert className="mt-2">
                     <TbAlertCircle />
                     <AlertTitle>Important Note</AlertTitle>
                     <AlertDescription>{pkgDetails.note}</AlertDescription>
