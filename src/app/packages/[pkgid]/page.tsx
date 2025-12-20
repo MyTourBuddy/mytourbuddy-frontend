@@ -1,5 +1,6 @@
 "use client";
 
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Card, CardContent } from "@/components/ui/card";
 import { Package } from "@/schemas/package.schema";
 import Image from "next/image";
@@ -173,19 +174,11 @@ const PackagePage = () => {
 
                 {/* Note */}
                 {pkgDetails.note && (
-                  <section className="bg-linear-to-br from-primary/10 via-primary/5 to-transparent border-2 border-primary/30 rounded-2xl p-2 md:p-4 flex gap-4 mt-2">
-                    <div className="shrink-0 w-8 h-8 rounded-lg bg-primary text-primary-foreground flex items-center justify-center mt-1">
-                      <TbAlertCircle className="text-xl" />
-                    </div>
-                    <div className="flex flex-col gap-2">
-                      <p className="font-bold text-primary text-base sm:text-lg uppercase tracking-wide">
-                        Important Note
-                      </p>
-                      <p className="text-base text-foreground leading-relaxed">
-                        {pkgDetails.note}
-                      </p>
-                    </div>
-                  </section>
+                  <Alert>
+                    <TbAlertCircle />
+                    <AlertTitle>Important Note</AlertTitle>
+                    <AlertDescription>{pkgDetails.note}</AlertDescription>
+                  </Alert>
                 )}
               </div>
             </div>
