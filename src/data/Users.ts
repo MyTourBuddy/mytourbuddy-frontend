@@ -61,7 +61,7 @@ export const packages: Package[] = [
     price: 450000, // in LKR cents or just as number
     duration: "5 days / 4 nights",
     location: "Anuradhapura, Polonnaruwa, Sigiriya",
-    image: "",
+    image: "https://i.ibb.co/Xk52Wk9t/testpkgcover.jpg",
     included: [
       "Accommodation (4 nights)",
       "Daily breakfast",

@@ -30,7 +30,7 @@ const UserProfile = async ({
 
   return (
     <section className="max-w-5xl w-full mx-auto flex flex-col gap-6 md:gap-8">
-      <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-balance">
+      <h1 className="text-3xl font-bold tracking-tight">
         My Profile
       </h1>
 

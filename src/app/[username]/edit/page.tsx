@@ -13,9 +13,9 @@ import { Card, CardContent } from "@/components/ui/card";
 
 const EditProfile = () => {
   return (
-    <section className="max-w-4xl w-full mx-auto flex flex-col gap-6 md:gap-8 p-4">
+    <section className="max-w-4xl w-full mx-auto flex flex-col gap-6 md:gap-8">
       <div>
-        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground text-balance">
+        <h1 className="text-3xl font-bold tracking-tight">
           Edit Profile
         </h1>
         <p className="text-sm sm:text-base text-muted-foreground mt-2">

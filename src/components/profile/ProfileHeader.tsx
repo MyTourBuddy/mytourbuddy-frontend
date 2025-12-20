@@ -1,15 +1,18 @@
+"use client";
+
 import { TbPencil } from "react-icons/tb";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { Card, CardContent } from "../ui/card";
 import Link from "next/link";
 import { User } from "@/schemas/user.schema";
+import EditProfileMenu from "./EditProfileMenu";
 
 const ProfileHeader = ({ user }: { user: User }) => {
   const { firstName, lastName, role, username, memberSince } = user;
   const fullName = firstName + " " + lastName;
   const initials = `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
-  
+
   const formattedDate = new Date(memberSince).toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",
@@ -24,9 +27,9 @@ const ProfileHeader = ({ user }: { user: User }) => {
             {initials}
           </div>
 
-          <Button size="icon" variant="outline">
-            <TbPencil className="text-lg" />
-          </Button>
+          <div className="md:hidden block">
+            <EditProfileMenu />
+          </div>
         </div>
 
         <div className="hidden md:block">
@@ -42,7 +45,7 @@ const ProfileHeader = ({ user }: { user: User }) => {
             </h2>
             <Badge className="px-2 py-0.5 text-xs md:text-sm">{role}</Badge>
 
-            <Button
+            {/* <Button
               size="icon"
               variant="outline"
               className="ml-auto hidden md:flex"
@@ -50,7 +53,10 @@ const ProfileHeader = ({ user }: { user: User }) => {
               <Link href={`/${username}/edit`}>
                 <TbPencil className="text-xl" />
               </Link>
-            </Button>
+            </Button> */}
+            <div className="hidden md:block ml-auto">
+              <EditProfileMenu />
+            </div>
           </div>
 
           <div className="space-y-1.5 md:space-y-2 text-sm md:text-base text-muted-foreground">

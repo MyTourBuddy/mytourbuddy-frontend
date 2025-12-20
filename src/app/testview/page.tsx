@@ -1,9 +1,9 @@
-import { PackageCreateForm } from "@/components/profile/edit/PackageInfoForm";
+import EditProfileMenu from "@/components/profile/EditProfileMenu";
 
 const TestView = () => {
   return (
     <div>
-      {/* <PackageCreateForm /> */}
+      <EditProfileMenu/>
     </div>
   );
 };
