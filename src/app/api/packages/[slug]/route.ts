@@ -15,7 +15,7 @@ export async function GET(
     return NextResponse.json(pkg);
   }
 
-  const guidePackages = packages.filter((pkg) => pkg.username === slug);
+  const guidePackages = packages.filter((pkg) => pkg.guideId === slug);
 
   if (guidePackages.length === 0) {
     return NextResponse.json(

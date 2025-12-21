@@ -16,7 +16,7 @@ const PackagesPage = () => {
 
   const pathname = usePathname();
 
-  const username = "sarahguide";
+  const username = "guide-002";
 
   const fetchPackages = async () => {
     const response = await fetch(`/api/packages/${username}`);
