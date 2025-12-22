@@ -1,7 +1,7 @@
 import { Experience } from "@/schemas/experience.schema";
 import { Package } from "@/schemas/package.schema";
 import { Review } from "@/schemas/review.schema";
-import { User, Guide, Tourist } from "@/schemas/user.schema";
+import { User } from "@/schemas/user.schema";
 
 export async function getUsers(): Promise<User[]> {
   const res = await fetch("http://localhost:3000/api/users", {

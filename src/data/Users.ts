@@ -148,6 +148,8 @@ export const experiences: Experience[] = [
     title: "Sigiriya Rock Fortress Tour",
     description:
       "Guided 150+ tourists through the ancient Sigiriya Rock Fortress, sharing historical insights about the 5th-century palace and its magnificent frescoes. Specialized in early morning climbs to catch the breathtaking sunrise views.",
+    experiencedAt: new Date("2023-08-15"),
+    createdAt: new Date("2023-08-20"),
   },
   {
     id: "exp-002",
@@ -155,6 +157,8 @@ export const experiences: Experience[] = [
     title: "Kandy Cultural Experience",
     description:
       "Led cultural tours in Kandy, including visits to the Temple of the Tooth, traditional dance performances, and local spice gardens. Expert in explaining the rich Buddhist heritage and colonial history of the hill capital.",
+    experiencedAt: new Date("2023-10-05"),
+    createdAt: new Date("2023-10-08"),
   },
   {
     id: "exp-003",
@@ -162,6 +166,8 @@ export const experiences: Experience[] = [
     title: "Yala National Park Safari",
     description:
       "Conducted wildlife safaris in Yala National Park with a focus on leopard tracking and bird watching. Successfully spotted leopards in 80% of tours and identified over 200 bird species for nature enthusiasts.",
+    experiencedAt: new Date("2024-01-12"),
+    createdAt: new Date("2024-01-15"),
   },
 ];
 

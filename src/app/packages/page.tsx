@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
 import { Package } from "@/schemas/package.schema";
+import { formatCurrency } from "@/utils/helpers";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -102,8 +103,8 @@ const PackagesPage = () => {
                         </p>
 
                         <div className="flex flex-wrap gap-2">
-                          <Badge variant="secondary" className="font-medium">
-                            ${pkg.price}
+                          <Badge variant="default" className="font-medium">
+                            {formatCurrency(pkg.price)}/person
                           </Badge>
                           <Badge variant="outline">{pkg.location}</Badge>
                           <Badge variant="outline">{pkg.duration}</Badge>

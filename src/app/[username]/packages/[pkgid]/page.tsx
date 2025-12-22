@@ -12,9 +12,10 @@ import { GiCheckMark } from "react-icons/gi";
 import { GrCurrency, GrMap, GrUserWorker } from "react-icons/gr";
 import { LuAlarmClock } from "react-icons/lu";
 import { PiSmileySad } from "react-icons/pi";
-import { TbAlertCircle, TbX } from "react-icons/tb";
+import { TbAlertCircle, TbPencil, TbTrash, TbX } from "react-icons/tb";
 import { IoChatbubbleOutline } from "react-icons/io5";
 import { HiUserGroup } from "react-icons/hi2";
+import { formatCurrency } from "@/utils/helpers";
 
 const PackagePage = () => {
   const { pkgid } = useParams<{ pkgid: string }>();
@@ -82,13 +83,6 @@ const PackagePage = () => {
       </section>
     );
   }
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "LKR",
-    }).format(amount);
-  };
 
   return (
     <section className="max-w-5xl mx-auto w-full">
@@ -206,9 +200,9 @@ const PackagePage = () => {
         </Card>
 
         {/* pricing card */}
-        <Card className="col-span-1 md:col-span-2 h-fit">
+        <Card className="md:flex flex-col hidden col-span-1 md:col-span-2 h-fit">
           <CardContent className="flex flex-col gap-6">
-            <div className="md:flex hidden flex-col gap-4">
+            <div className="flex flex-col gap-4">
               <div className="flex flex-col gap-3">
                 <p className="text-muted-foreground">Price per person</p>
                 <p className="text-primary font-bold text-2xl">
@@ -233,23 +227,6 @@ const PackagePage = () => {
                 </div>
               )}
             </div>
-
-            <div className="flex flex-col gap-2">
-              <Button size="lg" className="w-full">
-                Book Now
-              </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                className="w-full flex items-center justify-center"
-              >
-                <IoChatbubbleOutline /> Contact Guide
-              </Button>
-            </div>
-
-            <p className="text-xs text-center text-muted-foreground">
-              You won't be charged yet
-            </p>
           </CardContent>
         </Card>
       </div>

@@ -144,36 +144,40 @@ const ContactDetailsForm = () => {
 
         {/* Social Media */}
         <Field>
-          <FieldLabel htmlFor="socialMedia">Social Media</FieldLabel>
+          <FieldLabel>Social Media</FieldLabel>
+
           {draft.socialMedia.length === 0 && !isEditing ? (
             "--"
           ) : (
             <div className="flex flex-col gap-2">
               {draft.socialMedia.map((item, index) => (
-                <div key={index} className="flex gap-2 items-center">
+                <div key={index} className="flex gap-2">
                   <Input
-                    type="text"
                     value={item}
+                    placeholder="Platform or URL"
                     readOnly={!isEditing}
-                    placeholder="Enter platform or URL"
                     onChange={(e) => {
                       if (!isEditing) return;
-                      const newArr = [...draft.socialMedia];
-                      newArr[index] = e.target.value;
-                      setDraft((prev) => ({ ...prev, socialMedia: newArr }));
+                      const updated = [...draft.socialMedia];
+                      updated[index] = e.target.value;
+                      setDraft((prev) => ({
+                        ...prev,
+                        socialMedia: updated,
+                      }));
                     }}
                   />
-                  {isEditing && (
+
+                  {isEditing && draft.socialMedia.length > 1 && (
                     <Button
+                      type="button"
                       variant="outline"
                       size="icon"
                       onClick={() => {
-                        const newArr = draft.socialMedia.filter(
-                          (_, i) => i !== index
-                        );
                         setDraft((prev) => ({
                           ...prev,
-                          socialMedia: newArr,
+                          socialMedia: prev.socialMedia.filter(
+                            (_, i) => i !== index
+                          ),
                         }));
                       }}
                     >
@@ -182,11 +186,12 @@ const ContactDetailsForm = () => {
                   )}
                 </div>
               ))}
+
               {isEditing && (
                 <Button
-                  variant="outline"
-                  size="sm"
-                  className="w-fit mt-1"
+                  type="button"
+                  variant="ghost"
+                  className="w-fit"
                   onClick={() =>
                     setDraft((prev) => ({
                       ...prev,
@@ -194,7 +199,8 @@ const ContactDetailsForm = () => {
                     }))
                   }
                 >
-                  <TbPlus className="mr-1" /> Add new
+                  <TbPlus className="mr-2" />
+                  Add social media
                 </Button>
               )}
             </div>

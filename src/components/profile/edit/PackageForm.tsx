@@ -5,8 +5,36 @@ import { ButtonGroup } from "@/components/ui/button-group";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { useState } from "react";
+import { TbPlus, TbX } from "react-icons/tb";
 
 export const PackageCreateForm = () => {
+  const [included, setIncluded] = useState<string[]>([""]);
+  const [notIncluded, setNotIncluded] = useState<string[]>([""]);
+
+  const updateItem = (
+    index: number,
+    value: string,
+    list: string[],
+    setList: (v: string[]) => void
+  ) => {
+    const updated = [...list];
+    updated[index] = value;
+    setList(updated);
+  };
+
+  const addItem = (list: string[], setList: (v: string[]) => void) => {
+    setList([...list, ""]);
+  };
+
+  const removeItem = (
+    index: number,
+    list: string[],
+    setList: (v: string[]) => void
+  ) => {
+    setList(list.filter((_, i) => i !== index));
+  };
+
   const createPackage = async (formData: FormData) => {
     console.log(formData);
   };
@@ -55,6 +83,16 @@ export const PackageCreateForm = () => {
         </Field>
 
         <Field>
+          <FieldLabel>Max Group Size</FieldLabel>
+          <Input
+            type="number"
+            name="maxGroupSize"
+            placeholder="e.g. 10"
+            min={1}
+          />
+        </Field>
+
+        <Field>
           <FieldLabel htmlFor="duration" className="text-sm md:text-balance">
             Duration <span className="text-red-500">*</span>
           </FieldLabel>
@@ -93,28 +131,91 @@ export const PackageCreateForm = () => {
         </Field>
 
         <Field>
-          <FieldLabel htmlFor="included" className="text-sm md:text-balance">
+          <FieldLabel>
             What’s Included <span className="text-red-500">*</span>
           </FieldLabel>
-          <Textarea
-            rows={3}
-            name="includes"
-            placeholder="Meals, transport, guide, accommodation"
-            className="text-sm md:text-balance"
-            required
-          />
+
+          <div className="flex flex-col gap-2">
+            {included.map((item, index) => (
+              <div key={index} className="flex gap-2">
+                <Input
+                  value={item}
+                  placeholder="e.g. Accommodation"
+                  onChange={(e) =>
+                    updateItem(index, e.target.value, included, setIncluded)
+                  }
+                  required
+                />
+
+                {included.length > 1 && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    onClick={() => removeItem(index, included, setIncluded)}
+                  >
+                    <TbX />
+                  </Button>
+                )}
+              </div>
+            ))}
+
+            <Button
+              type="button"
+              variant="ghost"
+              className="w-fit"
+              onClick={() => addItem(included, setIncluded)}
+            >
+              <TbPlus className="mr-2" />
+              Add item
+            </Button>
+          </div>
         </Field>
 
         <Field>
-          <FieldLabel htmlFor="notIncluded" className="text-sm md:text-balance">
-            What’s Not Included
-          </FieldLabel>
-          <Textarea
-            rows={3}
-            name="notIncluded"
-            placeholder="Personal expenses, tickets, tips"
-            className="text-sm md:text-balance"
-          />
+          <FieldLabel>What’s Not Included</FieldLabel>
+
+          <div className="flex flex-col gap-2">
+            {notIncluded.map((item, index) => (
+              <div key={index} className="flex gap-2">
+                <Input
+                  value={item}
+                  placeholder="e.g. Personal expenses"
+                  onChange={(e) =>
+                    updateItem(
+                      index,
+                      e.target.value,
+                      notIncluded,
+                      setNotIncluded
+                    )
+                  }
+                />
+
+                {notIncluded.length > 1 && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    onClick={() =>
+                      removeItem(index, notIncluded, setNotIncluded)
+                    }
+                  >
+                    <TbX />
+                  </Button>
+                )}
+              </div>
+            ))}
+
+            <Button
+              type="button"
+              variant="ghost"
+              className="w-fit"
+              onClick={() => addItem(notIncluded, setNotIncluded)}
+            >
+              <TbPlus className="mr-2" />
+              Add item
+            </Button>
+          </div>
         </Field>
 
         <Field>
@@ -141,6 +242,32 @@ export const PackageCreateForm = () => {
 };
 
 export const PackageEditForm = () => {
+  const [included, setIncluded] = useState<string[]>([""]);
+  const [notIncluded, setNotIncluded] = useState<string[]>([""]);
+
+  const updateItem = (
+    index: number,
+    value: string,
+    list: string[],
+    setList: (v: string[]) => void
+  ) => {
+    const updated = [...list];
+    updated[index] = value;
+    setList(updated);
+  };
+
+  const addItem = (list: string[], setList: (v: string[]) => void) => {
+    setList([...list, ""]);
+  };
+
+  const removeItem = (
+    index: number,
+    list: string[],
+    setList: (v: string[]) => void
+  ) => {
+    setList(list.filter((_, i) => i !== index));
+  };
+
   return (
     <form className="flex flex-col gap-4 md:gap-6">
       <FieldGroup>
@@ -185,6 +312,16 @@ export const PackageEditForm = () => {
         </Field>
 
         <Field>
+          <FieldLabel>Max Group Size</FieldLabel>
+          <Input
+            type="number"
+            name="maxGroupSize"
+            placeholder="e.g. 10"
+            min={1}
+          />
+        </Field>
+
+        <Field>
           <FieldLabel htmlFor="duration" className="text-sm md:text-balance">
             Duration <span className="text-red-500">*</span>
           </FieldLabel>
@@ -223,28 +360,91 @@ export const PackageEditForm = () => {
         </Field>
 
         <Field>
-          <FieldLabel htmlFor="included" className="text-sm md:text-balance">
+          <FieldLabel>
             What’s Included <span className="text-red-500">*</span>
           </FieldLabel>
-          <Textarea
-            rows={3}
-            name="includes"
-            placeholder="Meals, transport, guide, accommodation"
-            className="text-sm md:text-balance"
-            required
-          />
+
+          <div className="flex flex-col gap-2">
+            {included.map((item, index) => (
+              <div key={index} className="flex gap-2">
+                <Input
+                  value={item}
+                  placeholder="e.g. Accommodation"
+                  onChange={(e) =>
+                    updateItem(index, e.target.value, included, setIncluded)
+                  }
+                  required
+                />
+
+                {included.length > 1 && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    onClick={() => removeItem(index, included, setIncluded)}
+                  >
+                    <TbX />
+                  </Button>
+                )}
+              </div>
+            ))}
+
+            <Button
+              type="button"
+              variant="ghost"
+              className="w-fit"
+              onClick={() => addItem(included, setIncluded)}
+            >
+              <TbPlus className="mr-2" />
+              Add item
+            </Button>
+          </div>
         </Field>
 
         <Field>
-          <FieldLabel htmlFor="notIncluded" className="text-sm md:text-balance">
-            What’s Not Included
-          </FieldLabel>
-          <Textarea
-            rows={3}
-            name="notIncluded"
-            placeholder="Personal expenses, tickets, tips"
-            className="text-sm md:text-balance"
-          />
+          <FieldLabel>What’s Not Included</FieldLabel>
+
+          <div className="flex flex-col gap-2">
+            {notIncluded.map((item, index) => (
+              <div key={index} className="flex gap-2">
+                <Input
+                  value={item}
+                  placeholder="e.g. Personal expenses"
+                  onChange={(e) =>
+                    updateItem(
+                      index,
+                      e.target.value,
+                      notIncluded,
+                      setNotIncluded
+                    )
+                  }
+                />
+
+                {notIncluded.length > 1 && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    onClick={() =>
+                      removeItem(index, notIncluded, setNotIncluded)
+                    }
+                  >
+                    <TbX />
+                  </Button>
+                )}
+              </div>
+            ))}
+
+            <Button
+              type="button"
+              variant="ghost"
+              className="w-fit"
+              onClick={() => addItem(notIncluded, setNotIncluded)}
+            >
+              <TbPlus className="mr-2" />
+              Add item
+            </Button>
+          </div>
         </Field>
 
         <Field>

@@ -15,6 +15,7 @@ import { PiSmileySad } from "react-icons/pi";
 import { TbAlertCircle, TbX } from "react-icons/tb";
 import { IoChatbubbleOutline } from "react-icons/io5";
 import { HiUserGroup } from "react-icons/hi2";
+import { formatCurrency } from "@/utils/helpers";
 
 const PackagePage = () => {
   const { pkgid } = useParams<{ pkgid: string }>();
@@ -82,13 +83,6 @@ const PackagePage = () => {
       </section>
     );
   }
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "LKR",
-    }).format(amount);
-  };
 
   return (
     <section className="max-w-5xl mx-auto w-full">

@@ -18,8 +18,6 @@ interface User {
   specializations: string[];
 }
 
-// Passionate tour guide with extensive knowledge of Sri Lankan culture and history. Specializing in cultural tours and authentic local experiences.
-
 const initialUser: User = {
   bio: "",
   yearsOfExp: 5,
@@ -181,34 +179,33 @@ const ProfessionalDetailsForm = () => {
           ) : (
             <div className="flex flex-col gap-2">
               {draft.certifications.map((item, index) => (
-                <div key={index} className="flex gap-2 items-center">
+                <div key={index} className="flex gap-2">
                   <Input
-                    type="text"
                     value={item}
-                    readOnly={!isEditing}
                     placeholder="Enter certification"
+                    readOnly={!isEditing}
                     onChange={(e) => {
                       if (!isEditing) return;
-                      const newArr = [...draft.certifications];
-                      newArr[index] = e.target.value;
+                      const updated = [...draft.certifications];
+                      updated[index] = e.target.value;
                       setDraft((prev) => ({
                         ...prev,
-                        certifications: newArr,
+                        certifications: updated,
                       }));
                     }}
                   />
 
-                  {isEditing && (
+                  {isEditing && draft.certifications.length > 1 && (
                     <Button
+                      type="button"
                       variant="outline"
                       size="icon"
                       onClick={() => {
-                        const newArr = draft.certifications.filter(
-                          (_, i) => i !== index
-                        );
                         setDraft((prev) => ({
                           ...prev,
-                          certifications: newArr,
+                          certifications: prev.certifications.filter(
+                            (_, i) => i !== index
+                          ),
                         }));
                       }}
                     >
@@ -220,9 +217,9 @@ const ProfessionalDetailsForm = () => {
 
               {isEditing && (
                 <Button
-                  variant="outline"
-                  size="sm"
-                  className="w-fit mt-1"
+                  type="button"
+                  variant="ghost"
+                  className="w-fit"
                   onClick={() =>
                     setDraft((prev) => ({
                       ...prev,
@@ -230,7 +227,8 @@ const ProfessionalDetailsForm = () => {
                     }))
                   }
                 >
-                  <TbPlus className="mr-1" /> Add new
+                  <TbPlus className="mr-2" />
+                  Add certification
                 </Button>
               )}
             </div>
