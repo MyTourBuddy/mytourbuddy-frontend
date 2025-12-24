@@ -1,5 +1,3 @@
-// step 2 - common
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,103 +11,63 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { TbArrowRight } from "react-icons/tb";
-import { useState, useMemo } from "react";
+import { useState } from "react";
+import {
+  PersonalInfoInput,
+  personalInfoSchema,
+} from "@/schemas/onboarding.schema";
+import { z } from "zod";
 
-interface StepProps {
-  stepUp: (data: {
-    firstName: string;
-    lastName: string;
-    email: string;
-    age: string;
-  }) => void;
-  initialData?: {
-    firstName: string;
-    lastName: string;
-    email: string;
-    age: string;
-  };
+interface PersonalInfoProps {
+  stepUp: (data: PersonalInfoInput) => void;
+  initialData?: PersonalInfoInput;
 }
 
-interface ValidationErrors {
-  firstName?: string;
-  lastName?: string;
-  email?: string;
-  age?: string;
-}
+type ValidationErrors = Partial<Record<keyof PersonalInfoInput, string>>;
 
-const PersonalInfo = ({ stepUp, initialData }: StepProps) => {
-  const [formData, setFormData] = useState({
+const PersonalInfo = ({ stepUp, initialData }: PersonalInfoProps) => {
+  const [formData, setFormData] = useState<Partial<PersonalInfoInput>>({
     firstName: initialData?.firstName || "",
     lastName: initialData?.lastName || "",
     email: initialData?.email || "",
-    age: initialData?.age || "",
+    age: initialData?.age || undefined,
   });
+
   const [errors, setErrors] = useState<ValidationErrors>({});
-  const [touched, setTouched] = useState<Record<string, boolean>>({});
 
-  const validateField = (name: string, value: string): string | undefined => {
-    switch (name) {
-      case "firstName":
-      case "lastName":
-        if (!value.trim()) return "This field is required";
-        if (value.trim().length < 2) return "Must be at least 2 characters";
-        if (!/^[a-zA-Z\s'-]+$/.test(value)) return "Only letters allowed";
-        return undefined;
-      case "email":
-        if (!value.trim()) return "Email is required";
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value))
-          return "Invalid email format";
-        return undefined;
-      case "age":
-        if (!value) return "Age is required";
-        const ageNum = parseInt(value);
-        if (isNaN(ageNum) || ageNum < 13)
-          return "Must be at least 13 years old";
-        if (ageNum > 120) return "Please enter a valid age";
-        return undefined;
-      default:
-        return undefined;
+  const validateForm = () => {
+    const result = personalInfoSchema.safeParse(formData);
+
+    if (result.success) {
+      setErrors({});
+      return true;
+    } else {
+      const formattedErrors: ValidationErrors = {};
+      result.error.issues.forEach((issue: z.ZodError["issues"][number]) => {
+        const field = issue.path[0] as keyof PersonalInfoInput;
+        formattedErrors[field] = issue.message;
+      });
+      setErrors(formattedErrors);
+      return false;
     }
   };
 
-  const handleBlur = (field: string) => {
-    setTouched({ ...touched, [field]: true });
-    const error = validateField(
-      field,
-      formData[field as keyof typeof formData]
-    );
-    setErrors({ ...errors, [field]: error });
-  };
+  const handleChange = (field: keyof PersonalInfoInput, value: string) => {
+    const processedValue =
+      field === "age" ? (value ? parseInt(value) : undefined) : value;
+    setFormData({ ...formData, [field]: processedValue });
 
-  const handleChange = (field: keyof typeof formData, value: string) => {
-    setFormData({ ...formData, [field]: value });
-    if (touched[field]) {
-      const error = validateField(field, value);
-      setErrors({ ...errors, [field]: error });
+    if (errors[field]) {
+      setErrors({ ...errors, [field]: undefined });
     }
   };
-
-  const isFormValid = useMemo(() => {
-    const hasAllFields = Object.values(formData).every((val) => val.trim());
-    const hasNoErrors = Object.values(errors).every((err) => !err);
-    return hasAllFields && hasNoErrors;
-  }, [formData, errors]);
 
   const handleSubmit = () => {
-    const newErrors: ValidationErrors = {};
-    Object.keys(formData).forEach((key) => {
-      const error = validateField(key, formData[key as keyof typeof formData]);
-      if (error) newErrors[key as keyof ValidationErrors] = error;
-    });
-
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      setTouched({ firstName: true, lastName: true, email: true, age: true });
-      return;
+    if (validateForm()) {
+      stepUp(formData as PersonalInfoInput);
     }
-
-    stepUp(formData);
   };
+
   return (
     <Card className="w-full">
       <CardHeader className="text-center mb-3">
@@ -119,47 +77,41 @@ const PersonalInfo = ({ stepUp, initialData }: StepProps) => {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <FieldGroup className="flex flex-col gap3">
+        <FieldGroup className="flex flex-col gap-3">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
             <Field>
-              <Label htmlFor="fname">First name</Label>
+              <Label htmlFor="firstName">First name</Label>
               <Input
                 type="text"
-                id="fname"
-                name="fname"
+                id="firstName"
+                name="firstName"
                 placeholder="First name"
-                value={formData.firstName}
+                value={formData.firstName || ""}
                 onChange={(e) => handleChange("firstName", e.target.value)}
-                onBlur={() => handleBlur("firstName")}
                 aria-invalid={!!errors.firstName}
-                aria-describedby={errors.firstName ? "fname-error" : undefined}
               />
-              {errors.firstName && touched.firstName && (
-                <p id="fname-error" className="text-xs text-red-500 mt-1">
-                  {errors.firstName}
-                </p>
+              {errors.firstName && (
+                <p className="text-xs text-red-500 mt-1">{errors.firstName}</p>
               )}
             </Field>
+
             <Field>
-              <Label htmlFor="lname">Last name</Label>
+              <Label htmlFor="lastName">Last name</Label>
               <Input
                 type="text"
-                id="lname"
-                name="lname"
+                id="lastName"
+                name="lastName"
                 placeholder="Last name"
-                value={formData.lastName}
+                value={formData.lastName || ""}
                 onChange={(e) => handleChange("lastName", e.target.value)}
-                onBlur={() => handleBlur("lastName")}
                 aria-invalid={!!errors.lastName}
-                aria-describedby={errors.lastName ? "lname-error" : undefined}
               />
-              {errors.lastName && touched.lastName && (
-                <p id="lname-error" className="text-xs text-red-500 mt-1">
-                  {errors.lastName}
-                </p>
+              {errors.lastName && (
+                <p className="text-xs text-red-500 mt-1">{errors.lastName}</p>
               )}
             </Field>
           </div>
+
           <Field>
             <Label htmlFor="email">Email</Label>
             <Input
@@ -167,18 +119,15 @@ const PersonalInfo = ({ stepUp, initialData }: StepProps) => {
               id="email"
               name="email"
               placeholder="Email"
-              value={formData.email}
+              value={formData.email || ""}
               onChange={(e) => handleChange("email", e.target.value)}
-              onBlur={() => handleBlur("email")}
               aria-invalid={!!errors.email}
-              aria-describedby={errors.email ? "email-error" : undefined}
             />
-            {errors.email && touched.email && (
-              <p id="email-error" className="text-xs text-red-500 mt-1">
-                {errors.email}
-              </p>
+            {errors.email && (
+              <p className="text-xs text-red-500 mt-1">{errors.email}</p>
             )}
           </Field>
+
           <Field>
             <Label htmlFor="age">Age</Label>
             <Input
@@ -186,18 +135,14 @@ const PersonalInfo = ({ stepUp, initialData }: StepProps) => {
               id="age"
               name="age"
               placeholder="Age"
-              min="13"
+              min="1"
               max="120"
-              value={formData.age}
+              value={formData.age || ""}
               onChange={(e) => handleChange("age", e.target.value)}
-              onBlur={() => handleBlur("age")}
               aria-invalid={!!errors.age}
-              aria-describedby={errors.age ? "age-error" : undefined}
             />
-            {errors.age && touched.age && (
-              <p id="age-error" className="text-xs text-red-500 mt-1">
-                {errors.age}
-              </p>
+            {errors.age && (
+              <p className="text-xs text-red-500 mt-1">{errors.age}</p>
             )}
           </Field>
         </FieldGroup>
@@ -205,7 +150,6 @@ const PersonalInfo = ({ stepUp, initialData }: StepProps) => {
       <CardFooter>
         <Button
           onClick={handleSubmit}
-          disabled={!isFormValid}
           className="w-full h-10 md:h-11 text-sm md:text-base group"
         >
           <span>Next</span>

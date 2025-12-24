@@ -9,114 +9,52 @@ import PersonalInfo from "./PersonalInfo";
 import AccountInfo from "./AccountInfo";
 import TravelDetails from "./TravelDetails";
 import GuideDetails from "./GuideDetails";
+import { ProfileData } from "@/schemas/onboarding.schema";
 import ProfilePreview from "./ProfilePreview";
-
-interface FormData {
-  firstName: string;
-  lastName: string;
-  email: string;
-  age: string;
-  username: string;
-  password: string;
-  confirmPassword: string;
-  country: string;
-  preferences: string;
-  location: string;
-  languages: string;
-  experience: string;
-}
-
-type Role = "tourist" | "guide" | null;
-
-const STORAGE_KEY = "onboarding-progress";
-const TOTAL_STEPS = 5;
 
 const OnboardingFlow = () => {
   const router = useRouter();
   const [step, setStep] = useState(1);
-  const [role, setRole] = useState<Role>(null);
-  const [formData, setFormData] = useState<FormData>({
-    firstName: "",
-    lastName: "",
-    email: "",
-    age: "",
-    username: "",
-    password: "",
-    confirmPassword: "",
-    country: "",
-    preferences: "",
-    location: "",
-    languages: "",
-    experience: "",
-  });
+  const [formData, setFormData] = useState<ProfileData | null>(null);
 
-  useEffect(() => {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) {
-      try {
-        const {
-          step: savedStep,
-          role: savedRole,
-          formData: savedFormData,
-        } = JSON.parse(saved);
-        setStep(savedStep);
-        setRole(savedRole);
-        setFormData(savedFormData);
-      } catch (error) {
-        console.error("Failed to load saved progress:", error);
-      }
-    }
-  }, []);
-
-  useEffect(() => {
-    if (step > 1 || role) {
-      try {
-        const dataToSave = {
-          step,
-          role,
-          formData: {
-            firstName: formData.firstName,
-            lastName: formData.lastName,
-            email: formData.email,
-            age: formData.age,
-            username: formData.username,
-            password: formData.password,
-            confirmPassword: formData.confirmPassword,
-            country: formData.country,
-            preferences: formData.preferences,
-            location: formData.location,
-            languages: formData.languages,
-            experience: formData.experience,
-          }
-        };
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
-      } catch (error) {
-        console.error("Failed to save progress:", error);
-      }
-    }
-  }, [step, role, formData]);
+  const TOTAL_STEPS = 5;
 
   const handleNext = useCallback(
-    (data?: Partial<FormData>) => {
-      if (data) {
-        setFormData((prev) => ({ ...prev, ...data }));
+    (data?: Partial<ProfileData>) => {
+      if (data && formData) {
+        setFormData({ ...formData, ...data } as ProfileData);
       }
 
       if (step < TOTAL_STEPS) {
         setStep((prev) => prev + 1);
       } else {
-        console.log("Onboarding complete!", { role, ...formData, ...data });
-        localStorage.removeItem(STORAGE_KEY);
+        console.log("Onboarding complete!", formData);
         router.push("/signin");
       }
     },
-    [step, role, formData, router]
+    [step, router, formData]
   );
 
-  const handleRoleSelect = useCallback((selectedRole: "tourist" | "guide") => {
-    setRole(selectedRole);
-    setStep(2);
-  }, []);
+  const handleRoleSelect = useCallback(
+    (selectedRole: "tourist" | "guide" | "admin") => {
+      if (selectedRole === "admin") return;
+      setFormData({
+        role: selectedRole,
+        firstName: "",
+        lastName: "",
+        email: "",
+        age: 0,
+        username: "",
+        password: "",
+        confirmPassword: "",
+        ...(selectedRole === "tourist"
+          ? { country: "", travelPreferences: [] }
+          : { languages: [], yearsOfExp: 0 }),
+      } as ProfileData);
+      setStep(2);
+    },
+    []
+  );
 
   const handleBack = useCallback(() => {
     if (step > 1) {
@@ -177,60 +115,63 @@ const OnboardingFlow = () => {
       {step === 2 && (
         <PersonalInfo
           stepUp={handleNext}
-          initialData={{
-            firstName: formData.firstName,
-            lastName: formData.lastName,
-            email: formData.email,
-            age: formData.age,
-          }}
+          initialData={
+            formData
+              ? {
+                  firstName: formData.firstName,
+                  lastName: formData.lastName,
+                  email: formData.email,
+                  age: formData.age,
+                }
+              : undefined
+          }
         />
       )}
       {step === 3 && (
         <AccountInfo
           stepUp={handleNext}
-          initialData={{
-            username: formData.username,
-            password: formData.password,
-            confirmPassword: formData.confirmPassword,
-          }}
+          initialData={
+            formData
+              ? {
+                  username: formData.username,
+                  password: formData.password,
+                  confirmPassword: formData.confirmPassword,
+                }
+              : undefined
+          }
         />
       )}
-      {step === 4 && role === "tourist" && (
+      {step === 4 && formData?.role === "tourist" && (
         <TravelDetails
           stepUp={handleNext}
-          initialData={{
-            country: formData.country,
-            preferences: formData.preferences,
-          }}
+          initialData={
+            formData && "travelPreferences" in formData
+              ? {
+                  country: formData.country,
+                  travelPreferences: formData.travelPreferences,
+                }
+              : undefined
+          }
         />
       )}
-      {step === 4 && role === "guide" && (
+      {step === 4 && formData?.role === "guide" && (
         <GuideDetails
           stepUp={handleNext}
-          initialData={{
-            location: formData.location,
-            languages: formData.languages,
-            experience: formData.experience,
-          }}
+          initialData={
+            formData && "languages" in formData
+              ? {
+                  languages: formData.languages,
+                  yearsOfExp: formData.yearsOfExp,
+                }
+              : undefined
+          }
         />
       )}
-      {step === 5 && role && (
+      {step === 5 && formData && (
         <ProfilePreview
           stepUp={handleNext}
           onEdit={handleEdit}
-          profileData={{
-            role,
-            firstName: formData.firstName,
-            lastName: formData.lastName,
-            email: formData.email,
-            age: formData.age,
-            username: formData.username,
-            country: formData.country,
-            preferences: formData.preferences,
-            location: formData.location,
-            languages: formData.languages,
-            experience: formData.experience,
-          }}
+          profileData={formData!}
         />
       )}
     </div>

@@ -3,9 +3,9 @@ import React from 'react'
 
 const Navbar = () => {
   return (
-    <div>
+    <nav className='h-16 md:h-20'>
       <Link href="/">MyTourBuddy</Link>
-    </div>
+    </nav>
   )
 }
 

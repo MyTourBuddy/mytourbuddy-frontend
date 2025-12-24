@@ -1,0 +1,250 @@
+"use client";
+
+import SelectableButtons from "@/components/SelectableButtons";
+import { Button } from "@/components/ui/button";
+import { ButtonGroup } from "@/components/ui/button-group";
+import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { Separator } from "@/components/ui/separator";
+import { Textarea } from "@/components/ui/textarea";
+import { useState } from "react";
+import { TbPencil, TbPlus, TbX } from "react-icons/tb";
+
+interface User {
+  bio: string;
+  yearsOfExp: number;
+  languages: string[];
+  certifications: string[];
+  specializations: string[];
+}
+
+const initialUser: User = {
+  bio: "",
+  yearsOfExp: 5,
+  languages: ["English", "Sinhala"],
+  certifications: [],
+  specializations: [],
+};
+
+const ProfessionalDetailsForm = () => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [user, setUser] = useState(initialUser);
+  const [draft, setDraft] = useState(initialUser);
+
+  const handleEdit = () => {
+    setDraft(user);
+    setIsEditing(true);
+  };
+
+  const handleCancel = () => {
+    setDraft(user);
+    setIsEditing(false);
+  };
+
+  const handleSave = () => {
+    console.log(draft);
+
+    setUser(draft);
+    setIsEditing(false);
+  };
+
+  const handleChange = (key: keyof typeof initialUser, values: string[]) => {
+    setDraft((prev) => ({
+      ...prev,
+      [key]: values,
+    }));
+  };
+
+  const handleBioChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setDraft((prev) => ({
+      ...prev,
+      bio: e.target.value,
+    }));
+  };
+
+  const handleYearsOfExpChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setDraft((prev) => ({
+      ...prev,
+      yearsOfExp: value === "" ? 0 : Number(value),
+    }));
+  };
+
+  return (
+    <div className="flex flex-col gap-4 w-full">
+      <div className="flex items-center justify-between">
+        <p className="text-sm text-muted-foreground">
+          Manage your travel preferences
+        </p>
+
+        {!isEditing && (
+          <Button variant="outline" size="icon" onClick={handleEdit}>
+            <TbPencil />
+          </Button>
+        )}
+      </div>
+
+      <Separator />
+
+      {/* form */}
+      <FieldGroup className="max-w-md">
+        <Field>
+          <FieldLabel htmlFor="bio">Bio</FieldLabel>
+          {draft.bio.length === 0 && !isEditing ? (
+            "--"
+          ) : (
+            <Textarea
+              id="bio"
+              cols={5}
+              value={draft.bio}
+              readOnly={!isEditing}
+              onChange={isEditing ? handleBioChange : undefined}
+            />
+          )}
+        </Field>
+        <Field>
+          <FieldLabel htmlFor="yearsOfExp">Years of Experience</FieldLabel>
+          {draft.yearsOfExp < 0 && !isEditing ? (
+            "--"
+          ) : (
+            <Input
+              id="yearsOfExp"
+              type="number"
+              value={draft.yearsOfExp}
+              readOnly={!isEditing}
+              onChange={isEditing ? handleYearsOfExpChange : undefined}
+            />
+          )}
+        </Field>
+        <Field>
+          <FieldLabel>Languages</FieldLabel>
+          {draft.languages.length === 0 && !isEditing ? (
+            "--"
+          ) : (
+            <SelectableButtons
+              options={[
+                "English",
+                "Sinhala",
+                "Tamil",
+                "Hindi",
+                "French",
+                "German",
+              ]}
+              selected={draft.languages}
+              onChange={(v) => handleChange("languages", v)}
+              allowAddMore
+              placeholder="Add language..."
+              disabled={!isEditing}
+            />
+          )}
+        </Field>
+
+        <Field>
+          <FieldLabel>Specializations</FieldLabel>
+          {draft.specializations.length === 0 && !isEditing ? (
+            "--"
+          ) : (
+            <SelectableButtons
+              options={[
+                "Culture",
+                "Food & Cuisine",
+                "Photography",
+                "Wildlife",
+                "Adventure",
+              ]}
+              selected={draft.specializations}
+              onChange={(v) => handleChange("specializations", v)}
+              allowAddMore
+              placeholder="Add Specialization..."
+              disabled={!isEditing}
+            />
+          )}
+        </Field>
+        <Field>
+          <FieldLabel>Certifications</FieldLabel>
+
+          {draft.certifications.length === 0 && !isEditing ? (
+            "--"
+          ) : (
+            <div className="flex flex-col gap-2">
+              {draft.certifications.map((item, index) => (
+                <div key={index} className="flex gap-2">
+                  <Input
+                    value={item}
+                    placeholder="Enter certification"
+                    readOnly={!isEditing}
+                    onChange={(e) => {
+                      if (!isEditing) return;
+                      const updated = [...draft.certifications];
+                      updated[index] = e.target.value;
+                      setDraft((prev) => ({
+                        ...prev,
+                        certifications: updated,
+                      }));
+                    }}
+                  />
+
+                  {isEditing && draft.certifications.length > 1 && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="icon"
+                      onClick={() => {
+                        setDraft((prev) => ({
+                          ...prev,
+                          certifications: prev.certifications.filter(
+                            (_, i) => i !== index
+                          ),
+                        }));
+                      }}
+                    >
+                      <TbX />
+                    </Button>
+                  )}
+                </div>
+              ))}
+
+              {isEditing && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  className="w-fit"
+                  onClick={() =>
+                    setDraft((prev) => ({
+                      ...prev,
+                      certifications: [...prev.certifications, ""],
+                    }))
+                  }
+                >
+                  <TbPlus className="mr-2" />
+                  Add certification
+                </Button>
+              )}
+            </div>
+          )}
+        </Field>
+      </FieldGroup>
+
+      {/* actions */}
+      {isEditing && (
+        <ButtonGroup className="ml-auto">
+          <Button variant="outline" onClick={handleCancel}>
+            Cancel
+          </Button>
+          <Button
+            onClick={handleSave}
+            disabled={
+              draft.languages.length === 0 ||
+              draft.specializations.length === 0 ||
+              draft.yearsOfExp < 0
+            }
+          >
+            Save
+          </Button>
+        </ButtonGroup>
+      )}
+    </div>
+  );
+};
+
+export default ProfessionalDetailsForm;

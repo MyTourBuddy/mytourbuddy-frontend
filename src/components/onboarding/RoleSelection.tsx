@@ -13,12 +13,13 @@ import {
 import img1 from "@/../public/img1.svg";
 import Image from "next/image";
 import { TbMap, TbWorld } from "react-icons/tb";
+import { RoleSelectionInput } from "@/schemas/onboarding.schema";
 
-interface StepProps {
-  onRoleSelect: (role: "tourist" | "guide") => void;
+interface RoleSelectionProps {
+  onRoleSelect: (role: RoleSelectionInput["role"]) => void;
 }
 
-const RoleSelection = ({ onRoleSelect }: StepProps) => {
+const RoleSelection = ({ onRoleSelect }: RoleSelectionProps) => {
   return (
     <Card className="w-full text-center">
       <CardHeader className="space-y-3 md:space-y-4">
