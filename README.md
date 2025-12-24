@@ -19,12 +19,7 @@ this is your tour buddy 🦧
 
 ### TODO
 
-
-#### Guide Profile Header
-![Guide Profile Header](./public/guide-profile-header.png)
-
-#### Tourist Profile Header
-![Tourist Profile Header](./public/tourist-profile-header.png)
+- design dashboards
 
 ### Contact
 
