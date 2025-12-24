@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import SelectableButtons from "@/components/SelectableButtons";
 import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
@@ -10,14 +9,12 @@ import { TbPencil, TbPlus, TbX } from "react-icons/tb";
 import { ButtonGroup } from "@/components/ui/button-group";
 
 interface User {
-  workingDays: string[];
   emergencyContact: string;
   website: string;
   socialMedia: string[];
 }
 
 const initialUser: User = {
-  workingDays: [],
   emergencyContact: "",
   website: "",
   socialMedia: [],
@@ -42,13 +39,6 @@ const ContactDetailsForm = () => {
     console.log(draft);
     setUser(draft);
     setIsEditing(false);
-  };
-
-  const handleChange = (key: keyof typeof initialUser, values: string[]) => {
-    setDraft((prev) => ({
-      ...prev,
-      [key]: values,
-    }));
   };
 
   const handleEmergencyContactChange = (
@@ -85,29 +75,6 @@ const ContactDetailsForm = () => {
 
       {/* Form */}
       <FieldGroup className="max-w-md">
-        {/* Working Days */}
-        <Field>
-          <FieldLabel>Working Days</FieldLabel>
-          {draft.workingDays.length === 0 && !isEditing ? (
-            "--"
-          ) : (
-            <SelectableButtons
-              options={[
-                "Monday",
-                "Tuesday",
-                "Wednesday",
-                "Thursday",
-                "Friday",
-                "Saturday",
-                "Sunday",
-              ]}
-              selected={draft.workingDays}
-              onChange={(v) => handleChange("workingDays", v)}
-              disabled={!isEditing}
-            />
-          )}
-        </Field>
-
         {/* Emergency Contact */}
         <Field>
           <FieldLabel htmlFor="emergencyContact">Emergency Contact</FieldLabel>
@@ -214,12 +181,7 @@ const ContactDetailsForm = () => {
           <Button variant="outline" onClick={handleCancel}>
             Cancel
           </Button>
-          <Button
-            onClick={handleSave}
-            disabled={draft.workingDays.length === 0}
-          >
-            Save
-          </Button>
+          <Button onClick={handleSave}>Save</Button>
         </ButtonGroup>
       )}
     </div>

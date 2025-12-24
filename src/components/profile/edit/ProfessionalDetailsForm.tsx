@@ -70,17 +70,6 @@ const ProfessionalDetailsForm = () => {
     }));
   };
 
-  const handleCertificationsChange = (
-    e: React.ChangeEvent<HTMLTextAreaElement>
-  ) => {
-    setDraft((prev) => ({
-      ...prev,
-      certifications: e.target.value
-        .split(",")
-        .map((c) => c.trim())
-        .filter((c) => c),
-    }));
-  };
   return (
     <div className="flex flex-col gap-4 w-full">
       <div className="flex items-center justify-between">

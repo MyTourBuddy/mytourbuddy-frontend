@@ -1,9 +1,8 @@
-'use client'
+"use client";
 
 import PersonalInfoForm from "@/components/profile/edit/PersonalInfoForm";
 import TravelPrefForm from "@/components/profile/edit/TravelPrefForm";
 import ProfessionalDetailsForm from "@/components/profile/edit/ProfessionalDetailsForm";
-import ServiceInfoForm from "@/components/profile/edit/ServiceInfoForm";
 import ContactDetailsForm from "@/components/profile/edit/ContactDetailsForm";
 import {
   Accordion,
@@ -12,15 +11,21 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Card, CardContent } from "@/components/ui/card";
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 import { useParams } from "next/navigation";
 
 const EditProfile = () => {
-  const {username} = useParams<{username:string}>()
+  const { username } = useParams<{ username: string }>();
   return (
     <section className="max-w-4xl w-full mx-auto">
       <div className="flex flex-col gap-6">
-
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
@@ -28,9 +33,7 @@ const EditProfile = () => {
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbLink href={`/${username}`}>
-                {username}
-              </BreadcrumbLink>
+              <BreadcrumbLink href={`/${username}`}>{username}</BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
@@ -72,12 +75,6 @@ const EditProfile = () => {
                 </AccordionContent>
               </AccordionItem>
               <AccordionItem value="card4">
-                <AccordionTrigger>Service Information</AccordionTrigger>
-                <AccordionContent>
-                  <ServiceInfoForm />
-                </AccordionContent>
-              </AccordionItem>
-              <AccordionItem value="card5">
                 <AccordionTrigger>Contact & Availability</AccordionTrigger>
                 <AccordionContent>
                   <ContactDetailsForm />

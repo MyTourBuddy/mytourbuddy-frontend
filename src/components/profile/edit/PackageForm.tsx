@@ -9,8 +9,8 @@ import { useState } from "react";
 import { TbPlus, TbX } from "react-icons/tb";
 
 export const PackageCreateForm = () => {
-  const [included, setIncluded] = useState<string[]>([""]);
-  const [notIncluded, setNotIncluded] = useState<string[]>([""]);
+  const [included, setIncluded] = useState<string[]>([]);
+  const [notIncluded, setNotIncluded] = useState<string[]>([]);
 
   const updateItem = (
     index: number,
@@ -242,8 +242,8 @@ export const PackageCreateForm = () => {
 };
 
 export const PackageEditForm = () => {
-  const [included, setIncluded] = useState<string[]>([""]);
-  const [notIncluded, setNotIncluded] = useState<string[]>([""]);
+  const [included, setIncluded] = useState<string[]>([]);
+  const [notIncluded, setNotIncluded] = useState<string[]>([]);
 
   const updateItem = (
     index: number,

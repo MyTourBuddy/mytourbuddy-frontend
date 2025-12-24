@@ -176,8 +176,7 @@ export const reviews: Review[] = [
     id: "rev-001",
     guideId: "guide-001",
     touristId: "tourist-002",
-    title: "Amazing Cultural Experience",
-    description:
+    message:
       "The ancient cities tour was absolutely incredible! Our guide was knowledgeable and made history come alive. Climbing Sigiriya at sunrise was unforgettable.",
     rating: 5,
     createdAt: "2025-11-20",
@@ -186,8 +185,7 @@ export const reviews: Review[] = [
     id: "rev-002",
     guideId: "guide-001",
     touristId: "tourist-003",
-    title: "Best Tea Plantation Tour",
-    description:
+    message:
       "Beautiful scenery and amazing tea! The train ride through the hills was breathtaking. Highly recommend this tour to anyone visiting Sri Lanka.",
     rating: 5,
     createdAt: "2025-11-25",
@@ -196,8 +194,7 @@ export const reviews: Review[] = [
     id: "rev-003",
     guideId: "guide-001",
     touristId: "tourist-001",
-    title: "Wildlife Safari Adventure",
-    description:
+    message:
       "We spotted 3 leopards in Yala! The guide knew exactly where to go. Beach time in Mirissa was the perfect way to end our adventure.",
     rating: 5,
     createdAt: "2025-12-05",

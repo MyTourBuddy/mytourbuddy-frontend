@@ -14,11 +14,6 @@ const GuideProfileInfo = ({ user }: { user: Guide }) => {
     yearsOfExp,
     specializations,
     certifications,
-    dailyRate,
-    maxGroupSize,
-    ageGroups,
-    transportMode,
-    workingDays,
     emergencyContact,
     website,
     socialMedia,
@@ -110,41 +105,6 @@ const GuideProfileInfo = ({ user }: { user: Guide }) => {
         </CardContent>
       </Card>
 
-      {/* Service Information Card */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg md:text-xl">
-            Service Information
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <p className="text-sm text-muted-foreground">Daily Rate</p>
-              <p className="font-medium">LKR {dailyRate}</p>
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Max Group Size</p>
-              <p className="font-medium">{maxGroupSize} people</p>
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Transport Mode</p>
-              <p className="font-medium">{transportMode}</p>
-            </div>
-            <div className="md:col-span-2">
-              <p className="text-sm text-muted-foreground mb-2">Age Groups</p>
-              <div className="flex flex-wrap gap-2">
-                {ageGroups?.map((group) => (
-                  <Badge key={group} variant="secondary">
-                    {group}
-                  </Badge>
-                ))}
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
       {/* Contact & Availability Card */}
       <Card>
         <CardHeader>
@@ -154,10 +114,6 @@ const GuideProfileInfo = ({ user }: { user: Guide }) => {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <p className="text-sm text-muted-foreground">Working Days</p>
-              <p className="font-medium">{workingDays}</p>
-            </div>
             <div>
               <p className="text-sm text-muted-foreground">Emergency Contact</p>
               <p className="font-medium">{emergencyContact}</p>
@@ -173,36 +129,6 @@ const GuideProfileInfo = ({ user }: { user: Guide }) => {
           </div>
         </CardContent>
       </Card>
-
-      {/* Account Settings Card */}
-      {/* <Card>
-        <CardHeader>
-          <CardTitle className="text-lg md:text-xl">Account Settings</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-center justify-between py-2">
-            <div>
-              <p className="font-medium">Username</p>
-              <p className="text-sm text-muted-foreground">@johndoe</p>
-            </div>
-          </div>
-          <div className="flex items-center justify-between py-2">
-            <div>
-              <p className="font-medium">Password</p>
-              <p className="text-sm text-muted-foreground">••••••••</p>
-            </div>
-            <Button variant="outline" size="sm">
-              Change Password
-            </Button>
-          </div>
-          <div className="border-t pt-4 mt-4">
-            <p className="font-medium text-destructive mb-2">Danger Zone</p>
-            <Button variant="destructive" size="sm">
-              Delete Account
-            </Button>
-          </div>
-        </CardContent>
-      </Card> */}
     </div>
   );
 };
