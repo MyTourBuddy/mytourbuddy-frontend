@@ -16,22 +16,19 @@ const EditProfileMenu = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="cursor-pointer" asChild>
-        <Button
-          size="icon"
-          variant="outline"
-        >
+        <Button size="icon" variant="outline">
           <TbPencil className="text-xl" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <Link href={`${pathname}/edit`}>
-          <DropdownMenuItem>Edit profile</DropdownMenuItem>
+        <Link href="/dashboard/settings">
+          <DropdownMenuItem>Settings</DropdownMenuItem>
         </Link>
-        <Link href={`${pathname}/packages`}>
-          <DropdownMenuItem>Edit Packages</DropdownMenuItem>
+        <Link href="/dashboard/packages">
+          <DropdownMenuItem>My Packages</DropdownMenuItem>
         </Link>
-        <Link href={`${pathname}/experiences`}>
-          <DropdownMenuItem>Edit Experiences</DropdownMenuItem>
+        <Link href="/dashboard/experiences">
+          <DropdownMenuItem>My Experiences</DropdownMenuItem>
         </Link>
       </DropdownMenuContent>
     </DropdownMenu>

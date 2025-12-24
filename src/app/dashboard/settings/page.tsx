@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/breadcrumb";
 import { useParams } from "next/navigation";
 
-const EditProfile = () => {
+const ProfileSettingsPage = () => {
   const { username } = useParams<{ username: string }>();
   return (
     <section className="max-w-4xl w-full mx-auto">
@@ -33,11 +33,11 @@ const EditProfile = () => {
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbLink href={`/${username}`}>{username}</BreadcrumbLink>
+              <BreadcrumbLink href="/dashboard">Dashboard</BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbPage>Edit</BreadcrumbPage>
+              <BreadcrumbPage>Settings</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
@@ -88,4 +88,4 @@ const EditProfile = () => {
   );
 };
 
-export default EditProfile;
+export default ProfileSettingsPage;

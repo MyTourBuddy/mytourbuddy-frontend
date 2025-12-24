@@ -9,48 +9,42 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
-  Item,
-  ItemContent,
-  ItemDescription,
-  ItemGroup,
-  ItemMedia,
-  ItemTitle,
-} from "@/components/ui/item";
-import { Separator } from "@/components/ui/separator";
+import { Spinner } from "@/components/ui/spinner";
 import { Package } from "@/schemas/package.schema";
 import { formatCurrency } from "@/utils/helpers";
 import Image from "next/image";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { TbDots, TbEye, TbPencil, TbPlus, TbTrash } from "react-icons/tb";
+import { PiSmileySad } from "react-icons/pi";
 
 const PackagesPage = () => {
-  const [packages, setPackages] = useState<Package[]>([]);
+  const pathname = usePathname();
   const { username } = useParams<{ username: string }>();
 
-  const pathname = usePathname();
-
-  const guideId = "guide-001";
+  const [packages, setPackages] = useState<Package[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchPackages = async () => {
-    const response = await fetch(`/api/packages/${guideId}`);
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await fetch("/api/packages");
 
-    if (!response.ok) {
-      throw new Error("Failed to load packages");
+      if (!response.ok) {
+        throw new Error("Failed to load packages");
+      }
+
+      const data: Package[] = await response.json();
+      setPackages(data);
+    } catch (err) {
+      setError("Couldn't load tour packages. Please try again later.");
+      console.error("Fetch error:", err);
+    } finally {
+      setLoading(false);
     }
-
-    const data: Package[] = await response.json();
-    setPackages(data);
   };
 
   useEffect(() => {
@@ -58,7 +52,7 @@ const PackagesPage = () => {
   }, []);
 
   return (
-    <section className="max-w-3xl mx-auto">
+    <section className="max-w-5xl mx-auto w-full">
       <div className="flex flex-col gap-6">
         <Breadcrumb>
           <BreadcrumbList>
@@ -71,131 +65,79 @@ const PackagesPage = () => {
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbPage>Packages</BreadcrumbPage>
+              <BreadcrumbPage>Experiences</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
 
         {/* header */}
-        <div className="flex flex-col gap-4">
-          <div className="flex flex-col gap-3 md:flex-row md:items-end justify-between">
-            <div className="flex flex-col gap-3">
-              <h1 className="text-3xl font-bold tracking-tight">My Packages</h1>
-              <p className="text-muted-foreground mt-1">
-                Manage your tour packages ({packages.length}/3)
-              </p>
-            </div>
-            {packages.length < 3 && (
-              <Link href={`${pathname}/new`}>
-                <Button className="cursor-pointer">
-                  <TbPlus className="mr-2" />
-                  Add Package
-                </Button>
-              </Link>
-            )}
+        <h1 className="text-3xl font-bold tracking-tight">
+          {username}'s Packages
+        </h1>
+
+        {loading ? (
+          <div className="text-center text-muted-foreground flex md:flex-row flex-col items-center gap-3 md:gap-2 mx-auto py-8">
+            <Spinner className="size-6 md:size-4" />
+            Loading tour packages
           </div>
-
-          <Separator />
-        </div>
-
-        {/* cards */}
-        {packages.length == 0 ? (
-          <div className="text-center py-12 text-muted-foreground">
-            No packages yet. Create your first one to get started.
+        ) : error ? (
+          <div className="text-center max-w-md text-red-500 flex md:flex-row flex-col items-center gap-3 md:gap-2 mx-auto py-8">
+            <p className="text-2xl md:text-lg">
+              <PiSmileySad />
+            </p>
+            {error}
           </div>
         ) : (
-          <div className="flex flex-col gap-4">
-            {packages.map((pkg) => (
-              <div
-                key={pkg.id}
-                className="flex flex-col md:flex-row gap-4 p-4 border border-border rounded-lg hover:shadow-sm transition-shadow bg-card"
-              >
-                <div className="shrink-0 w-full md:w-32 h-48 md:h-32 rounded-md border border-border overflow-hidden bg-muted">
-                  {pkg.image ? (
-                    <Image
-                      src={pkg.image || "/placeholder.svg"}
-                      alt={pkg.title}
-                      width={128}
-                      height={128}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="flex items-center justify-center w-full h-full">
-                      <span className="text-xs text-muted-foreground text-center px-2">
-                        No image
-                      </span>
-                    </div>
-                  )}
-                </div>
-
-                <div className="flex-1 flex flex-col gap-3 justify-between">
-                  <div className="flex items-start justify-between gap-2">
-                    <h3 className="text-base font-semibold line-clamp-2 flex-1">
-                      {pkg.title}
-                    </h3>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="h-8 w-8 p-0 shrink-0"
-                        >
-                          <TbDots className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <Link href={`${pathname}/${pkg.id}`}>
-                          <DropdownMenuItem>
-                            <TbEye />
-                            View
-                          </DropdownMenuItem>
-                        </Link>
-                        <Link href={`${pathname}/${pkg.id}/edit`}>
-                          <DropdownMenuItem>
-                            <TbPencil />
-                            Edit
-                          </DropdownMenuItem>
-                        </Link>
-                        <DropdownMenuItem>
-                          <TbTrash />
-                          Delete
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </div>
-
-                  <p className="text-sm text-muted-foreground line-clamp-2">
-                    {pkg.description}
-                  </p>
-
-                  <div className="flex flex-col md:flex-row md:flex-wrap gap-2">
-                    <Badge
-                      variant="default"
-                      className="font-semibold text-xs text-center"
-                    >
-                      {formatCurrency(pkg.price)}/person
-                    </Badge>
-                    {pkg.duration && (
-                      <Badge
-                        variant="outline"
-                        className="text-xs border border-border text-center"
-                      >
-                        {pkg.duration}
-                      </Badge>
-                    )}
-                    {pkg.location && (
-                      <Badge
-                        variant="outline"
-                        className="text-xs border border-border text-center"
-                      >
-                        {pkg.location}
-                      </Badge>
-                    )}
-                  </div>
-                </div>
+          <>
+            {/* cards */}
+            {packages.length == 0 ? (
+              <div className="text-center max-w-md flex md:flex-row flex-col items-center gap-3 md:gap-2 mx-auto py-8">
+                <p className="text-2xl md:text-lg">
+                  <PiSmileySad />
+                </p>
+                No tour packages yet.
               </div>
-            ))}
-          </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                {packages.map((pkg) => (
+                  <Link key={pkg.id} href={`${pathname}/${pkg.id}`}>
+                    <Card className="overflow-hidden py-0 h-full">
+                      <div className="relative aspect-video bg-gray-100">
+                        {pkg.image ? (
+                          <Image
+                            src={pkg.image || "/placeholder.svg"}
+                            alt={pkg.title}
+                            fill
+                            className="object-cover"
+                          />
+                        ) : (
+                          <div className="flex items-center justify-center h-full bg-gray-200 rounded-t-lg">
+                            <span className="text-gray-400">No image</span>
+                          </div>
+                        )}
+                      </div>
+                      <div className="px-5 md:py-2 mb-5 flex flex-col gap-2 md:gap-4">
+                        <h3 className="font-semibold text-base md:text-lg line-clamp-2 hover:underline">
+                          {pkg.title}
+                        </h3>
+                        <p className="text-sm text-muted-foreground line-clamp-3">
+                          {pkg.description}
+                        </p>
+
+                        <div className="flex flex-wrap gap-2">
+                          <Badge variant="default" className="font-medium">
+                            {formatCurrency(pkg.price)}/person
+                          </Badge>
+                          <Badge variant="outline">{pkg.location}</Badge>
+                          <Badge variant="outline">{pkg.duration}</Badge>
+                        </div>
+                      </div>
+                    </Card>
+                  </Link>
+                ))}
+              </div>
+            )}
+          </>
         )}
       </div>
     </section>

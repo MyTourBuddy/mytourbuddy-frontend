@@ -1,10 +1,7 @@
 "use client";
 
-import { TbPencil } from "react-icons/tb";
 import { Badge } from "../ui/badge";
-import { Button } from "../ui/button";
 import { Card, CardContent } from "../ui/card";
-import Link from "next/link";
 import { User } from "@/schemas/user.schema";
 import EditProfileMenu from "./EditProfileMenu";
 
@@ -45,15 +42,6 @@ const ProfileHeader = ({ user }: { user: User }) => {
             </h2>
             <Badge className="px-2 py-0.5 text-xs md:text-sm">{role}</Badge>
 
-            {/* <Button
-              size="icon"
-              variant="outline"
-              className="ml-auto hidden md:flex"
-            >
-              <Link href={`/${username}/edit`}>
-                <TbPencil className="text-xl" />
-              </Link>
-            </Button> */}
             <div className="hidden md:block ml-auto">
               <EditProfileMenu />
             </div>

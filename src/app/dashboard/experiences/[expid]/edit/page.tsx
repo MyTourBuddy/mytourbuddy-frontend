@@ -1,6 +1,6 @@
 "use client";
 
-import { PackageEditForm } from "@/components/profile/edit/PackageForm";
+import { EditExperienceForm } from "@/components/profile/edit/ExperienceForm";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -11,8 +11,9 @@ import {
 } from "@/components/ui/breadcrumb";
 import { useParams } from "next/navigation";
 
-const EditPackage = () => {
-  const { pkgid, username } = useParams<{ pkgid: string; username: string }>();
+const EditExperience = () => {
+  const { expid } = useParams<{ expid: string }>();
+
   return (
     <section className="max-w-2xl mx-auto">
       <div className="flex flex-col gap-6">
@@ -23,8 +24,8 @@ const EditPackage = () => {
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbLink href={`/${username}/packages/${pkgid}`}>
-                {pkgid}
+              <BreadcrumbLink href={`/dashboard/experiences/${expid}`}>
+                {expid}
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
@@ -33,11 +34,12 @@ const EditPackage = () => {
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
-        <h1 className="text-3xl font-bold tracking-tight">Edit Package</h1>
-        <PackageEditForm />
+
+        <h1 className="text-3xl font-bold tracking-tight">Edit Experience</h1>
+        <EditExperienceForm />
       </div>
     </section>
   );
 };
 
-export default EditPackage;
+export default EditExperience;

@@ -1,7 +1,6 @@
 "use client";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
 import { Package } from "@/schemas/package.schema";
@@ -13,7 +12,6 @@ import { GrCurrency, GrMap, GrUserWorker } from "react-icons/gr";
 import { LuAlarmClock } from "react-icons/lu";
 import { PiSmileySad } from "react-icons/pi";
 import { TbAlertCircle, TbX } from "react-icons/tb";
-import { IoChatbubbleOutline } from "react-icons/io5";
 import { HiUserGroup } from "react-icons/hi2";
 import { formatCurrency } from "@/utils/helpers";
 import {
@@ -26,7 +24,8 @@ import {
 } from "@/components/ui/breadcrumb";
 
 const PackagePage = () => {
-  const { pkgid, username } = useParams<{ pkgid: string; username: string }>();
+  const { pkgid } = useParams<{ pkgid: string }>();
+
   const [pkgDetails, setPkgDetails] = useState<Package>();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -102,18 +101,17 @@ const PackagePage = () => {
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbLink href={`/${username}/packages`}>
+              <BreadcrumbLink href="/dashboard/packages">
                 Packages
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbPage>{pkgid}</BreadcrumbPage>
+              <BreadcrumbPage>{pkgDetails.id}</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
 
-        {/* content */}
         <div className="grid grid-cols-1 md:grid-cols-6 gap-2">
           <Card className="col-span-1 md:col-span-4">
             <CardContent>
@@ -230,9 +228,9 @@ const PackagePage = () => {
           </Card>
 
           {/* pricing card */}
-          <Card className="col-span-1 md:col-span-2 h-fit">
+          <Card className="md:flex flex-col hidden col-span-1 md:col-span-2 h-fit">
             <CardContent className="flex flex-col gap-6">
-              <div className="md:flex hidden flex-col gap-4">
+              <div className="flex flex-col gap-4">
                 <div className="flex flex-col gap-3">
                   <p className="text-muted-foreground">Price per person</p>
                   <p className="text-primary font-bold text-2xl">
@@ -257,23 +255,6 @@ const PackagePage = () => {
                   </div>
                 )}
               </div>
-
-              <div className="flex flex-col gap-2">
-                <Button size="lg" className="w-full">
-                  Book Now
-                </Button>
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="w-full flex items-center justify-center"
-                >
-                  <IoChatbubbleOutline /> Contact Guide
-                </Button>
-              </div>
-
-              <p className="text-xs text-center text-muted-foreground">
-                You won't be charged yet
-              </p>
             </CardContent>
           </Card>
         </div>

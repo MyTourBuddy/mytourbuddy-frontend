@@ -50,7 +50,7 @@ const ExperiencePage = () => {
       <section className="max-w-5xl mx-auto w-full">
         <div className="text-center text-muted-foreground flex justify-center md:flex-row flex-col items-center gap-3 md:gap-2 py-8">
           <Spinner className="size-6 md:size-4" />
-          Loading {username}'s experience
+          Loading guide's experience
         </div>
       </section>
     );
@@ -92,7 +92,7 @@ const ExperiencePage = () => {
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbLink href={`/${username}/experiences`}>
+              <BreadcrumbLink href="/dashboard/experiences">
                 Experiences
               </BreadcrumbLink>
             </BreadcrumbItem>
@@ -102,7 +102,7 @@ const ExperiencePage = () => {
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
-        
+
         <div className="flex flex-col gap-1">
           <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
             {expDetails.title}

@@ -1,6 +1,14 @@
 "use client";
 
 import { Badge } from "@/components/ui/badge";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 import { Card } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
 import { Package } from "@/schemas/package.schema";
@@ -45,6 +53,18 @@ const PackagesPage = () => {
   return (
     <section className="max-w-5xl mx-auto w-full">
       <div className="flex flex-col gap-6">
+        <Breadcrumb>
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink href="/">Home</BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Packages</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+
         {/* header */}
         <div className="flex flex-col gap-3">
           <h1 className="text-3xl font-bold tracking-tight">Tour Packages</h1>

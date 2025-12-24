@@ -9,10 +9,8 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { useParams } from "next/navigation";
 
 const NewExperience = () => {
-  const { username } = useParams<{ username: string }>();
   return (
     <section className="max-w-2xl mx-auto">
       <div className="flex flex-col gap-6">
@@ -23,7 +21,7 @@ const NewExperience = () => {
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbLink href={`/${username}/experiences`}>
+              <BreadcrumbLink href="/dashboard/experiences">
                 Experiences
               </BreadcrumbLink>
             </BreadcrumbItem>

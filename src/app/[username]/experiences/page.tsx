@@ -8,14 +8,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Separator } from "@/components/ui/separator";
+import { Card } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
 import { Experience } from "@/schemas/experience.schema";
 import Image from "next/image";
@@ -23,9 +16,8 @@ import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { PiSmileySad } from "react-icons/pi";
-import { TbDots, TbEye, TbPencil, TbPlus, TbTrash } from "react-icons/tb";
 
-const ExperiencesPage = () => {
+const GuideExpsPage = () => {
   const pathname = usePathname();
   const { username } = useParams<{ username: string }>();
 
@@ -33,13 +25,11 @@ const ExperiencesPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const guideId = "guide-001";
-
   const fetchExperiences = async () => {
     try {
       setLoading(true);
       setError(null);
-      const response = await fetch(`/api/experiences/${guideId}`);
+      const response = await fetch("/api/experiences");
 
       if (!response.ok) {
         throw new Error("Failed to load experiences");
@@ -48,7 +38,7 @@ const ExperiencesPage = () => {
       const data: Experience[] = await response.json();
       setExperiences(data);
     } catch (err) {
-      setError("Couldn't load this experience. Please try again later.");
+      setError("Couldn't load tour experiences. Please try again later.");
       console.error("Fetch error:", err);
     } finally {
       setLoading(false);
@@ -59,46 +49,9 @@ const ExperiencesPage = () => {
     fetchExperiences();
   }, []);
 
-  if (loading) {
-    return (
-      <section className="max-w-5xl mx-auto w-full">
-        <div className="text-center text-muted-foreground flex justify-center md:flex-row flex-col items-center gap-3 md:gap-2 py-8">
-          <Spinner className="size-6 md:size-4" />
-          Loading guide's experiences
-        </div>
-      </section>
-    );
-  }
-
-  if (!experiences) {
-    return (
-      <section className="max-w-5xl mx-auto w-full">
-        <div className="text-center text-muted-foreground max-w-md flex md:flex-row flex-col justify-center items-center gap-3 md:gap-2 mx-auto py-8">
-          <p className="text-2xl md:text-lg">
-            <PiSmileySad />
-          </p>
-          Experiences not found
-        </div>
-      </section>
-    );
-  }
-
-  if (error) {
-    return (
-      <section className="max-w-5xl mx-auto w-full">
-        <div className="text-center max-w-md text-red-500 flex md:flex-row flex-col justify-center items-center gap-3 md:gap-2 mx-auto py-8">
-          <p className="text-2xl md:text-lg">
-            <PiSmileySad />
-          </p>
-          {error}
-        </div>
-      </section>
-    );
-  }
   return (
-    <section className="max-w-3xl mx-auto">
+    <section className="max-w-5xl mx-auto w-full">
       <div className="flex flex-col gap-6">
-        {/* breadcrumb */}
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
@@ -116,101 +69,72 @@ const ExperiencesPage = () => {
         </Breadcrumb>
 
         {/* header */}
-        <div className="flex flex-col gap-4">
-          <div className="flex flex-col gap-3 md:flex-row md:items-end justify-between">
-            <div className="flex flex-col gap-3">
-              <h1 className="text-3xl font-bold tracking-tight">
-                My Experinces
-              </h1>
-              <p className="text-muted-foreground mt-1">Manage my experinces</p>
-            </div>
-            <Link href={`${pathname}/new`}>
-              <Button className="cursor-pointer">
-                <TbPlus className="mr-2" />
-                Add Experinces
-              </Button>
-            </Link>
-          </div>
-          <Separator />
-        </div>
+        <h1 className="text-3xl font-bold tracking-tight">
+          {username}'s Experiences
+        </h1>
 
-        {/* cards */}
-        {experiences.length == 0 ? (
-          <div className="text-center py-12 text-muted-foreground">
-            No packages yet. Create your first one to get started.
+        {loading ? (
+          <div className="text-center text-muted-foreground flex md:flex-row flex-col items-center gap-3 md:gap-2 mx-auto py-8">
+            <Spinner className="size-6 md:size-4" />
+            Loading {username}'s experiences
+          </div>
+        ) : error ? (
+          <div className="text-center max-w-md text-red-500 flex md:flex-row flex-col items-center gap-3 md:gap-2 mx-auto py-8">
+            <p className="text-2xl md:text-lg">
+              <PiSmileySad />
+            </p>
+            {error}
           </div>
         ) : (
-          <div className="flex flex-col gap-4">
-            {experiences.map((exp) => (
-              <div
-                key={exp.id}
-                className="flex flex-col md:flex-row gap-4 p-4 border border-border rounded-lg hover:shadow-sm transition-shadow bg-card"
-              >
-                <div className="shrink-0 w-full md:w-32 h-48 md:h-32 rounded-md border border-border overflow-hidden bg-muted">
-                  {exp.image ? (
-                    <Image
-                      src={exp.image || "/placeholder.svg"}
-                      alt={exp.title}
-                      width={128}
-                      height={128}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="flex items-center justify-center w-full h-full">
-                      <span className="text-xs text-muted-foreground text-center px-2">
-                        No image
-                      </span>
-                    </div>
-                  )}
-                </div>
-
-                <div className="flex-1 flex flex-col gap-3">
-                  <div className="flex items-start justify-between gap-2">
-                    <h3 className="text-base font-semibold line-clamp-2 flex-1">
-                      {exp.title}
-                    </h3>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="h-8 w-8 p-0 shrink-0"
-                        >
-                          <TbDots className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <Link href={`${pathname}/${exp.id}`}>
-                          <DropdownMenuItem>
-                            <TbEye />
-                            View
-                          </DropdownMenuItem>
-                        </Link>
-                        <Link href={`${pathname}/${exp.id}/edit`}>
-                          <DropdownMenuItem>
-                            <TbPencil />
-                            Edit
-                          </DropdownMenuItem>
-                        </Link>
-                        <DropdownMenuItem>
-                          <TbTrash />
-                          Delete
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </div>
-
-                  <p className="text-sm text-muted-foreground line-clamp-3">
-                    {exp.description}
-                  </p>
-                </div>
+          <>
+            {/* cards */}
+            {experiences.length == 0 ? (
+              <div className="text-center max-w-md flex md:flex-row flex-col items-center gap-3 md:gap-2 mx-auto py-8">
+                <p className="text-2xl md:text-lg">
+                  <PiSmileySad />
+                </p>
+                No experiences added yet.
               </div>
-            ))}
-          </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                {experiences.map((exp) => (
+                  <Link key={exp.id} href={`${pathname}/${exp.id}`}>
+                    <Card className="overflow-hidden py-0 h-full">
+                      <div className="relative aspect-video bg-gray-100">
+                        {exp.image ? (
+                          <Image
+                            src={exp.image || "/placeholder.svg"}
+                            alt={exp.title}
+                            fill
+                            className="object-cover"
+                          />
+                        ) : (
+                          <div className="flex items-center justify-center h-full bg-gray-200 rounded-t-lg">
+                            <span className="text-gray-400">No image</span>
+                          </div>
+                        )}
+                      </div>
+                      <div className="px-5 md:py-2 mb-5 flex flex-col gap-2 md:gap-4">
+                        <h3 className="font-semibold text-base md:text-lg line-clamp-2 hover:underline">
+                          {exp.title}
+                        </h3>
+                        <p className="text-sm text-muted-foreground">
+                          {new Date(exp.experiencedAt).toLocaleDateString()}
+                        </p>
+                        <p className="text-sm text-muted-foreground line-clamp-3">
+                          {exp.description}
+                        </p>
+                      </div>
+                    </Card>
+                  </Link>
+                ))}
+              </div>
+            )}
+          </>
         )}
       </div>
     </section>
   );
 };
 
-export default ExperiencesPage;
+export default GuideExpsPage;
