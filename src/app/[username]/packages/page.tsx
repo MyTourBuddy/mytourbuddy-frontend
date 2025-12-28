@@ -65,7 +65,7 @@ const PackagesPage = () => {
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbPage>Experiences</BreadcrumbPage>
+              <BreadcrumbPage>Packages</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
