@@ -1,66 +1,248 @@
-import { Experience } from "@/schemas/experience.schema";
-import { Package } from "@/schemas/package.schema";
-import { Review } from "@/schemas/review.schema";
-import { User } from "@/schemas/user.schema";
+import { SigninInput } from "@/schemas/auth.schema";
+import {
+  GuideProfile,
+  ProfileData,
+  TouristProfile,
+} from "@/schemas/onboarding.schema";
+import { Guide, Tourist, User } from "@/schemas/user.schema";
+import { register } from "module";
+import { success } from "zod";
 
-export async function getUsers(): Promise<User[]> {
-  const res = await fetch("http://localhost:3000/api/users", {
-    method: "GET",
-    cache: "no-store",
-  });
+const BACKEND_URL =
+  process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8080/api/v1";
 
-  if (!res.ok) throw new Error("Failed to fetch user");
-
-  return res.json();
+interface AuthResponse {
+  user: User;
 }
 
-export async function getPackages(guideId?: string): Promise<Package[]> {
-  const url = guideId
-    ? `http://localhost:3000/api/packages?guideId=${guideId}`
-    : "http://localhost:3000/api/packages";
-
-  const res = await fetch(url, {
-    method: "GET",
-    cache: "no-store",
-  });
-
-  if (!res.ok) throw new Error("Failed to fetch packages");
-
-  return res.json();
+interface ApiError {
+  status: number;
+  message: string;
+  errors?: Record<string, string>;
 }
 
-export async function getExperiences(guideId?: string): Promise<Experience[]> {
-  const url = guideId
-    ? `http://localhost:3000/api/experiences?guideId=${guideId}`
-    : "http://localhost:3000/api/experiences";
+async function apiRequest<T>(
+  endpoint: string,
+  options: RequestInit = {}
+): Promise<T> {
+  const url = `${BACKEND_URL}/${endpoint}`;
 
-  const res = await fetch(url, {
-    method: "GET",
-    cache: "no-store",
-  });
+  const config: RequestInit = {
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+    credentials: "include",
+  };
 
-  if (!res.ok) throw new Error("Failed to fetch experiences");
+  try {
+    const response = await fetch(url, config);
 
-  return res.json();
-}
+    if (response.status === 204) {
+      return { success: true } as T;
+    }
 
-export async function getReviews(
-  userId?: string,
-  role?: "guide" | "tourist"
-): Promise<Review[]> {
-  let url = "http://localhost:3000/api/reviews";
+    if (response.status === 401) {
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("user");
+      }
+    }
 
-  if (userId && role) {
-    const param = role === "guide" ? "guideId" : "touristId";
-    url = `${url}?${param}=${userId}`;
+    const data = await response.json();
+
+    if (!response.ok) {
+      const error: ApiError = {
+        status: response.status,
+        message: data.error || data.message || "Something went wrong",
+        errors: data.errors || undefined,
+      };
+      throw error;
+    }
+
+    return data;
+  } catch (error) {
+    console.error("API Request Error:", error);
+    throw error;
   }
-
-  const res = await fetch(url, {
-    method: "GET",
-    cache: "no-store",
-  });
-
-  if (!res.ok) throw new Error("Failed to fetch reviews");
-
-  return res.json();
 }
+
+export const authAPI = {
+  login: async (credentials: SigninInput): Promise<AuthResponse> => {
+    const response = await apiRequest<AuthResponse>("auth/login", {
+      method: "POST",
+      body: JSON.stringify(credentials),
+    });
+
+    if (typeof window !== "undefined") {
+      localStorage.setItem("user", JSON.stringify(response.user));
+    }
+
+    return response;
+  },
+
+  register: async (userData: ProfileData): Promise<AuthResponse> => {
+    function isTourist(userData: ProfileData): userData is TouristProfile {
+      return userData.role === "tourist";
+    }
+
+    function isGuide(userData: ProfileData): userData is GuideProfile {
+      return userData.role === "guide";
+    }
+
+    const backendData = {
+      role: userData.role.toUpperCase(),
+      firstName: userData.firstName,
+      lastName: userData.lastName,
+      email: userData.email,
+      age: userData.age,
+      username: userData.username,
+      password: userData.password,
+      ...(isTourist(userData) && {
+        country: userData.country,
+        travelPreferences: userData.travelPreferences,
+      }),
+      ...(isGuide(userData) && {
+        languages: userData.languages,
+        yearsOfExp: userData.yearsOfExp,
+      }),
+    };
+
+    const response = await apiRequest<AuthResponse>("auth/register", {
+      method: "POST",
+      body: JSON.stringify(backendData),
+    });
+
+    if (typeof window !== "undefined") {
+      localStorage.setItem("user", JSON.stringify(response.user));
+    }
+
+    return response;
+  },
+
+  logout: async (): Promise<{ message: string }> => {
+    const response = await apiRequest<{ message: string }>("auth/logout", {
+      method: "POST",
+    });
+
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("user");
+    }
+
+    return response;
+  },
+
+  getCurrentUser: async (): Promise<AuthResponse> => {
+    return await apiRequest<AuthResponse>("auth/me");
+  },
+
+  healthCheck: async (): Promise<{
+    status: string;
+    timestamp: string;
+    service: string;
+  }> => {
+    return await apiRequest("auth/health");
+  },
+};
+
+export const userAPI = {
+  getAll: async (): Promise<User[]> => {
+    return await apiRequest("users");
+  },
+
+  getByUsername: async (username: string): Promise<User> => {
+    return await apiRequest(`users?username=${username}`);
+  },
+
+  getById: async (userId: string): Promise<User> => {
+    return await apiRequest(`users/${userId}`);
+  },
+
+  update: async (userId: string, userData: Partial<User>): Promise<User> => {
+    return await apiRequest(`users/${userId}`, {
+      method: "PUT",
+      body: JSON.stringify(userData),
+    });
+  },
+
+  delete: async (userId: string): Promise<{ success: boolean }> => {
+    return await apiRequest(`users/${userId}`, {
+      method: "DELETE",
+    });
+  },
+
+  create: async (userData: ProfileData): Promise<User> => {
+    return await apiRequest("users", {
+      method: "POST",
+      body: JSON.stringify(userData),
+    });
+  },
+};
+
+export const auth = {
+  getCurrentUser: (): User | null => {
+    if (typeof window !== "undefined") {
+      const userStr = localStorage.getItem("user");
+      if (userStr) {
+        try {
+          return JSON.parse(userStr);
+        } catch {
+          return null;
+        }
+      }
+    }
+    return null;
+  },
+
+  saveSession: (user: User): void => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem("user", JSON.stringify(user));
+    }
+  },
+
+  isAuthenticated: async (): Promise<boolean> => {
+    try {
+      await authAPI.getCurrentUser();
+      return true;
+    } catch (error) {
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("user");
+      }
+      return false;
+    }
+  },
+
+  isAdmin: (): boolean => {
+    const user = auth.getCurrentUser();
+    return user?.role === "admin";
+  },
+
+  isTourist: (): boolean => {
+    const user = auth.getCurrentUser();
+    return user?.role === "tourist";
+  },
+
+  isGuide: (): boolean => {
+    const user = auth.getCurrentUser();
+    return user?.role === "guide";
+  },
+
+  isProfileComplete: (): boolean => {
+    const user = auth.getCurrentUser();
+    return user?.isProfileComplete === true;
+  },
+
+  logout: async (): Promise<void> => {
+    try {
+      await authAPI.logout();
+    } catch (error) {
+      console.error("Logout error:", error);
+    } finally {
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("user");
+      }
+    }
+  },
+};
+
+export default apiRequest;

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { TbArrowLeft } from "react-icons/tb";
 import { Button } from "@/components/ui/button";
@@ -11,11 +11,16 @@ import TravelDetails from "./TravelDetails";
 import GuideDetails from "./GuideDetails";
 import { ProfileData } from "@/schemas/onboarding.schema";
 import ProfilePreview from "./ProfilePreview";
+import { useAuth } from "@/context/AuthContext";
 
 const OnboardingFlow = () => {
   const router = useRouter();
+  const { register } = useAuth();
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState<ProfileData | null>(null);
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const TOTAL_STEPS = 5;
 
@@ -27,13 +32,32 @@ const OnboardingFlow = () => {
 
       if (step < TOTAL_STEPS) {
         setStep((prev) => prev + 1);
-      } else {
-        console.log("Onboarding complete!", formData);
-        router.push("/signin");
       }
     },
     [step, router, formData]
   );
+
+  const handleSubmit = async () => {
+    if (!formData) return;
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const result = await register(formData);
+
+      if (result.success && result.user) {
+        router.push("/dashboard");
+      } else {
+        setError(result.error || "Registration failed");
+        router.push("/");
+      }
+    } catch (error: any) {
+      setError(error.message || "An unexpected error occurred");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleRoleSelect = useCallback(
     (selectedRole: "tourist" | "guide" | "admin") => {
@@ -59,24 +83,14 @@ const OnboardingFlow = () => {
   const handleBack = useCallback(() => {
     if (step > 1) {
       setStep((prev) => prev - 1);
+      setError(null);
     }
   }, [step]);
 
   const handleEdit = useCallback((editStep: number) => {
     setStep(editStep);
+    setError(null);
   }, []);
-
-  useEffect(() => {
-    const handleKeyPress = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && step > 1) {
-        handleBack();
-      }
-    };
-    window.addEventListener("keydown", handleKeyPress);
-    return () => window.removeEventListener("keydown", handleKeyPress);
-  }, [step, handleBack]);
-
-  const progressPercentage = useMemo(() => (step / TOTAL_STEPS) * 100, [step]);
 
   return (
     <div className="flex flex-col items-center gap-3 md:gap-6 max-w-md mx-auto w-full py-4 md:py-8">
@@ -169,9 +183,11 @@ const OnboardingFlow = () => {
       )}
       {step === 5 && formData && (
         <ProfilePreview
-          stepUp={handleNext}
+          stepUp={handleSubmit}
           onEdit={handleEdit}
-          profileData={formData!}
+          profileData={formData}
+          loading={loading}
+          error={error}
         />
       )}
     </div>

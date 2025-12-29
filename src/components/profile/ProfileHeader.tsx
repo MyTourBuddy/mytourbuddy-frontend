@@ -3,18 +3,30 @@
 import { Badge } from "../ui/badge";
 import { Card, CardContent } from "../ui/card";
 import { User } from "@/schemas/user.schema";
+import { useAuth } from "@/context/AuthContext";
+import { useParams } from "next/navigation";
 import EditProfileMenu from "./EditProfileMenu";
 
 const ProfileHeader = ({ user }: { user: User }) => {
-  const { firstName, lastName, role, username, memberSince } = user;
-  const fullName = firstName + " " + lastName;
-  const initials = `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
+  const { user: currentUser } = useAuth();
+  const { username: routeUsername } = useParams<{ username: string }>();
+  if (!user) return null;
 
-  const formattedDate = new Date(memberSince).toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
+  const { firstName, lastName, role, username, memberSince, avatar } = user;
+
+  const fullName = firstName && lastName ? `${firstName} ${lastName}` : "";
+  const initials =
+    firstName && lastName
+      ? `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase()
+      : "";
+
+  const formattedDate = memberSince
+    ? new Date(memberSince).toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      })
+    : "";
 
   return (
     <Card className="bg-accent relative">
@@ -24,9 +36,11 @@ const ProfileHeader = ({ user }: { user: User }) => {
             {initials}
           </div>
 
-          <div className="md:hidden block">
-            <EditProfileMenu />
-          </div>
+          {currentUser?.username === routeUsername && (
+            <div className="md:hidden block">
+              <EditProfileMenu />
+            </div>
+          )}
         </div>
 
         <div className="hidden md:block">
@@ -42,9 +56,11 @@ const ProfileHeader = ({ user }: { user: User }) => {
             </h2>
             <Badge className="px-2 py-0.5 text-xs md:text-sm">{role}</Badge>
 
-            <div className="hidden md:block ml-auto">
-              <EditProfileMenu />
-            </div>
+            {currentUser?.username === routeUsername && (
+              <div className="hidden md:block ml-auto">
+                <EditProfileMenu />
+              </div>
+            )}
           </div>
 
           <div className="space-y-1.5 md:space-y-2 text-sm md:text-base text-muted-foreground">

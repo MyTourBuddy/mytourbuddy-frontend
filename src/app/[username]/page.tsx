@@ -18,34 +18,33 @@ import {
 } from "@/components/ui/breadcrumb";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Guide, Tourist, User } from "@/schemas/user.schema";
+import { userAPI } from "@/lib/api";
+import { useAuth } from "@/context/AuthContext";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 const UserProfile = () => {
   const { username } = useParams<{ username: string }>();
+  const { user: currentUser } = useAuth();
   const [userData, setUserData] = useState<User | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await fetch(`/api/users?username=${username}`);
-        if (!response.ok) {
-          throw new Error("Failed to load user");
-        }
-        const data: User = await response.json();
+        const data: User = await userAPI.getByUsername(username);
         setUserData(data);
       } catch (err: any) {
-        setError(err.message);
+        setError(err.message || "Failed to load user");
       }
     };
     fetchUsers();
   }, [username]);
 
-  if (error) return <UserNotFound username="" />;
+  if (error) return <UserNotFound username={username} />;
   if (!userData) return <div>Loading...</div>;
 
-  const role = userData.role;
+  const role = userData.role.toLowerCase();
 
   return (
     <section className="max-w-4xl w-full mx-auto">
@@ -61,12 +60,12 @@ const UserProfile = () => {
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
-
         <h1 className="text-3xl font-bold tracking-tight">My Profile</h1>
-
         <ProfileHeader user={userData} />
-        <ProfileCompletion user={userData as Guide | Tourist} />
-
+        display only
+        {currentUser?.username === username && (
+          <ProfileCompletion user={userData as Guide | Tourist} />
+        )}
         <Tabs defaultValue="account" className="w-full">
           {role === "tourist" && (
             <TabsList className="grid w-full h-full grid-cols-2 gap-1 sm:gap-2">
@@ -92,13 +91,16 @@ const UserProfile = () => {
             )}
           </TabsContent>
           <TabsContent value="packages">
-            <PackagesSection user={userData as Guide} />
+            <p>packages</p>
+            {/* <PackagesSection user={userData as Guide} /> */}
           </TabsContent>
           <TabsContent value="experience">
-            <ExperiencesSection user={userData as Guide} />
+            <p>exp</p>
+            {/* <ExperiencesSection user={userData as Guide} /> */}
           </TabsContent>
           <TabsContent value="reviews">
-            <ReviewsSection user={userData} />
+            <p>reviews</p>
+            {/* <ReviewsSection user={userData} /> */}
           </TabsContent>
         </Tabs>
       </div>

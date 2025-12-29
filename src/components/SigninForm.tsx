@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Card,
   CardContent,
@@ -13,11 +15,59 @@ import { Button } from "./ui/button";
 import Image from "next/image";
 import img3 from "@/../public/img3.svg";
 import { TbArrowRight } from "react-icons/tb";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
+import { useState } from "react";
+import { Alert, AlertDescription } from "./ui/alert";
 
 const SigninForm = () => {
-  const justValidation = () => {
-    // redirect to dashboard if username = "admin" and password = "admin"
+  const router = useRouter();
+  const { login } = useAuth();
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [formData, setFormData] = useState({
+    username: "",
+    password: "",
+  });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+    if (error) setError(null);
   };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+
+    try {
+      const result = await login(formData);
+
+      if (result.success && result.user) {
+        const role = result.user.role.toLowerCase();
+
+        if (role === "admin") {
+          router.push("/admin");
+        } else if (role === "guide" || role === "tourist") {
+          router.push("/dashboard");
+        } else {
+          router.push("/");
+        }
+      } else {
+        setError(result.error || "Login failed");
+      }
+    } catch (err: any) {
+      setError(err.message || "An unexpected error occurred");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <Card className="w-full">
       <CardHeader className="text-center mb-3 flex flex-col items-center gap-2 md:gap-4">
@@ -38,7 +88,7 @@ const SigninForm = () => {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form method="post" className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4">
           <Field>
             <FieldLabel htmlFor="username">Username</FieldLabel>
             <Input
@@ -46,7 +96,10 @@ const SigninForm = () => {
               name="username"
               type="text"
               placeholder="Enter your username"
+              value={formData.username}
+              onChange={handleChange}
               required
+              disabled={loading}
             />
           </Field>
           <Field>
@@ -56,9 +109,19 @@ const SigninForm = () => {
               name="password"
               type="password"
               placeholder="Enter your password"
+              value={formData.password}
+              onChange={handleChange}
               required
+              disabled={loading}
             />
           </Field>
+
+          {error && (
+            <Alert variant="destructive" className="mb-4">
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
+
           <div className="flex items-center justify-between">
             <Link
               href="/forgot-password"
@@ -70,9 +133,16 @@ const SigninForm = () => {
           <Button
             type="submit"
             className="w-full h-10 md:h-11 text-sm md:text-base group"
+            disabled={loading}
           >
-            <span>Signin</span>
-            <TbArrowRight className="transition-transform group-hover:translate-x-1 duration-300" />
+            {loading ? (
+              <span>Signing in...</span>
+            ) : (
+              <>
+                <span>Signin</span>
+                <TbArrowRight className="transition-transform group-hover:translate-x-1 duration-300" />
+              </>
+            )}
           </Button>
         </form>
       </CardContent>

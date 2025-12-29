@@ -10,10 +10,11 @@ const TouristProfileInfo = ({ user }: { user: Tourist }) => {
     age,
     phone,
     country,
-    preferredDestinations,
-    travelInterests,
+    travelPreferences,
     languagesSpoken,
   } = user;
+
+  console.log(user);
 
   const fullName = `${firstName} ${lastName}`;
 
@@ -42,7 +43,7 @@ const TouristProfileInfo = ({ user }: { user: Tourist }) => {
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Phone Number</p>
-              <p className="font-medium">{phone}</p>
+              <p className="font-medium">{phone ? phone : "--"}</p>
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Country</p>
@@ -62,25 +63,11 @@ const TouristProfileInfo = ({ user }: { user: Tourist }) => {
         <CardContent>
           <div className="space-y-4">
             <div>
-              <p className="text-sm text-muted-foreground mb-2">
-                Preferred Destinations
-              </p>
+              <p className="text-sm text-muted-foreground mb-2">Preferences</p>
               <div className="flex flex-wrap gap-2">
-                {preferredDestinations?.map((destination) => (
+                {travelPreferences?.map((destination) => (
                   <Badge key={destination} variant="secondary">
                     {destination}
-                  </Badge>
-                ))}
-              </div>
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground mb-2">
-                Travel Interests
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {travelInterests?.map((interest) => (
-                  <Badge key={interest} variant="secondary">
-                    {interest}
                   </Badge>
                 ))}
               </div>
@@ -90,46 +77,22 @@ const TouristProfileInfo = ({ user }: { user: Tourist }) => {
                 Languages Spoken
               </p>
               <div className="flex flex-wrap gap-2">
-                {languagesSpoken?.map((lang) => (
-                  <Badge key={lang} variant="secondary">
-                    {lang}
-                  </Badge>
-                ))}
+                {languagesSpoken && languagesSpoken.length > 0 ? (
+                  <>
+                    {languagesSpoken.map((lang) => (
+                      <Badge key={lang} variant="secondary">
+                        {lang}
+                      </Badge>
+                    ))}
+                  </>
+                ) : (
+                  "--"
+                )}
               </div>
             </div>
           </div>
         </CardContent>
       </Card>
-
-      {/* Account Settings Card */}
-      {/* <Card>
-        <CardHeader>
-          <CardTitle className="text-lg md:text-xl">Account Settings</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-center justify-between py-2">
-            <div>
-              <p className="font-medium">Username</p>
-              <p className="text-sm text-muted-foreground">@johndoe</p>
-            </div>
-          </div>
-          <div className="flex items-center justify-between py-2">
-            <div>
-              <p className="font-medium">Password</p>
-              <p className="text-sm text-muted-foreground">••••••••</p>
-            </div>
-            <Button variant="outline" size="sm">
-              Change Password
-            </Button>
-          </div>
-          <div className="border-t pt-4 mt-4">
-            <p className="font-medium text-destructive mb-2">Danger Zone</p>
-            <Button variant="destructive" size="sm">
-              Delete Account
-            </Button>
-          </div>
-        </CardContent>
-      </Card> */}
     </div>
   );
 };

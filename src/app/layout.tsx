@@ -3,6 +3,7 @@ import "./globals.css";
 import { poppins } from "@/utils/fonts";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { AuthProvider } from "@/context/AuthContext";
 
 export const metadata: Metadata = {
   title: "MyTourBuddy",
@@ -17,9 +18,11 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${poppins.variable}`} suppressHydrationWarning>
       <body className="flex flex-col bg-background dark:bg-primary-foreground min-h-screen antialiased">
-        <Navbar />
-        <main className="flex-1 px-4 md:px-8">{children}</main>
-        <Footer />
+        <AuthProvider>
+          <Navbar />
+          <main className="flex-1 px-4 md:px-8">{children}</main>
+          <Footer />
+        </AuthProvider>
       </body>
     </html>
   );

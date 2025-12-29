@@ -13,21 +13,30 @@ import { Separator } from "@/components/ui/separator";
 import { TbCheck, TbPencil } from "react-icons/tb";
 import { useMemo } from "react";
 import { ProfileData } from "@/schemas/onboarding.schema";
+import { Alert, AlertDescription } from "../ui/alert";
 
 interface StepProps {
   stepUp: () => void;
   onEdit: (step: number) => void;
   profileData: ProfileData;
+  loading?: boolean;
+  error?: string | null;
 }
 
-const ProfilePreview = ({ stepUp, onEdit, profileData }: StepProps) => {
+const ProfilePreview = ({
+  stepUp,
+  onEdit,
+  profileData,
+  loading,
+  error,
+}: StepProps) => {
   const isTourist = useMemo(
     () => profileData.role === "tourist",
     [profileData.role]
   );
 
-  const isProfileComplete = useMemo(() => {
-    // Common required fields (Steps 1-3)
+  const isOnboardingComplete = useMemo(() => {
+    // common requires
     const hasCommonFields = !!(
       profileData.firstName &&
       profileData.lastName &&
@@ -40,7 +49,7 @@ const ProfilePreview = ({ stepUp, onEdit, profileData }: StepProps) => {
 
     if (!hasCommonFields) return false;
 
-    // Role-specific validation (Step 4)
+    // only tourist
     if (isTourist) {
       return (
         "country" in profileData &&
@@ -49,6 +58,7 @@ const ProfilePreview = ({ stepUp, onEdit, profileData }: StepProps) => {
         profileData.travelPreferences.length > 0
       );
     } else {
+      // only guide
       return (
         "languages" in profileData &&
         "yearsOfExp" in profileData &&
@@ -250,15 +260,27 @@ const ProfilePreview = ({ stepUp, onEdit, profileData }: StepProps) => {
             </Button>
           </div>
         )}
+
+        {error && (
+          <Alert variant="destructive">
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
       </CardContent>
       <CardFooter>
         <Button
           onClick={stepUp}
-          disabled={!isProfileComplete}
+          disabled={!isOnboardingComplete || loading}
           className="w-full h-10 md:h-11 text-sm md:text-base group"
         >
-          <span>Complete Registration</span>
-          <TbCheck className="transition-transform group-hover:scale-110 duration-300" />
+          {loading ? (
+            <span>Creating Account...</span>
+          ) : (
+            <>
+              <span>Complete Registration</span>
+              <TbCheck className="transition-transform group-hover:scale-110 duration-300" />
+            </>
+          )}
         </Button>
       </CardFooter>
     </Card>

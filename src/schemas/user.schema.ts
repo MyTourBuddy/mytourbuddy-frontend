@@ -2,7 +2,7 @@ import { z } from "zod";
 
 const baseUserSchema = z.object({
   id: z.string(),
-  role: z.enum(["tourist", "guide"]),
+  role: z.enum(["tourist", "guide", "admin"]),
   firstName: z.string(),
   lastName: z.string(),
   email: z.email(),
@@ -19,8 +19,6 @@ const touristSchema = baseUserSchema.extend({
   role: z.literal("tourist"),
   country: z.string(),
   travelPreferences: z.array(z.string()),
-  preferredDestinations: z.array(z.string()).optional(),
-  travelInterests: z.array(z.string()).optional(),
   languagesSpoken: z.array(z.string()).optional(),
 });
 
@@ -41,11 +39,18 @@ const guideSchema = baseUserSchema.extend({
   socialMedia: z.array(z.string()).optional(),
 });
 
+const adminSchema = baseUserSchema.extend({
+  role: z.literal("admin"),
+});
+
 export const userSchema = z.discriminatedUnion("role", [
   touristSchema,
   guideSchema,
+  adminSchema,
 ]);
 
-export type User = z.infer<typeof baseUserSchema>;
+export type BaseUser = z.infer<typeof baseUserSchema>;
 export type Tourist = z.infer<typeof touristSchema>;
 export type Guide = z.infer<typeof guideSchema>;
+export type Admin = z.infer<typeof adminSchema>;
+export type User = Tourist | Guide | Admin;
