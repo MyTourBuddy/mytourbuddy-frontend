@@ -4,6 +4,7 @@ import { poppins } from "@/utils/fonts";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { AuthProvider } from "@/context/AuthContext";
+import { Toaster } from "react-hot-toast";
 
 export const metadata: Metadata = {
   title: "MyTourBuddy",
@@ -22,6 +23,7 @@ export default function RootLayout({
           <Navbar />
           <main className="flex-1 px-4 md:px-8">{children}</main>
           <Footer />
+          <Toaster position="bottom-right" reverseOrder={false} />
         </AuthProvider>
       </body>
     </html>

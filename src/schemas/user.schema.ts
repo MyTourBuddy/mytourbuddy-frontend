@@ -1,46 +1,45 @@
 import { z } from "zod";
 
-const baseUserSchema = z.object({
+export const baseUserSchema = z.object({
   id: z.string(),
-  role: z.enum(["tourist", "guide", "admin"]),
+  role: z.enum(["TOURIST", "GUIDE", "ADMIN"]),
+
   firstName: z.string(),
   lastName: z.string(),
   email: z.email(),
-  age: z.number().min(1).max(120),
   username: z.string(),
   password: z.string().min(8),
-  avatar: z.string(),
-  memberSince: z.string(),
+  age: z.number().min(1).max(120),
+  avatar: z.string().optional(),
   phone: z.string(),
   isProfileComplete: z.boolean().default(false),
+  memberSince: z.string(),
 });
 
-const touristSchema = baseUserSchema.extend({
-  role: z.literal("tourist"),
+export const touristSchema = baseUserSchema.extend({
+  role: z.literal("TOURIST"),
+
   country: z.string(),
   travelPreferences: z.array(z.string()),
   languagesSpoken: z.array(z.string()).optional(),
 });
 
-const guideSchema = baseUserSchema.extend({
-  role: z.literal("guide"),
+export const guideSchema = baseUserSchema.extend({
+  role: z.literal("GUIDE"),
+
   languages: z.array(z.string()),
   yearsOfExp: z.number().min(0),
   bio: z.string().optional(),
   specializations: z.array(z.string()),
-  certifications: z.string().optional(),
-  dailyRate: z.number().min(0),
-  maxGroupSize: z.number().min(1),
-  transportMode: z.string(),
-  ageGroups: z.array(z.string()),
-  workingDays: z.array(z.string()),
-  emergencyContact: z.string().optional(),
+  certifications: z.array(z.string()).optional(),
+  emergencyContact: z.string(),
   website: z.string().optional(),
   socialMedia: z.array(z.string()).optional(),
+  isVerified: z.boolean(),
 });
 
-const adminSchema = baseUserSchema.extend({
-  role: z.literal("admin"),
+export const adminSchema = baseUserSchema.extend({
+  role: z.literal("ADMIN"),
 });
 
 export const userSchema = z.discriminatedUnion("role", [

@@ -1,11 +1,15 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tourist } from "@/schemas/user.schema";
+import { useAuth } from "@/context/AuthContext";
 
 const TouristProfileInfo = ({ user }: { user: Tourist }) => {
+  const { user: currentUser } = useAuth();
+
   const {
     firstName,
     lastName,
+    username,
     email,
     age,
     phone,
@@ -13,8 +17,6 @@ const TouristProfileInfo = ({ user }: { user: Tourist }) => {
     travelPreferences,
     languagesSpoken,
   } = user;
-
-  console.log(user);
 
   const fullName = `${firstName} ${lastName}`;
 
@@ -49,50 +51,51 @@ const TouristProfileInfo = ({ user }: { user: Tourist }) => {
               <p className="text-sm text-muted-foreground">Country</p>
               <p className="font-medium">{country}</p>
             </div>
+            <div>
+                <p className="text-sm text-muted-foreground mb-2">
+                  Languages Spoken
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {languagesSpoken && languagesSpoken.length > 0
+                    ? languagesSpoken.map((lang) => (
+                        <Badge key={lang} variant="secondary">
+                          {lang}
+                        </Badge>
+                      ))
+                    : "--"}
+                </div>
+              </div>
           </div>
         </CardContent>
       </Card>
 
       {/* Travel Preferences Card */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg md:text-xl">
-            Travel Preferences
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div>
-              <p className="text-sm text-muted-foreground mb-2">Preferences</p>
-              <div className="flex flex-wrap gap-2">
-                {travelPreferences?.map((destination) => (
-                  <Badge key={destination} variant="secondary">
-                    {destination}
-                  </Badge>
-                ))}
+      {currentUser?.username === username && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg md:text-xl">
+              Travel Preferences
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div>
+                <p className="text-sm text-muted-foreground mb-2">
+                  Preferences
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {travelPreferences?.map((prefs) => (
+                    <Badge key={prefs} variant="secondary">
+                      {prefs}
+                    </Badge>
+                  ))}
+                </div>
               </div>
+              
             </div>
-            <div>
-              <p className="text-sm text-muted-foreground mb-2">
-                Languages Spoken
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {languagesSpoken && languagesSpoken.length > 0 ? (
-                  <>
-                    {languagesSpoken.map((lang) => (
-                      <Badge key={lang} variant="secondary">
-                        {lang}
-                      </Badge>
-                    ))}
-                  </>
-                ) : (
-                  "--"
-                )}
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 };

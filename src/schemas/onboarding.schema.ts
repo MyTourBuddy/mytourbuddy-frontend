@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const roleSelectionSchema = z.object({
-  role: z.enum(["tourist", "guide", "admin"]),
+  role: z.enum(["TOURIST", "GUIDE", "ADMIN"]),
 });
 
 export const personalInfoSchema = z.object({

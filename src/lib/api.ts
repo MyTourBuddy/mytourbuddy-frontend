@@ -4,9 +4,7 @@ import {
   ProfileData,
   TouristProfile,
 } from "@/schemas/onboarding.schema";
-import { Guide, Tourist, User } from "@/schemas/user.schema";
-import { register } from "module";
-import { success } from "zod";
+import { User } from "@/schemas/user.schema";
 
 const BACKEND_URL =
   process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8080/api/v1";
@@ -83,15 +81,15 @@ export const authAPI = {
 
   register: async (userData: ProfileData): Promise<AuthResponse> => {
     function isTourist(userData: ProfileData): userData is TouristProfile {
-      return userData.role === "tourist";
+      return userData.role === "TOURIST";
     }
 
     function isGuide(userData: ProfileData): userData is GuideProfile {
-      return userData.role === "guide";
+      return userData.role === "GUIDE";
     }
 
     const backendData = {
-      role: userData.role.toUpperCase(),
+      role: userData,
       firstName: userData.firstName,
       lastName: userData.lastName,
       email: userData.email,
@@ -214,17 +212,17 @@ export const auth = {
 
   isAdmin: (): boolean => {
     const user = auth.getCurrentUser();
-    return user?.role === "admin";
+    return user?.role === "ADMIN";
   },
 
   isTourist: (): boolean => {
     const user = auth.getCurrentUser();
-    return user?.role === "tourist";
+    return user?.role === "TOURIST";
   },
 
   isGuide: (): boolean => {
     const user = auth.getCurrentUser();
-    return user?.role === "guide";
+    return user?.role === "GUIDE";
   },
 
   isProfileComplete: (): boolean => {

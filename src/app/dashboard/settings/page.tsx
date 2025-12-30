@@ -19,10 +19,15 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import { useAuth } from "@/context/AuthContext";
 import { useParams } from "next/navigation";
 
 const ProfileSettingsPage = () => {
   const { username } = useParams<{ username: string }>();
+  const auth = useAuth();
+
+  console.log(auth.isTourist);
+  
   return (
     <section className="max-w-4xl w-full mx-auto">
       <div className="flex flex-col gap-6">
@@ -60,26 +65,33 @@ const ProfileSettingsPage = () => {
               </AccordionItem>
 
               {/* tourist only */}
-              <AccordionItem value="card2">
-                <AccordionTrigger>Travel Preferences</AccordionTrigger>
-                <AccordionContent>
-                  <TravelPrefForm />
-                </AccordionContent>
-              </AccordionItem>
+
+              {auth.isTourist && (
+                <AccordionItem value="card2">
+                  <AccordionTrigger>Travel Preferences</AccordionTrigger>
+                  <AccordionContent>
+                    <TravelPrefForm />
+                  </AccordionContent>
+                </AccordionItem>
+              )}
 
               {/* guide only */}
-              <AccordionItem value="card3">
-                <AccordionTrigger>Professional Details</AccordionTrigger>
-                <AccordionContent>
-                  <ProfessionalDetailsForm />
-                </AccordionContent>
-              </AccordionItem>
-              <AccordionItem value="card4">
-                <AccordionTrigger>Contact & Availability</AccordionTrigger>
-                <AccordionContent>
-                  <ContactDetailsForm />
-                </AccordionContent>
-              </AccordionItem>
+              {auth.isGuide && (
+                <AccordionItem value="card3">
+                  <AccordionTrigger>Professional Details</AccordionTrigger>
+                  <AccordionContent>
+                    <ProfessionalDetailsForm />
+                  </AccordionContent>
+                </AccordionItem>
+              )}
+              {auth.isGuide && (
+                <AccordionItem value="card4">
+                  <AccordionTrigger>Contact & Availability</AccordionTrigger>
+                  <AccordionContent>
+                    <ContactDetailsForm />
+                  </AccordionContent>
+                </AccordionItem>
+              )}
             </Accordion>
           </CardContent>
         </Card>

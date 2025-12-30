@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
@@ -16,51 +17,69 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { TbPencil } from "react-icons/tb";
 import { ButtonGroup } from "@/components/ui/button-group";
-
-interface User {
-  firstname: string;
-  lastname: string;
-  age: number;
-  phone: string;
-  country: string;
-  avatar: string;
-}
-
-const initialUser: User = {
-  firstname: "Sasmitha",
-  lastname: "Perera",
-  age: 22,
-  phone: "",
-  country: "",
-  avatar: "",
-};
+import { auth, userAPI } from "@/lib/api";
+import toast from "react-hot-toast";
+import { User } from "@/schemas/user.schema";
 
 const PersonalInfoForm = () => {
+  const router = useRouter();
+  const [draft, setDraft] = useState<User | null>(null);
+  const [original, setOriginal] = useState<User | null>(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [user, setUser] = useState<User>(initialUser);
-  const [draft, setDraft] = useState<User>(initialUser);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleEdit = () => {
-    setDraft(user);
-    setIsEditing(true);
-  };
+  useEffect(() => {
+    const dbUser = auth.getCurrentUser();
+    if (!dbUser) return;
+
+    setDraft(dbUser);
+    setOriginal(dbUser);
+  }, []);
+
+  if (!draft) {
+    return <p className="text-sm text-muted-foreground">Loading profile...</p>;
+  }
+
+  const handleEdit = () => setIsEditing(true);
 
   const handleCancel = () => {
-    setDraft(user);
+    if (original) setDraft({ ...original });
     setIsEditing(false);
+    toast("Changes discarded", { icon: "🗑️" });
   };
 
-  const handleChange = (key: keyof User, value: string | number) => {
-    setDraft((prev) => ({
-      ...prev,
-      [key]: value,
-    }));
-  };
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-  const handleSave = () => {
-    setUser(draft);
-    setIsEditing(false);
-    console.log("Profile saved:", draft);
+    const user = auth.getCurrentUser();
+    if (!user) return;
+
+    setIsLoading(true);
+
+    try {
+      const updateData = {
+        firstName: draft.firstName,
+        lastName: draft.lastName,
+        age: draft.age,
+        phone: draft.phone,
+        avatar: draft.avatar,
+        ...(auth.isTourist() && { country: (draft as any).country }),
+      };
+
+      const updatedUser = await userAPI.update(user.id, updateData);
+
+      auth.saveSession(updatedUser);
+      setOriginal({ ...draft });
+      setIsEditing(false);
+      router.refresh();
+
+      toast.success("Profile updated successfully!");
+    } catch (error) {
+      console.error("Update failed:", error);
+      toast.error("Failed to update profile. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -76,140 +95,111 @@ const PersonalInfoForm = () => {
         )}
       </div>
       <Separator />
-
-      <form>
+      <form onSubmit={handleSave}>
         <div className="grid md:text-base text-xs grid-cols-1 md:grid-cols-3 gap-6">
           <div className="md:col-span-2 space-y-4 md:order-1 order-2">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <Field>
-                <FieldLabel htmlFor="firstname">Firstname</FieldLabel>
-
-                {draft.firstname.length === 0 && !isEditing ? (
-                  "--"
-                ) : (
-                  <Input
-                    id="firstname"
-                    type="text"
-                    placeholder="Enter Firstname"
-                    value={draft.firstname}
-                    readOnly={!isEditing}
-                    onChange={(e) => handleChange("firstname", e.target.value)}
-                  />
-                )}
+                <FieldLabel>First Name</FieldLabel>
+                <Input
+                  value={draft.firstName ?? ""}
+                  readOnly={!isEditing}
+                  onChange={(e) =>
+                    setDraft({ ...draft, firstName: e.target.value })
+                  }
+                />
               </Field>
+
               <Field>
-                <FieldLabel htmlFor="lastname">Lastname</FieldLabel>
-                {draft.lastname.length === 0 && !isEditing ? (
-                  "--"
-                ) : (
-                  <Input
-                    id="lastname"
-                    type="text"
-                    placeholder="Enter Lastname"
-                    value={draft.lastname}
-                    readOnly={!isEditing}
-                    onChange={(e) => handleChange("lastname", e.target.value)}
-                  />
-                )}
+                <FieldLabel>Last Name</FieldLabel>
+                <Input
+                  value={draft.lastName ?? ""}
+                  readOnly={!isEditing}
+                  onChange={(e) =>
+                    setDraft({ ...draft, lastName: e.target.value })
+                  }
+                />
               </Field>
             </div>
-
             <Field>
-              <FieldLabel htmlFor="age">Age</FieldLabel>
-              {draft.age < 1 && !isEditing ? (
-                "--"
-              ) : (
-                <Input
-                  id="age"
-                  type="number"
-                  placeholder="Enter Age"
-                  value={draft.age}
-                  readOnly={!isEditing}
-                  onChange={(e) => handleChange("age", Number(e.target.value))}
-                />
-              )}
+              <FieldLabel>Age</FieldLabel>
+              <Input
+                type="number"
+                min={1}
+                value={draft.age ?? 1}
+                readOnly={!isEditing}
+                onChange={(e) =>
+                  setDraft({
+                    ...draft,
+                    age: Number(e.target.value) || 1,
+                  })
+                }
+              />
             </Field>
 
             <Field>
-              <FieldLabel htmlFor="phone">Phone Number</FieldLabel>
-              {draft.phone.length === 0 && !isEditing ? (
-                "--"
-              ) : (
-                <Input
-                  id="phone"
-                  type="tel"
-                  placeholder="Enter Phone No."
-                  value={draft.phone}
-                  readOnly={!isEditing}
-                  onChange={(e) => handleChange("phone", e.target.value)}
-                />
-              )}
+              <FieldLabel>Phone Number</FieldLabel>
+              <Input
+                value={draft.phone ?? ""}
+                readOnly={!isEditing}
+                onChange={(e) => setDraft({ ...draft, phone: e.target.value })}
+              />
             </Field>
 
-            <Field>
-              <FieldLabel htmlFor="country">Country</FieldLabel>
-              {draft.country.length === 0 && !isEditing ? (
-                "--"
-              ) : (
-                <Select
-                  value={draft.country}
-                  onValueChange={(value) => handleChange("country", value)}
-                  disabled={!isEditing}
-                >
-                  <SelectTrigger id="country" className="w-full">
-                    <SelectValue placeholder="Select Country" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {COUNTRIES.map((country) => (
-                      <SelectItem key={country} value={country}>
-                        {country}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
-            </Field>
+            {auth.isTourist() && (
+              <Field>
+                <FieldLabel>Country</FieldLabel>
+                {!isEditing ? (
+                  <Input
+                    name="country"
+                    value={(draft as any).country ?? ""}
+                    readOnly
+                  />
+                ) : (
+                  <Select
+                    value={(draft as any).country ?? ""}
+                    onValueChange={(value) =>
+                      setDraft({ ...draft, country: value } as any)
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select country" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {COUNTRIES.map((c) => (
+                        <SelectItem key={c} value={c}>
+                          {c}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              </Field>
+            )}
           </div>
 
           <div className="flex flex-col items-center justify-start md:order-2 order-1">
             <Field className="w-full">
               <FieldLabel className="text-center">Avatar</FieldLabel>
-              <div className="flex justify-center mt-2">
-                <Avatar className="rounded-lg w-30 h-30 md:w-40 md:h-40 border-2">
-                  <AvatarImage src={draft.avatar} />
-                  <AvatarFallback className="rounded-lg w-30 h-30 md:w-40 md:h-40 font-semibold text-4xl text-primary">
-                    {draft.firstname[0]}
-                    {draft.lastname[0]}
+              <div className="flex justify-center md:order-2 order-1">
+                <Avatar className="w-32 h-32 md:w-40 md:h-40 rounded-lg border">
+                  {draft.avatar && <AvatarImage src={draft.avatar} />}
+                  <AvatarFallback className="text-4xl rounded-none">
+                    {draft.firstName?.[0] ?? "T"}
+                    {draft.lastName?.[0] ?? "B"}
                   </AvatarFallback>
                 </Avatar>
               </div>
-              <Input
-                value={draft.avatar}
-                readOnly={!isEditing}
-                className="hidden"
-                onChange={(e) => handleChange("avatar", e.target.value)}
-              />
             </Field>
           </div>
         </div>
-
         {isEditing && (
-          <ButtonGroup className="ml-auto">
-            <Button variant="outline" onClick={handleCancel}>
+          <ButtonGroup className="ml-auto mt-6">
+            <Button type="button" variant="outline" onClick={handleCancel}>
               Cancel
             </Button>
-            <Button
-              onClick={handleSave}
-              disabled={
-                draft.firstname.length === 0 ||
-                draft.lastname.length === 0 ||
-                draft.age < 1 ||
-                draft.country.length === 0 ||
-                draft.phone.length === 0 ||
-                draft.avatar.length === 0
-              }
-            >
-              Save
+            <Button type="submit" disabled={isLoading}>
+              {isLoading ? "Updating..." : "Update"}
             </Button>
           </ButtonGroup>
         )}

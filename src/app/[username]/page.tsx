@@ -62,7 +62,8 @@ const UserProfile = () => {
         </Breadcrumb>
         <h1 className="text-3xl font-bold tracking-tight">My Profile</h1>
         <ProfileHeader user={userData} />
-        display only
+
+        {/* display only the current user */}
         {currentUser?.username === username && (
           <ProfileCompletion user={userData as Guide | Tourist} />
         )}
