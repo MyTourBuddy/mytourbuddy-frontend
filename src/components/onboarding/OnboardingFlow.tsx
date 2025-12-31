@@ -60,8 +60,8 @@ const OnboardingFlow = () => {
   };
 
   const handleRoleSelect = useCallback(
-    (selectedRole: "tourist" | "guide" | "admin") => {
-      if (selectedRole === "admin") return;
+    (selectedRole: "TOURIST" | "GUIDE" | "ADMIN") => {
+      if (selectedRole === "ADMIN") return;
       setFormData({
         role: selectedRole,
         firstName: "",
@@ -71,7 +71,7 @@ const OnboardingFlow = () => {
         username: "",
         password: "",
         confirmPassword: "",
-        ...(selectedRole === "tourist"
+        ...(selectedRole === "TOURIST"
           ? { country: "", travelPreferences: [] }
           : { languages: [], yearsOfExp: 0 }),
       } as ProfileData);
@@ -93,7 +93,7 @@ const OnboardingFlow = () => {
   }, []);
 
   return (
-    <div className="flex flex-col items-center gap-3 md:gap-6 max-w-md mx-auto w-full py-4 md:py-8">
+    <div className="flex flex-col items-center gap-3 md:gap-6 py-4 md:py-8">
       {step > 1 && (
         <div className="w-full">
           <Button
@@ -155,7 +155,7 @@ const OnboardingFlow = () => {
           }
         />
       )}
-      {step === 4 && formData?.role === "tourist" && (
+      {step === 4 && formData?.role === "TOURIST" && (
         <TravelDetails
           stepUp={handleNext}
           initialData={
@@ -168,7 +168,7 @@ const OnboardingFlow = () => {
           }
         />
       )}
-      {step === 4 && formData?.role === "guide" && (
+      {step === 4 && formData?.role === "GUIDE" && (
         <GuideDetails
           stepUp={handleNext}
           initialData={

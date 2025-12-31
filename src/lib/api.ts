@@ -37,18 +37,60 @@ async function apiRequest<T>(
   try {
     const response = await fetch(url, config);
 
+    // Handle 204 No Content
     if (response.status === 204) {
       return { success: true } as T;
     }
 
+    // Handle 401 Unauthorized
     if (response.status === 401) {
       if (typeof window !== "undefined") {
         localStorage.removeItem("user");
       }
     }
 
-    const data = await response.json();
+    // Check if response has content
+    const contentType = response.headers.get("content-type");
+    const hasJsonContent = contentType?.includes("application/json");
 
+    // Get response text first to check if it's empty
+    const text = await response.text();
+    
+    // If response is empty, handle based on status
+    if (!text || text.trim() === "") {
+      if (response.ok) {
+        // Success with empty body
+        return { success: true } as T;
+      } else {
+        // Error with empty body
+        const error: ApiError = {
+          status: response.status,
+          message: `Request failed with status ${response.status}`,
+        };
+        throw error;
+      }
+    }
+
+    // Try to parse JSON
+    let data: any;
+    try {
+      data = JSON.parse(text);
+    } catch (parseError) {
+      // If JSON parsing fails but request was successful
+      if (response.ok) {
+        console.warn("Response is not valid JSON, returning text as data");
+        return { success: true, data: text } as T;
+      } else {
+        // If parsing fails and request failed
+        const error: ApiError = {
+          status: response.status,
+          message: text || "Invalid JSON response from server",
+        };
+        throw error;
+      }
+    }
+
+    // Handle error responses
     if (!response.ok) {
       const error: ApiError = {
         status: response.status,
@@ -60,6 +102,16 @@ async function apiRequest<T>(
 
     return data;
   } catch (error) {
+    // Handle network errors
+    if (error instanceof TypeError && error.message === "Failed to fetch") {
+      const networkError: ApiError = {
+        status: 0,
+        message: "Network error: Unable to reach the server. Please check your connection.",
+      };
+      throw networkError;
+    }
+
+    // Re-throw ApiError or other errors
     console.error("API Request Error:", error);
     throw error;
   }
@@ -72,7 +124,7 @@ export const authAPI = {
       body: JSON.stringify(credentials),
     });
 
-    if (typeof window !== "undefined") {
+    if (typeof window !== "undefined" && response.user) {
       localStorage.setItem("user", JSON.stringify(response.user));
     }
 
@@ -89,7 +141,7 @@ export const authAPI = {
     }
 
     const backendData = {
-      role: userData,
+      role: userData.role,
       firstName: userData.firstName,
       lastName: userData.lastName,
       email: userData.email,
@@ -111,7 +163,7 @@ export const authAPI = {
       body: JSON.stringify(backendData),
     });
 
-    if (typeof window !== "undefined") {
+    if (typeof window !== "undefined" && response.user) {
       localStorage.setItem("user", JSON.stringify(response.user));
     }
 
@@ -140,6 +192,18 @@ export const authAPI = {
     service: string;
   }> => {
     return await apiRequest("auth/health");
+  },
+
+  checkUsername: async (username: string): Promise<{ message: string }> => {
+    return await apiRequest(
+      `auth/check-username?username=${encodeURIComponent(username)}`
+    );
+  },
+
+  checkEmail: async (email: string): Promise<{ message: string }> => {
+    return await apiRequest(
+      `auth/check-email?email=${encodeURIComponent(email)}`
+    );
   },
 };
 

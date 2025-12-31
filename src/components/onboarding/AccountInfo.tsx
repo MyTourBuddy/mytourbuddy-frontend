@@ -11,12 +11,15 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { TbArrowRight, TbCheck } from "react-icons/tb";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import {
   AccountInfoInput,
   accountInfoSchema,
 } from "@/schemas/onboarding.schema";
 import { z } from "zod";
+import { useDebounce } from "@/hooks/useDebounce";
+import { authAPI } from "@/lib/api";
+import { Spinner } from "../ui/spinner";
 
 interface AccountInfoProps {
   stepUp: (data: AccountInfoInput) => void;
@@ -33,6 +36,40 @@ const AccountInfo = ({ stepUp, initialData }: AccountInfoProps) => {
   });
 
   const [errors, setErrors] = useState<ValidationErrors>({});
+  const [isCheckingUsername, setIsCheckingUsername] = useState(false);
+  const [usernameAvailable, setUsernameAvailable] = useState<boolean | null>(null);
+  const [usernameCheckError, setUsernameCheckError] = useState<string | null>(null);
+  const debouncedUsername = useDebounce(formData.username || "", 500);
+
+  useEffect(() => {
+    const checkUsername = async () => {
+      if (!debouncedUsername || debouncedUsername.length < 3) {
+        setUsernameAvailable(null);
+        setUsernameCheckError(null);
+        return;
+      }
+
+      setIsCheckingUsername(true);
+      setUsernameCheckError(null);
+      try {
+        await authAPI.checkUsername(debouncedUsername);
+        setUsernameAvailable(true);
+        setUsernameCheckError(null);
+      } catch (error: any) {
+        if (error.status === 409) {
+          setUsernameAvailable(false);
+          setUsernameCheckError("Username is already taken");
+        } else {
+          setUsernameAvailable(false);
+          setUsernameCheckError("Unable to verify username availability");
+        }
+      } finally {
+        setIsCheckingUsername(false);
+      }
+    };
+
+    checkUsername();
+  }, [debouncedUsername]);
 
   const passwordStrength = useMemo(() => {
     const pw = formData.password || "";
@@ -70,11 +107,36 @@ const AccountInfo = ({ stepUp, initialData }: AccountInfoProps) => {
   const handleChange = (field: keyof AccountInfoInput, value: string) => {
     setFormData({ ...formData, [field]: value });
 
-    // Clear error for this field when typing
     if (errors[field]) {
       setErrors({ ...errors, [field]: undefined });
     }
+
+    if (field === "username") {
+      setUsernameAvailable(null);
+      setUsernameCheckError(null);
+    }
   };
+
+  const isFormValid = useMemo(() => {
+    if (!formData.username || !formData.password || !formData.confirmPassword) {
+      return false;
+    }
+
+    if (isCheckingUsername || usernameAvailable !== true) {
+      return false;
+    }
+
+    if (usernameCheckError) {
+      return false;
+    }
+
+    if (Object.keys(errors).length > 0) {
+      return false;
+    }
+
+    const result = accountInfoSchema.safeParse(formData);
+    return result.success;
+  }, [formData, errors, isCheckingUsername, usernameAvailable, usernameCheckError]);
 
   const handleSubmit = () => {
     if (validateForm()) {
@@ -94,17 +156,44 @@ const AccountInfo = ({ stepUp, initialData }: AccountInfoProps) => {
         <FieldGroup className="flex flex-col gap-3">
           <Field>
             <Label htmlFor="username">Username</Label>
-            <Input
-              type="text"
-              id="username"
-              name="username"
-              placeholder="Username"
-              value={formData.username || ""}
-              onChange={(e) => handleChange("username", e.target.value)}
-              aria-invalid={!!errors.username}
-            />
-            {errors.username && (
+            <div className="relative">
+              <Input
+                type="text"
+                id="username"
+                name="username"
+                placeholder="Username"
+                value={formData.username || ""}
+                onChange={(e) => handleChange("username", e.target.value)}
+                aria-invalid={!!errors.username || !!usernameCheckError}
+                className={
+                  usernameAvailable === true
+                    ? "border-green-500 pr-10"
+                    : usernameAvailable === false || usernameCheckError
+                    ? "border-red-500"
+                    : ""
+                }
+              />
+              {isCheckingUsername && (
+                <span className="absolute right-3 top-1/2 -translate-y-1/2">
+                  <Spinner />
+                </span>
+              )}
+              {usernameAvailable === true && !isCheckingUsername && (
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-green-500">
+                  <TbCheck className="h-5 w-5" />
+                </span>
+              )}
+            </div>
+            {usernameCheckError && (
+              <p className="text-xs text-red-500 mt-1">{usernameCheckError}</p>
+            )}
+            {!usernameCheckError && errors.username && (
               <p className="text-xs text-red-500 mt-1">{errors.username}</p>
+            )}
+            {usernameAvailable === true && !usernameCheckError && !errors.username && (
+              <p className="text-xs text-green-500 mt-1 flex items-center gap-1">
+                <TbCheck className="h-3 w-3" /> Username is available
+              </p>
             )}
           </Field>
 
@@ -179,6 +268,7 @@ const AccountInfo = ({ stepUp, initialData }: AccountInfoProps) => {
       <CardFooter>
         <Button
           onClick={handleSubmit}
+          disabled={!isFormValid}
           className="w-full h-10 md:h-11 text-sm md:text-base group"
         >
           <span>Next</span>

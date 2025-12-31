@@ -7,16 +7,16 @@ import { useEffect } from "react";
 
 const SignupPage = () => {
   // todo: make this better
-  const { isAuthenticated, loading } = useAuth();
-  const router = useRouter();
+  // const { isAuthenticated, loading } = useAuth();
+  // const router = useRouter();
 
-  useEffect(() => {
-    if (!loading && isAuthenticated) {
-      router.push("/");
-    }
-  }, [loading, isAuthenticated, router]);
+  // useEffect(() => {
+  //   if (!loading && isAuthenticated) {
+  //     router.push("/");
+  //   }
+  // }, [loading, isAuthenticated, router]);
   return (
-    <div className="max-w-xl w-full mx-auto">
+    <div className="max-w-md w-full mx-auto">
       <OnboardingFlow />
     </div>
   );

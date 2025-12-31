@@ -7,19 +7,19 @@ import { useEffect } from "react";
 
 const SigninPage = () => {
   // todo: make this better
-  const { isAuthenticated, loading } = useAuth();
-  const router = useRouter();
+  // const { isAuthenticated, loading } = useAuth();
+  // const router = useRouter();
 
-  useEffect(() => {
-    if (!loading && isAuthenticated) {
-      router.push("/");
-    }
-  }, [loading, isAuthenticated, router]);
+  // useEffect(() => {
+  //   if (!loading && isAuthenticated) {
+  //     router.push("/");
+  //   }
+  // }, [loading, isAuthenticated, router]);
 
   return (
-    <div className="max-w-lg w-full mx-auto py-4 md:py-8">
+    <section className="max-w-md w-full mx-auto">
       <SigninForm />
-    </div>
+    </section>
   );
 };
 

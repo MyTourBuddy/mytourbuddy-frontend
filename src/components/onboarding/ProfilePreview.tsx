@@ -31,7 +31,7 @@ const ProfilePreview = ({
   error,
 }: StepProps) => {
   const isTourist = useMemo(
-    () => profileData.role === "tourist",
+    () => profileData.role === "TOURIST",
     [profileData.role]
   );
 

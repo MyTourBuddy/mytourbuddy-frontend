@@ -50,7 +50,7 @@ const RoleSelection = ({ onRoleSelect }: RoleSelectionProps) => {
           <Button
             variant="outline"
             className="flex-1 h-10 md:h-11 text-sm md:text-base"
-            onClick={() => onRoleSelect("tourist")}
+            onClick={() => onRoleSelect("TOURIST")}
           >
             <TbWorld />
             <span>Tourist</span>
@@ -58,7 +58,7 @@ const RoleSelection = ({ onRoleSelect }: RoleSelectionProps) => {
           <Button
             variant="outline"
             className="flex-1 h-10 md:h-11 text-sm md:text-base"
-            onClick={() => onRoleSelect("guide")}
+            onClick={() => onRoleSelect("GUIDE")}
           >
             <TbMap />
             <span>Guide</span>
