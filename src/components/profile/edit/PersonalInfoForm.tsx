@@ -75,7 +75,7 @@ const PersonalInfoForm = () => {
 
       toast.success("Profile updated successfully!");
     } catch (error) {
-      console.error("Update failed:", error);
+      // console.error("Update failed:", error);
       toast.error("Failed to update profile. Please try again.");
     } finally {
       setIsLoading(false);
@@ -99,10 +99,15 @@ const PersonalInfoForm = () => {
         <div className="grid md:text-base text-xs grid-cols-1 md:grid-cols-3 gap-6">
           <div className="md:col-span-2 space-y-4 md:order-1 order-2">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* First Name */}
               <Field>
-                <FieldLabel>First Name</FieldLabel>
+                <FieldLabel>
+                  First Name&nbsp;<span className="text-destructive">*</span>
+                </FieldLabel>
                 <Input
+                  name="firstName"
                   value={draft.firstName ?? ""}
+                  placeholder="Enter first name (e.g. Kasun)"
                   readOnly={!isEditing}
                   onChange={(e) =>
                     setDraft({ ...draft, firstName: e.target.value })
@@ -110,10 +115,15 @@ const PersonalInfoForm = () => {
                 />
               </Field>
 
+              {/* Last Name */}
               <Field>
-                <FieldLabel>Last Name</FieldLabel>
+                <FieldLabel>
+                  Last Name&nbsp;<span className="text-destructive">*</span>
+                </FieldLabel>
                 <Input
+                  name="lastName"
                   value={draft.lastName ?? ""}
+                  placeholder="Enter last name (e.g. Perera)"
                   readOnly={!isEditing}
                   onChange={(e) =>
                     setDraft({ ...draft, lastName: e.target.value })
@@ -121,12 +131,18 @@ const PersonalInfoForm = () => {
                 />
               </Field>
             </div>
+
+            {/* Age */}
             <Field>
-              <FieldLabel>Age</FieldLabel>
+              <FieldLabel>
+                Age&nbsp;<span className="text-destructive">*</span>
+              </FieldLabel>
               <Input
+                name="age"
                 type="number"
                 min={1}
                 value={draft.age ?? 1}
+                placeholder="Enter age (e.g. 24)"
                 readOnly={!isEditing}
                 onChange={(e) =>
                   setDraft({
@@ -137,54 +153,74 @@ const PersonalInfoForm = () => {
               />
             </Field>
 
+            {/* Phone Number */}
             <Field>
-              <FieldLabel>Phone Number</FieldLabel>
-              <Input
-                value={draft.phone ?? ""}
-                readOnly={!isEditing}
-                onChange={(e) => setDraft({ ...draft, phone: e.target.value })}
-              />
+              <FieldLabel>
+                Phone Number&nbsp;<span className="text-destructive">*</span>
+              </FieldLabel>
+              {!draft.phone && !isEditing ? (
+                "--"
+              ) : (
+                <Input
+                  name="phone"
+                  value={draft.phone ?? ""}
+                  placeholder="Enter phone number (e.g. +94 77 123 4567)"
+                  onChange={(e) =>
+                    setDraft({ ...draft, phone: e.target.value })
+                  }
+                />
+              )}
             </Field>
 
+            {/* Country */}
             {auth.isTourist() && (
               <Field>
-                <FieldLabel>Country</FieldLabel>
-                {!isEditing ? (
-                  <Input
-                    name="country"
-                    value={(draft as any).country ?? ""}
-                    readOnly
-                  />
+                <FieldLabel>
+                  Country&nbsp;<span className="text-destructive">*</span>
+                </FieldLabel>
+                {!(draft as any).country ? (
+                  "--"
                 ) : (
-                  <Select
-                    value={(draft as any).country ?? ""}
-                    onValueChange={(value) =>
-                      setDraft({ ...draft, country: value } as any)
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select country" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {COUNTRIES.map((c) => (
-                        <SelectItem key={c} value={c}>
-                          {c}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <>
+                    {!isEditing ? (
+                      <Input
+                        name="country"
+                        value={(draft as any).country ?? ""}
+                        readOnly
+                      />
+                    ) : (
+                      <Select
+                        value={(draft as any).country ?? ""}
+                        onValueChange={(value) =>
+                          setDraft({ ...draft, country: value } as any)
+                        }
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select country" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {COUNTRIES.map((c) => (
+                            <SelectItem key={c} value={c}>
+                              {c}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    )}
+                  </>
                 )}
               </Field>
             )}
           </div>
 
+          {/* Avatar */}
           <div className="flex flex-col items-center justify-start md:order-2 order-1">
             <Field className="w-full">
               <FieldLabel className="text-center">Avatar</FieldLabel>
               <div className="flex justify-center md:order-2 order-1">
                 <Avatar className="w-32 h-32 md:w-40 md:h-40 rounded-lg border">
                   {draft.avatar && <AvatarImage src={draft.avatar} />}
-                  <AvatarFallback className="text-4xl rounded-none">
+                  <AvatarFallback className="text-4xl font-bold rounded-none">
                     {draft.firstName?.[0] ?? "T"}
                     {draft.lastName?.[0] ?? "B"}
                   </AvatarFallback>
@@ -193,12 +229,24 @@ const PersonalInfoForm = () => {
             </Field>
           </div>
         </div>
+
+        {/* actions */}
         {isEditing && (
           <ButtonGroup className="ml-auto mt-6">
             <Button type="button" variant="outline" onClick={handleCancel}>
               Cancel
             </Button>
-            <Button type="submit" disabled={isLoading}>
+            <Button
+              type="submit"
+              disabled={
+                isLoading ||
+                !draft.firstName ||
+                !draft.lastName ||
+                draft.age < 1 ||
+                !draft.phone ||
+                (auth.isTourist() && !(draft as any).country)
+              }
+            >
               {isLoading ? "Updating..." : "Update"}
             </Button>
           </ButtonGroup>

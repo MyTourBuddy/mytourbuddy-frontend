@@ -80,7 +80,7 @@ const ProfessionalDetailsForm = () => {
     <div className="flex flex-col gap-4 w-full">
       <div className="flex items-center justify-between">
         <p className="text-sm text-muted-foreground">
-          Manage your travel preferences
+          Manage your professional details
         </p>
 
         {!isEditing && (
@@ -95,6 +95,7 @@ const ProfessionalDetailsForm = () => {
       {/* form */}
       <form onSubmit={handleSave} method="post">
         <FieldGroup className="max-w-md">
+          {/* Bio */}
           <Field>
             <FieldLabel htmlFor="bio">Bio</FieldLabel>
             {(!draft.bio || draft.bio.length === 0) && !isEditing ? (
@@ -104,13 +105,19 @@ const ProfessionalDetailsForm = () => {
                 id="bio"
                 cols={5}
                 value={draft.bio || ""}
+                placeholder="A short intro about you as a guide"
                 readOnly={!isEditing}
                 onChange={(e) => setDraft({ ...draft, bio: e.target.value })}
               />
             )}
           </Field>
+
+          {/* Years of Experience */}
           <Field>
-            <FieldLabel htmlFor="yearsOfExp">Years of Experience</FieldLabel>
+            <FieldLabel htmlFor="yearsOfExp">
+              Years of Experience&nbsp;
+              <span className="text-destructive">*</span>
+            </FieldLabel>
             {draft.yearsOfExp < 0 && !isEditing ? (
               "--"
             ) : (
@@ -119,6 +126,7 @@ const ProfessionalDetailsForm = () => {
                 type="number"
                 min={0}
                 value={draft.yearsOfExp}
+                placeholder="Years of guiding experience (e.g. 5)"
                 readOnly={!isEditing}
                 onChange={(e) =>
                   setDraft({
@@ -129,8 +137,12 @@ const ProfessionalDetailsForm = () => {
               />
             )}
           </Field>
+
+          {/* Languages */}
           <Field>
-            <FieldLabel>Languages</FieldLabel>
+            <FieldLabel>
+              Languages&nbsp;<span className="text-destructive">*</span>
+            </FieldLabel>
             {(draft.languages || []).length === 0 && !isEditing ? (
               "--"
             ) : (
@@ -146,16 +158,18 @@ const ProfessionalDetailsForm = () => {
                 selected={draft.languages || []}
                 onChange={(values) => setDraft({ ...draft, languages: values })}
                 allowAddMore
-                placeholder="Add language..."
+                placeholder="Add language (e.g. English)"
                 disabled={!isEditing}
               />
             )}
           </Field>
 
+          {/* Specializations */}
           <Field>
-            <FieldLabel>Specializations</FieldLabel>
-            {(!draft.languages || draft.languages.length === 0) &&
-            !isEditing ? (
+            <FieldLabel>
+              Specializations&nbsp;<span className="text-destructive">*</span>
+            </FieldLabel>
+            {(draft.specializations || []).length == 0 && !isEditing ? (
               <p className="text-sm">--</p>
             ) : (
               <SelectableButtons
@@ -174,16 +188,16 @@ const ProfessionalDetailsForm = () => {
                   setDraft({ ...draft, specializations: values })
                 }
                 allowAddMore
-                placeholder="Add specialization..."
+                placeholder="Add specialization (e.g. Wildlife)"
                 disabled={!isEditing}
               />
             )}
           </Field>
+
+          {/* Certifications */}
           <Field>
             <FieldLabel>Certifications</FieldLabel>
-            {draft.certifications &&
-            draft.certifications.length === 0 &&
-            !isEditing ? (
+            {(draft.certifications || []).length == 0 && !isEditing ? (
               "--"
             ) : (
               <div className="flex flex-col gap-2">
@@ -192,7 +206,7 @@ const ProfessionalDetailsForm = () => {
                     <div key={index} className="flex gap-2">
                       <Input
                         value={item}
-                        placeholder="Enter certification"
+                        placeholder="e.g. Sri Lanka Tourist Guide License"
                         readOnly={!isEditing}
                         onChange={(e) => {
                           const updated = [...(draft.certifications || [])];
@@ -203,7 +217,7 @@ const ProfessionalDetailsForm = () => {
 
                       {isEditing &&
                         draft.certifications &&
-                        draft.certifications.length > 1 && (
+                        draft.certifications.length > 0 && (
                           <Button
                             type="button"
                             variant="outline"

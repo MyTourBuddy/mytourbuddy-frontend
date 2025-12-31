@@ -94,16 +94,17 @@ const ContactDetailsForm = () => {
           {/* Emergency Contact */}
           <Field>
             <FieldLabel htmlFor="emergencyContact">
-              Emergency Contact
+              Emergency Contact&nbsp;
+              <span className="text-destructive">*</span>
             </FieldLabel>
-            {draft.emergencyContact.length === 0 && !isEditing ? (
+            {!draft.emergencyContact && !isEditing ? (
               "--"
             ) : (
               <Input
                 id="emergencyContact"
                 name="emergencyContact"
                 type="text"
-                placeholder="Enter Emergency Contact No."
+                placeholder="Enter phone number (e.g. +94 77 123 4567)"
                 value={draft.emergencyContact ?? ""}
                 readOnly={!isEditing}
                 onChange={(e) =>
@@ -164,7 +165,7 @@ const ContactDetailsForm = () => {
                       }}
                     />
 
-                    {isEditing && (draft.socialMedia || []).length > 1 && (
+                    {isEditing && (draft.socialMedia || []).length > 0 && (
                       <Button
                         type="button"
                         variant="outline"
@@ -205,14 +206,17 @@ const ContactDetailsForm = () => {
           </Field>
         </FieldGroup>
 
-        {/* Actions */}
+        {/* actions */}
         {isEditing && (
           <ButtonGroup className="ml-auto">
             <Button type="button" variant="outline" onClick={handleCancel}>
               Cancel
             </Button>
-            <Button type="submit" disabled={isLoading}>
-              {isLoading ? "Saving..." : "Save"}
+            <Button
+              type="submit"
+              disabled={isLoading || !draft.emergencyContact}
+            >
+              {isLoading ? "Updating..." : "Update"}
             </Button>
           </ButtonGroup>
         )}

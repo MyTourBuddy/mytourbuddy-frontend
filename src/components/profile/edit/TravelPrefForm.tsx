@@ -102,6 +102,7 @@ const TravelPrefForm = () => {
       {/* form */}
       <form onSubmit={handleSave} method="post">
         <FieldGroup>
+          {/* Travel Preferences */}
           <Field>
             <FieldLabel>Travel Preferences</FieldLabel>
             {(!draft.travelPreferences ||
@@ -127,6 +128,7 @@ const TravelPrefForm = () => {
             )}
           </Field>
 
+          {/* Languages Spoken */}
           <Field>
             <FieldLabel>Languages Spoken</FieldLabel>
             {(!draft.languagesSpoken || draft.languagesSpoken.length === 0) &&
