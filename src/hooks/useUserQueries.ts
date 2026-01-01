@@ -144,3 +144,38 @@ export function useCreateUser() {
     },
   });
 }
+
+// upload avatar to imgbb
+export function useUploadAvatar() {
+  return useMutation({
+    mutationFn: async (base64: string) => {
+      const response = await fetch(base64);
+      const blob = await response.blob();
+
+      const formData = new FormData();
+      formData.append("image", blob);
+
+      const IMGBB_KEY = process.env.NEXT_PUBLIC_IMGBB_API_KEY;
+      if (!IMGBB_KEY) {
+        throw new Error("IMGBB API key not configured");
+      }
+
+      const uploadResponse = await fetch(
+        `https://api.imgbb.com/1/upload?key=${IMGBB_KEY}`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
+      const result = await uploadResponse.json();
+      if (!result.success) {
+        throw new Error("Failed to upload image");
+      }
+
+      console.log(result);
+
+      return result.data.url;
+    },
+  });
+}
