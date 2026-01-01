@@ -8,26 +8,28 @@ import { Separator } from "@/components/ui/separator";
 import { TbPencil } from "react-icons/tb";
 import { ButtonGroup } from "@/components/ui/button-group";
 import { Tourist } from "@/schemas/user.schema";
-import { auth, userAPI } from "@/lib/api";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import { useCurrentUser } from "@/hooks/useAuthQueries";
+import { useUpdateUser } from "@/hooks/useUserQueries";
 
 const TravelPrefForm = () => {
   const router = useRouter();
-  const [isEditing, setIsEditing] = useState(false);
+  const { data: currentUser, isLoading: isLoadingUser } = useCurrentUser();
+  const updateUserMutation = useUpdateUser();
+
   const [draft, setDraft] = useState<Tourist | null>(null);
   const [original, setOriginal] = useState<Tourist | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
-    const dbUser = auth.getCurrentUser();
-    if (!dbUser || dbUser.role !== "TOURIST") return;
+    if (currentUser && currentUser.role === "TOURIST") {
+      setDraft(currentUser as Tourist);
+      setOriginal(currentUser as Tourist);
+    }
+  }, [currentUser]);
 
-    setDraft(dbUser as Tourist);
-    setOriginal(dbUser as Tourist);
-  }, []);
-
-  if (!draft) {
+  if (isLoadingUser || !draft) {
     return (
       <p className="text-sm text-muted-foreground">Loading preferences...</p>
     );
@@ -44,10 +46,7 @@ const TravelPrefForm = () => {
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const user = auth.getCurrentUser();
-    if (!user || user.role !== "TOURIST") return;
-
-    setIsLoading(true);
+    if (!currentUser || currentUser.role !== "TOURIST" || !draft) return;
 
     try {
       const updateData = {
@@ -55,17 +54,19 @@ const TravelPrefForm = () => {
         languagesSpoken: draft.languagesSpoken || [],
       };
 
-      const updatedUser = await userAPI.update(user.id, updateData);
+      await updateUserMutation.mutateAsync({
+        userId: currentUser.id,
+        userData: updateData,
+      });
 
-      auth.saveSession(updatedUser);
       setOriginal({ ...draft });
       setIsEditing(false);
       router.refresh();
 
       toast.success("Travel preferences updated successfully!");
     } catch (error) {
-    } finally {
-      setIsLoading(false);
+      console.error("Update failed:", error);
+      toast.error("Failed to update preferences. Please try again.");
     }
   };
 
@@ -163,12 +164,12 @@ const TravelPrefForm = () => {
             <Button
               type="submit"
               disabled={
-                isLoading ||
+                updateUserMutation.isPending ||
                 !draft.travelPreferences ||
                 draft.travelPreferences.length === 0
               }
             >
-              {isLoading ? "Updating..." : "Update"}
+              {updateUserMutation.isPending ? "Updating..." : "Update"}
             </Button>
           </ButtonGroup>
         )}

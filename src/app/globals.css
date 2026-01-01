@@ -45,16 +45,6 @@
 }
 
 :root {
-  --min-height-nav-offset: calc(100vh - 4rem);
-}
-
-@media (min-width: 768px) {
-  :root {
-    --min-height-nav-offset: calc(100vh - 5rem);
-  }
-}
-
-:root {
   --radius: 0.65rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.141 0.005 285.823);
@@ -135,9 +125,15 @@
 .navbar-offset {
   min-height: calc(100vh - 4rem);
 }
+.navbar-h {
+  height: 4rem;
+}
 
 @media (min-width: 768px) {
   .navbar-offset {
     min-height: calc(100vh - 5rem);
+  }
+  .navbar-h {
+    height: 5rem;
   }
 }

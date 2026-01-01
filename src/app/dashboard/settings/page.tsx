@@ -19,15 +19,11 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { useAuth } from "@/context/AuthContext";
-import { useParams } from "next/navigation";
+import { useCurrentUser } from "@/hooks/useAuthQueries";
 
 const ProfileSettingsPage = () => {
-  const { username } = useParams<{ username: string }>();
-  const auth = useAuth();
+  const { data: user } = useCurrentUser();
 
-  console.log(auth.isTourist);
-  
   return (
     <section className="max-w-4xl w-full mx-auto">
       <div className="flex flex-col gap-6">
@@ -66,7 +62,7 @@ const ProfileSettingsPage = () => {
 
               {/* tourist only */}
 
-              {auth.isTourist && (
+              {user?.role === "TOURIST" && (
                 <AccordionItem value="card2">
                   <AccordionTrigger>Travel Preferences</AccordionTrigger>
                   <AccordionContent>
@@ -76,7 +72,7 @@ const ProfileSettingsPage = () => {
               )}
 
               {/* guide only */}
-              {auth.isGuide && (
+              {user?.role === "GUIDE" && (
                 <AccordionItem value="card3">
                   <AccordionTrigger>Professional Details</AccordionTrigger>
                   <AccordionContent>
@@ -84,7 +80,7 @@ const ProfileSettingsPage = () => {
                   </AccordionContent>
                 </AccordionItem>
               )}
-              {auth.isGuide && (
+              {user?.role === "GUIDE" && (
                 <AccordionItem value="card4">
                   <AccordionTrigger>Contact & Availability</AccordionTrigger>
                   <AccordionContent>

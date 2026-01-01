@@ -5,6 +5,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { AuthProvider } from "@/context/AuthContext";
 import { Toaster } from "react-hot-toast";
+import { QueryProvider } from "@/lib/query/provider";
 
 export const metadata: Metadata = {
   title: "MyTourBuddy",
@@ -19,12 +20,14 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${poppins.variable}`} suppressHydrationWarning>
       <body className="flex flex-col bg-background dark:bg-primary-foreground min-h-screen antialiased">
-        <AuthProvider>
-          <Navbar />
-          <main className="flex-1 px-4 md:px-8">{children}</main>
-          <Footer />
-          <Toaster position="bottom-right" reverseOrder={false} />
-        </AuthProvider>
+        <QueryProvider>
+          <AuthProvider>
+            <Navbar />
+            <main className="flex-1 px-4 md:px-8">{children}</main>
+            <Footer />
+            <Toaster position="bottom-right" reverseOrder={false} />
+          </AuthProvider>
+        </QueryProvider>
       </body>
     </html>
   );

@@ -8,7 +8,7 @@ export const personalInfoSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
   lastName: z.string().min(1, "Last name is required"),
   email: z.email("Please enter a valid email"),
-  age: z.number("Age is required").min(1).max(150),
+  age: z.number().min(12, "Must be at least 12 years old").max(150, "Age must be less than 150"),
 });
 
 export const accountInfoSchema = z

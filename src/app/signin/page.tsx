@@ -17,7 +17,7 @@ const SigninPage = () => {
   // }, [loading, isAuthenticated, router]);
 
   return (
-    <section className="max-w-md w-full mx-auto">
+    <section className="max-w-md w-full mx-auto navbar-offset flex items-center justify-center">
       <SigninForm />
     </section>
   );

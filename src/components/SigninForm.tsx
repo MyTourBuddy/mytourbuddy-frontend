@@ -19,12 +19,12 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { useState } from "react";
 import { Alert, AlertDescription } from "./ui/alert";
+import { useLogin } from "@/hooks/useAuthQueries";
 
 const SigninForm = () => {
   const router = useRouter();
-  const { login } = useAuth();
+  const loginMutation = useLogin();
 
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     username: "",
@@ -42,29 +42,12 @@ const SigninForm = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
     setError(null);
 
     try {
-      const result = await login(formData);
-
-      if (result.success && result.user) {
-        const role = result.user.role.toLowerCase();
-
-        if (role === "admin") {
-          router.push("/admin");
-        } else if (role === "guide" || role === "tourist") {
-          router.push("/dashboard");
-        } else {
-          router.push("/");
-        }
-      } else {
-        setError(result.error || "Login failed");
-      }
+      await loginMutation.mutateAsync(formData);
     } catch (err: any) {
-      setError(err.message || "An unexpected error occurred");
-    } finally {
-      setLoading(false);
+      setError(err.message || "Login failed");
     }
   };
 
@@ -99,7 +82,7 @@ const SigninForm = () => {
               value={formData.username}
               onChange={handleChange}
               required
-              disabled={loading}
+              disabled={loginMutation.isPending}
             />
           </Field>
           <Field>
@@ -112,7 +95,7 @@ const SigninForm = () => {
               value={formData.password}
               onChange={handleChange}
               required
-              disabled={loading}
+              disabled={loginMutation.isPending}
             />
           </Field>
 
@@ -133,9 +116,9 @@ const SigninForm = () => {
           <Button
             type="submit"
             className="w-full h-10 md:h-11 text-sm md:text-base group"
-            disabled={loading}
+            disabled={loginMutation.isPending}
           >
-            {loading ? (
+            {loginMutation.isPending ? (
               <span>Signing in...</span>
             ) : (
               <>

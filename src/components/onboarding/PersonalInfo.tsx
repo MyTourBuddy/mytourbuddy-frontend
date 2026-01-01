@@ -11,15 +11,15 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { TbArrowRight, TbCheck } from "react-icons/tb";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import {
   PersonalInfoInput,
   personalInfoSchema,
 } from "@/schemas/onboarding.schema";
 import { z } from "zod";
 import { useDebounce } from "@/hooks/useDebounce";
-import { authAPI } from "@/lib/api";
 import { Spinner } from "../ui/spinner";
+import { useCheckEmail } from "@/hooks/useAuthQueries";
 
 interface PersonalInfoProps {
   stepUp: (data: PersonalInfoInput) => void;
@@ -37,40 +37,19 @@ const PersonalInfo = ({ stepUp, initialData }: PersonalInfoProps) => {
   });
 
   const [errors, setErrors] = useState<ValidationErrors>({});
-  const [isCheckingEmail, setIsCheckingEmail] = useState(false);
-  const [emailAvailable, setEmailAvailable] = useState<boolean | null>(null);
-  const [emailCheckError, setEmailCheckError] = useState<string | null>(null);
   const debouncedEmail = useDebounce(formData.email || "", 500);
 
-  useEffect(() => {
-    const checkEmail = async () => {
-      if (!debouncedEmail || !debouncedEmail.includes("@")) {
-        setEmailAvailable(null);
-        setEmailCheckError(null);
-        return;
-      }
+  const {
+    data: emailCheckData,
+    isLoading: isCheckingEmail,
+    error: emailCheckError,
+  } = useCheckEmail(
+    debouncedEmail,
+    debouncedEmail.length > 0 && debouncedEmail.includes("@")
+  );
 
-      setIsCheckingEmail(true);
-      setEmailCheckError(null);
-      try {
-        await authAPI.checkEmail(debouncedEmail);
-        setEmailAvailable(true);
-        setEmailCheckError(null);
-      } catch (error: any) {
-        if (error.status === 409) {
-          setEmailAvailable(false);
-          setEmailCheckError("Email is already taken");
-        } else {
-          setEmailAvailable(false);
-          setEmailCheckError("Unable to verify email availability");
-        }
-      } finally {
-        setIsCheckingEmail(false);
-      }
-    };
-
-    checkEmail();
-  }, [debouncedEmail]);
+  const emailAvailable = emailCheckData?.available ?? null;
+  const emailMessage = emailCheckData?.message || (emailCheckError ? "Unable to verify email availability" : null);
 
   const validateForm = () => {
     const result = personalInfoSchema.safeParse(formData);
@@ -78,15 +57,15 @@ const PersonalInfo = ({ stepUp, initialData }: PersonalInfoProps) => {
     if (result.success) {
       setErrors({});
       return true;
-    } else {
-      const formattedErrors: ValidationErrors = {};
-      result.error.issues.forEach((issue: z.ZodError["issues"][number]) => {
-        const field = issue.path[0] as keyof PersonalInfoInput;
-        formattedErrors[field] = issue.message;
-      });
-      setErrors(formattedErrors);
-      return false;
     }
+
+    const formattedErrors: ValidationErrors = {};
+    result.error.issues.forEach((issue: z.ZodError["issues"][number]) => {
+      const field = issue.path[0] as keyof PersonalInfoInput;
+      formattedErrors[field] = issue.message;
+    });
+    setErrors(formattedErrors);
+    return false;
   };
 
   const handleChange = (field: keyof PersonalInfoInput, value: string) => {
@@ -97,38 +76,20 @@ const PersonalInfo = ({ stepUp, initialData }: PersonalInfoProps) => {
     if (errors[field]) {
       setErrors({ ...errors, [field]: undefined });
     }
-
-    if (field === "email") {
-      setEmailAvailable(null);
-      setEmailCheckError(null);
-    }
   };
 
   const isFormValid = useMemo(() => {
-    if (
-      !formData.firstName ||
-      !formData.lastName ||
-      !formData.email ||
-      !formData.age
-    ) {
-      return false;
-    }
-
-    if (isCheckingEmail || emailAvailable !== true) {
-      return false;
-    }
-
-    if (emailCheckError) {
-      return false;
-    }
-
-    if (Object.keys(errors).length > 0) {
-      return false;
-    }
-
-    const result = personalInfoSchema.safeParse(formData);
-    return result.success;
-  }, [formData, errors, isCheckingEmail, emailAvailable, emailCheckError]);
+    return (
+      formData.firstName &&
+      formData.lastName &&
+      formData.email &&
+      formData.age &&
+      formData.age >= 12 &&
+      !isCheckingEmail &&
+      emailAvailable === true &&
+      Object.keys(errors).length === 0
+    );
+  }, [formData, errors, isCheckingEmail, emailAvailable]);
 
   const handleSubmit = () => {
     if (validateForm()) {
@@ -190,11 +151,11 @@ const PersonalInfo = ({ stepUp, initialData }: PersonalInfoProps) => {
                 placeholder="Email"
                 value={formData.email || ""}
                 onChange={(e) => handleChange("email", e.target.value)}
-                aria-invalid={!!errors.email || !!emailCheckError}
+                aria-invalid={!!errors.email || emailAvailable === false}
                 className={
                   emailAvailable === true
                     ? "border-green-500 pr-10"
-                    : emailAvailable === false || emailCheckError
+                    : emailAvailable === false
                     ? "border-red-500"
                     : ""
                 }
@@ -210,15 +171,12 @@ const PersonalInfo = ({ stepUp, initialData }: PersonalInfoProps) => {
                 </span>
               )}
             </div>
-            {emailCheckError && (
-              <p className="text-xs text-red-500 mt-1">{emailCheckError}</p>
-            )}
-            {!emailCheckError && errors.email && (
+            {errors.email && (
               <p className="text-xs text-red-500 mt-1">{errors.email}</p>
             )}
-            {emailAvailable === true && !emailCheckError && !errors.email && (
-              <p className="text-xs text-green-500 mt-1 flex items-center gap-1">
-                <TbCheck className="h-3 w-3" /> Email is available
+            {!errors.email && emailMessage && (
+              <p className={`text-xs mt-1 flex items-center gap-1 ${emailAvailable ? "text-green-500" : "text-red-500"}`}>
+                {emailAvailable && <TbCheck className="h-3 w-3" />} {emailMessage}
               </p>
             )}
           </Field>
@@ -230,14 +188,19 @@ const PersonalInfo = ({ stepUp, initialData }: PersonalInfoProps) => {
               id="age"
               name="age"
               placeholder="Age"
-              min="1"
-              max="120"
+              min="12"
+              max="150"
               value={formData.age || ""}
               onChange={(e) => handleChange("age", e.target.value)}
               aria-invalid={!!errors.age}
             />
             {errors.age && (
               <p className="text-xs text-red-500 mt-1">{errors.age}</p>
+            )}
+            {!errors.age && formData.age && formData.age < 12 && (
+              <p className="text-xs text-muted-foreground mt-1">
+                Must be at least 12 years old
+              </p>
             )}
           </Field>
         </FieldGroup>

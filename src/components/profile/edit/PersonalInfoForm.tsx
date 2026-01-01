@@ -17,26 +17,28 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { TbPencil } from "react-icons/tb";
 import { ButtonGroup } from "@/components/ui/button-group";
-import { auth, userAPI } from "@/lib/api";
 import toast from "react-hot-toast";
 import { User } from "@/schemas/user.schema";
+import { useCurrentUser } from "@/hooks/useAuthQueries";
+import { useUpdateUser } from "@/hooks/useUserQueries";
 
 const PersonalInfoForm = () => {
   const router = useRouter();
+  const { data: currentUser, isLoading: isLoadingUser } = useCurrentUser();
+  const updateUserMutation = useUpdateUser();
+  
   const [draft, setDraft] = useState<User | null>(null);
   const [original, setOriginal] = useState<User | null>(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    const dbUser = auth.getCurrentUser();
-    if (!dbUser) return;
+    if (currentUser) {
+      setDraft(currentUser);
+      setOriginal(currentUser);
+    }
+  }, [currentUser]);
 
-    setDraft(dbUser);
-    setOriginal(dbUser);
-  }, []);
-
-  if (!draft) {
+  if (isLoadingUser || !draft) {
     return <p className="text-sm text-muted-foreground">Loading profile...</p>;
   }
 
@@ -51,10 +53,7 @@ const PersonalInfoForm = () => {
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const user = auth.getCurrentUser();
-    if (!user) return;
-
-    setIsLoading(true);
+    if (!currentUser || !draft) return;
 
     try {
       const updateData = {
@@ -63,22 +62,22 @@ const PersonalInfoForm = () => {
         age: draft.age,
         phone: draft.phone,
         avatar: draft.avatar,
-        ...(auth.isTourist() && { country: (draft as any).country }),
+        ...(currentUser.role === "TOURIST" && { country: (draft as any).country }),
       };
 
-      const updatedUser = await userAPI.update(user.id, updateData);
+      await updateUserMutation.mutateAsync({
+        userId: currentUser.id,
+        userData: updateData,
+      });
 
-      auth.saveSession(updatedUser);
       setOriginal({ ...draft });
       setIsEditing(false);
       router.refresh();
 
       toast.success("Profile updated successfully!");
     } catch (error) {
-      // console.error("Update failed:", error);
+      console.error("Update failed:", error);
       toast.error("Failed to update profile. Please try again.");
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -173,7 +172,7 @@ const PersonalInfoForm = () => {
             </Field>
 
             {/* Country */}
-            {auth.isTourist() && (
+            {currentUser?.role === "TOURIST" && (
               <Field>
                 <FieldLabel>
                   Country&nbsp;<span className="text-destructive">*</span>
@@ -239,15 +238,15 @@ const PersonalInfoForm = () => {
             <Button
               type="submit"
               disabled={
-                isLoading ||
+                updateUserMutation.isPending ||
                 !draft.firstName ||
                 !draft.lastName ||
                 draft.age < 1 ||
                 !draft.phone ||
-                (auth.isTourist() && !(draft as any).country)
+                (currentUser?.role === "TOURIST" && !(draft as any).country)
               }
             >
-              {isLoading ? "Updating..." : "Update"}
+              {updateUserMutation.isPending ? "Updating..." : "Update"}
             </Button>
           </ButtonGroup>
         )}

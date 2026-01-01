@@ -7,7 +7,8 @@ import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
-import { auth, userAPI } from "@/lib/api";
+import { useCurrentUser } from "@/hooks/useAuthQueries";
+import { useUpdateUser } from "@/hooks/useUserQueries";
 import { Guide } from "@/schemas/user.schema";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -16,21 +17,22 @@ import { TbPencil, TbPlus, TbX } from "react-icons/tb";
 
 const ProfessionalDetailsForm = () => {
   const router = useRouter();
+  const { data: currentUser, isLoading: isLoadingUser } = useCurrentUser();
+  const updateUserMutation = useUpdateUser();
+
+  const [isEditing, setIsEditing] = useState(false);
   const [draft, setDraft] = useState<Guide | null>(null);
   const [original, setOriginal] = useState<Guide | null>(null);
-  const [isEditing, setIsEditing] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    const dbUser = auth.getCurrentUser();
-    if (!dbUser || !auth.isGuide()) return;
+    if (currentUser && currentUser.role === "GUIDE") {
+      const guide = currentUser as Guide;
+      setDraft(guide);
+      setOriginal(guide);
+    }
+  }, [currentUser]);
 
-    const guide = dbUser as Guide;
-    setDraft(guide);
-    setOriginal(guide);
-  }, []);
-
-  if (!draft) {
+  if (isLoadingUser || !draft) {
     return (
       <p className="text-sm text-muted-foreground">
         Loading professional details...
@@ -48,10 +50,7 @@ const ProfessionalDetailsForm = () => {
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    const user = auth.getCurrentUser();
-    if (!user) return;
-
-    setIsLoading(true);
+    if (!currentUser || !draft) return;
 
     try {
       const updateData = {
@@ -62,8 +61,11 @@ const ProfessionalDetailsForm = () => {
         certifications: draft.certifications || [],
       };
 
-      const updatedUser = await userAPI.update(user.id, updateData);
-      auth.saveSession(updatedUser);
+      await updateUserMutation.mutateAsync({
+        userId: currentUser.id,
+        userData: updateData,
+      });
+
       setOriginal({ ...draft });
       setIsEditing(false);
       router.refresh();
@@ -72,8 +74,6 @@ const ProfessionalDetailsForm = () => {
     } catch (error) {
       console.error("Update failed:", error);
       toast.error("Failed to update professional details. Please try again.");
-    } finally {
-      setIsLoading(false);
     }
   };
   return (
@@ -270,10 +270,10 @@ const ProfessionalDetailsForm = () => {
                 (draft.languages || []).length === 0 ||
                 (draft.specializations || []).length === 0 ||
                 draft.yearsOfExp < 0 ||
-                isLoading
+                updateUserMutation.isPending
               }
             >
-              {isLoading ? "Updating..." : "Update"}
+              {updateUserMutation.isPending ? "Updating..." : "Update"}
             </Button>
           </ButtonGroup>
         )}

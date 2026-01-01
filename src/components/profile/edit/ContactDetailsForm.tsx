@@ -7,28 +7,30 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { TbPencil, TbPlus, TbX } from "react-icons/tb";
 import { ButtonGroup } from "@/components/ui/button-group";
-import { auth, userAPI } from "@/lib/api";
 import { Guide } from "@/schemas/user.schema";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import { useCurrentUser } from "@/hooks/useAuthQueries";
+import { useUpdateUser } from "@/hooks/useUserQueries";
 
 const ContactDetailsForm = () => {
   const router = useRouter();
+  const { data: currentUser, isLoading: isLoadingUser } = useCurrentUser();
+  const updateUserMutation = useUpdateUser();
+
+  const [isEditing, setIsEditing] = useState(false);
   const [draft, setDraft] = useState<Guide | null>(null);
   const [original, setOriginal] = useState<Guide | null>(null);
-  const [isEditing, setIsEditing] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    const dbUser = auth.getCurrentUser();
-    if (!dbUser || !auth.isGuide()) return;
+    if (currentUser && currentUser.role === "GUIDE") {
+      const guide = currentUser as Guide;
+      setDraft(guide);
+      setOriginal(guide);
+    }
+  }, [currentUser]);
 
-    const guide = dbUser as Guide;
-    setDraft(guide);
-    setOriginal(guide);
-  }, []);
-
-  if (!draft || !original) {
+  if (isLoadingUser || !draft) {
     return (
       <p className="text-sm text-muted-foreground">
         Loading contact details...
@@ -47,7 +49,7 @@ const ContactDetailsForm = () => {
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    setIsLoading(true);
+    if (!currentUser || !draft) return;
 
     try {
       const updateData = {
@@ -56,8 +58,11 @@ const ContactDetailsForm = () => {
         socialMedia: draft.socialMedia || [],
       };
 
-      const updatedUser = await userAPI.update(draft.id, updateData);
-      auth.saveSession(updatedUser);
+      const updatedUser = await updateUserMutation.mutateAsync({
+        userId: currentUser.id,
+        userData: updateData,
+      });
+      
       setOriginal(updatedUser as Guide);
       setDraft(updatedUser as Guide);
       setIsEditing(false);
@@ -67,8 +72,6 @@ const ContactDetailsForm = () => {
     } catch (error) {
       console.error("Update failed:", error);
       toast.error("Failed to update contact details. Please try again.");
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -214,9 +217,9 @@ const ContactDetailsForm = () => {
             </Button>
             <Button
               type="submit"
-              disabled={isLoading || !draft.emergencyContact}
+              disabled={updateUserMutation.isPending || !draft.emergencyContact}
             >
-              {isLoading ? "Updating..." : "Update"}
+              {updateUserMutation.isPending ? "Updating..." : "Update"}
             </Button>
           </ButtonGroup>
         )}

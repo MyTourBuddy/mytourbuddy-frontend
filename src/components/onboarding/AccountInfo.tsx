@@ -11,15 +11,15 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { TbArrowRight, TbCheck } from "react-icons/tb";
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 import {
   AccountInfoInput,
   accountInfoSchema,
 } from "@/schemas/onboarding.schema";
 import { z } from "zod";
 import { useDebounce } from "@/hooks/useDebounce";
-import { authAPI } from "@/lib/api";
 import { Spinner } from "../ui/spinner";
+import { useCheckUsername } from "@/hooks/useAuthQueries";
 
 interface AccountInfoProps {
   stepUp: (data: AccountInfoInput) => void;
@@ -36,40 +36,19 @@ const AccountInfo = ({ stepUp, initialData }: AccountInfoProps) => {
   });
 
   const [errors, setErrors] = useState<ValidationErrors>({});
-  const [isCheckingUsername, setIsCheckingUsername] = useState(false);
-  const [usernameAvailable, setUsernameAvailable] = useState<boolean | null>(null);
-  const [usernameCheckError, setUsernameCheckError] = useState<string | null>(null);
   const debouncedUsername = useDebounce(formData.username || "", 500);
 
-  useEffect(() => {
-    const checkUsername = async () => {
-      if (!debouncedUsername || debouncedUsername.length < 3) {
-        setUsernameAvailable(null);
-        setUsernameCheckError(null);
-        return;
-      }
+  const {
+    data: usernameCheckData,
+    isLoading: isCheckingUsername,
+    error: usernameCheckError,
+  } = useCheckUsername(
+    debouncedUsername,
+    debouncedUsername.length >= 8
+  );
 
-      setIsCheckingUsername(true);
-      setUsernameCheckError(null);
-      try {
-        await authAPI.checkUsername(debouncedUsername);
-        setUsernameAvailable(true);
-        setUsernameCheckError(null);
-      } catch (error: any) {
-        if (error.status === 409) {
-          setUsernameAvailable(false);
-          setUsernameCheckError("Username is already taken");
-        } else {
-          setUsernameAvailable(false);
-          setUsernameCheckError("Unable to verify username availability");
-        }
-      } finally {
-        setIsCheckingUsername(false);
-      }
-    };
-
-    checkUsername();
-  }, [debouncedUsername]);
+  const usernameAvailable = usernameCheckData?.available ?? null;
+  const usernameMessage = usernameCheckData?.message || (usernameCheckError ? "Unable to verify username availability" : null);
 
   const passwordStrength = useMemo(() => {
     const pw = formData.password || "";
@@ -91,17 +70,15 @@ const AccountInfo = ({ stepUp, initialData }: AccountInfoProps) => {
     if (result.success) {
       setErrors({});
       return true;
-    } else {
-      const formattedErrors: ValidationErrors = {};
-      result.error.issues.forEach((issue: z.ZodError["issues"][number]) => {
-        const field = issue.path[0] as keyof AccountInfoInput;
-        if (!formattedErrors[field]) {
-          formattedErrors[field] = issue.message;
-        }
-      });
-      setErrors(formattedErrors);
-      return false;
     }
+
+    const formattedErrors: ValidationErrors = {};
+    result.error.issues.forEach((issue: z.ZodError["issues"][number]) => {
+      const field = issue.path[0] as keyof AccountInfoInput;
+      formattedErrors[field] = issue.message;
+    });
+    setErrors(formattedErrors);
+    return false;
   };
 
   const handleChange = (field: keyof AccountInfoInput, value: string) => {
@@ -110,33 +87,19 @@ const AccountInfo = ({ stepUp, initialData }: AccountInfoProps) => {
     if (errors[field]) {
       setErrors({ ...errors, [field]: undefined });
     }
-
-    if (field === "username") {
-      setUsernameAvailable(null);
-      setUsernameCheckError(null);
-    }
   };
 
   const isFormValid = useMemo(() => {
-    if (!formData.username || !formData.password || !formData.confirmPassword) {
-      return false;
-    }
-
-    if (isCheckingUsername || usernameAvailable !== true) {
-      return false;
-    }
-
-    if (usernameCheckError) {
-      return false;
-    }
-
-    if (Object.keys(errors).length > 0) {
-      return false;
-    }
-
-    const result = accountInfoSchema.safeParse(formData);
-    return result.success;
-  }, [formData, errors, isCheckingUsername, usernameAvailable, usernameCheckError]);
+    return (
+      formData.username &&
+      formData.username.length >= 8 &&
+      formData.password &&
+      formData.confirmPassword &&
+      !isCheckingUsername &&
+      usernameAvailable === true &&
+      Object.keys(errors).length === 0
+    );
+  }, [formData, errors, isCheckingUsername, usernameAvailable]);
 
   const handleSubmit = () => {
     if (validateForm()) {
@@ -164,11 +127,11 @@ const AccountInfo = ({ stepUp, initialData }: AccountInfoProps) => {
                 placeholder="Username"
                 value={formData.username || ""}
                 onChange={(e) => handleChange("username", e.target.value)}
-                aria-invalid={!!errors.username || !!usernameCheckError}
+                aria-invalid={!!errors.username || usernameAvailable === false}
                 className={
                   usernameAvailable === true
                     ? "border-green-500 pr-10"
-                    : usernameAvailable === false || usernameCheckError
+                    : usernameAvailable === false
                     ? "border-red-500"
                     : ""
                 }
@@ -184,15 +147,17 @@ const AccountInfo = ({ stepUp, initialData }: AccountInfoProps) => {
                 </span>
               )}
             </div>
-            {usernameCheckError && (
-              <p className="text-xs text-red-500 mt-1">{usernameCheckError}</p>
-            )}
-            {!usernameCheckError && errors.username && (
+            {errors.username && (
               <p className="text-xs text-red-500 mt-1">{errors.username}</p>
             )}
-            {usernameAvailable === true && !usernameCheckError && !errors.username && (
-              <p className="text-xs text-green-500 mt-1 flex items-center gap-1">
-                <TbCheck className="h-3 w-3" /> Username is available
+            {!errors.username && usernameMessage && (
+              <p className={`text-xs mt-1 flex items-center gap-1 ${usernameAvailable ? "text-green-500" : "text-red-500"}`}>
+                {usernameAvailable && <TbCheck className="h-3 w-3" />} {usernameMessage}
+              </p>
+            )}
+            {!errors.username && !usernameMessage && formData.username && formData.username.length < 8 && (
+              <p className="text-xs text-muted-foreground mt-1">
+                Minimum 8 characters required
               </p>
             )}
           </Field>
