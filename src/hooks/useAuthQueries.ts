@@ -4,6 +4,7 @@ import { ProfileData } from "@/schemas/onboarding.schema";
 import { User } from "@/schemas/user.schema";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 interface AuthResponse {
   user: User;
@@ -63,15 +64,18 @@ export function useLogin() {
         localStorage.setItem("user", JSON.stringify(user));
       }
 
-      // Update query cache
       queryClient.setQueryData(authKeys.currentUser(), user);
 
-      // Redirect based on role
-      const role = user.role.toLowerCase();
-      if (role === "admin") {
+      const role = user.role;
+      if (role === "ADMIN") {
         router.push("/admin");
-      } else if (role === "guide" || role === "tourist") {
-        router.push("/dashboard");
+      } else if (role === "GUIDE" || role === "TOURIST") {
+        if (user.isProfileComplete) {
+          router.push("/dashboard");
+        } else {
+          router.push(`${user.username}`);
+          toast("Please complete your profile", { icon: "📝" });
+        }
       } else {
         router.push("/");
       }
@@ -100,11 +104,21 @@ export function useRegister() {
         localStorage.setItem("user", JSON.stringify(user));
       }
 
-      // Update query cache
       queryClient.setQueryData(authKeys.currentUser(), user);
 
-      // Redirect to dashboard
-      router.push("/dashboard");
+      const role = user.role;
+      if (role === "ADMIN") {
+        router.push("/admin");
+      } else if (role === "GUIDE" || role === "TOURIST") {
+        if (user.isProfileComplete) {
+          router.push("/dashboard");
+        } else {
+          router.push(`${user.username}`);
+          toast("Please complete your profile", { icon: "📝" });
+        }
+      } else {
+        router.push("/");
+      }
     },
     onError: (error) => {
       console.error("Registration failed:", getErrorMessage(error));

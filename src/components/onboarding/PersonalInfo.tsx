@@ -20,6 +20,7 @@ import { z } from "zod";
 import { useDebounce } from "@/hooks/useDebounce";
 import { Spinner } from "../ui/spinner";
 import { useCheckEmail } from "@/hooks/useAuthQueries";
+import { capitalizeFirstLetter } from "@/utils/helpers";
 
 interface PersonalInfoProps {
   stepUp: (data: PersonalInfoInput) => void;
@@ -78,6 +79,12 @@ const PersonalInfo = ({ stepUp, initialData }: PersonalInfoProps) => {
     }
   };
 
+  const handleBlur = (field: keyof PersonalInfoInput) => {
+    if ((field === "firstName" || field === "lastName") && formData[field]) {
+      setFormData({ ...formData, [field]: capitalizeFirstLetter(formData[field] as string) });
+    }
+  };
+
   const isFormValid = useMemo(() => {
     return (
       formData.firstName &&
@@ -117,6 +124,7 @@ const PersonalInfo = ({ stepUp, initialData }: PersonalInfoProps) => {
                 placeholder="First name"
                 value={formData.firstName || ""}
                 onChange={(e) => handleChange("firstName", e.target.value)}
+                onBlur={() => handleBlur("firstName")}
                 aria-invalid={!!errors.firstName}
               />
               {errors.firstName && (
@@ -133,6 +141,7 @@ const PersonalInfo = ({ stepUp, initialData }: PersonalInfoProps) => {
                 placeholder="Last name"
                 value={formData.lastName || ""}
                 onChange={(e) => handleChange("lastName", e.target.value)}
+                onBlur={() => handleBlur("lastName")}
                 aria-invalid={!!errors.lastName}
               />
               {errors.lastName && (

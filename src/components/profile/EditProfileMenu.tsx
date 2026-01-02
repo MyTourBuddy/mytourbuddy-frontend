@@ -9,10 +9,10 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { useCurrentUser } from "@/hooks/useAuthQueries";
 
 const EditProfileMenu = () => {
-  const pathname = usePathname();
+  const { data } = useCurrentUser();
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="cursor-pointer" asChild>
@@ -24,12 +24,16 @@ const EditProfileMenu = () => {
         <Link href="/dashboard/settings">
           <DropdownMenuItem>Settings</DropdownMenuItem>
         </Link>
-        <Link href="/dashboard/packages">
-          <DropdownMenuItem>My Packages</DropdownMenuItem>
-        </Link>
-        <Link href="/dashboard/experiences">
-          <DropdownMenuItem>My Experiences</DropdownMenuItem>
-        </Link>
+        {data?.role === "GUIDE" && (
+          <>
+            <Link href="/dashboard/packages">
+              <DropdownMenuItem>My Packages</DropdownMenuItem>
+            </Link>
+            <Link href="/dashboard/experiences">
+              <DropdownMenuItem>My Experiences</DropdownMenuItem>
+            </Link>
+          </>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );

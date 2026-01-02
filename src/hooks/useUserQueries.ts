@@ -1,4 +1,4 @@
-import { apiClient, getErrorMessage, isApiError } from "@/lib/api/client";
+import { apiClient, getErrorMessage } from "@/lib/api/client";
 import { User } from "@/schemas/user.schema";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { authKeys } from "./useAuthQueries";
