@@ -16,9 +16,9 @@ const SignupPage = () => {
   //   }
   // }, [loading, isAuthenticated, router]);
   return (
-    <div className="max-w-md w-full mx-auto">
+    <section className="max-w-md mx-auto navbar-offset flex items-center justify-center w-full">
       <OnboardingFlow />
-    </div>
+    </section>
   );
 };
 

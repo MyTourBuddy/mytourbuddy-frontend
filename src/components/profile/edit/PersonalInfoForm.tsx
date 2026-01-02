@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Field, FieldLabel } from "@/components/ui/field";
@@ -12,31 +12,68 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
+import { Spinner } from "@/components/ui/spinner";
 import { COUNTRIES } from "@/data/constants";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { TbPencil } from "react-icons/tb";
+import { TbCamera, TbPencil, TbX } from "react-icons/tb";
 import { ButtonGroup } from "@/components/ui/button-group";
-import { auth, userAPI } from "@/lib/api";
 import toast from "react-hot-toast";
 import { User } from "@/schemas/user.schema";
+import { useCurrentUser } from "@/hooks/useAuthQueries";
+import { useUpdateUser, useUploadAvatar } from "@/hooks/useUserQueries";
 
 const PersonalInfoForm = () => {
   const router = useRouter();
+  const { data: currentUser, isLoading: isLoadingUser } = useCurrentUser();
+  const updateUserMutation = useUpdateUser();
+  const uploadAvatarMutation = useUploadAvatar();
+
   const [draft, setDraft] = useState<User | null>(null);
   const [original, setOriginal] = useState<User | null>(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    const dbUser = auth.getCurrentUser();
-    if (!dbUser) return;
+    if (currentUser) {
+      setDraft(currentUser);
+      setOriginal(currentUser);
+    }
+  }, [currentUser]);
 
-    setDraft(dbUser);
-    setOriginal(dbUser);
-  }, []);
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // Validate file type
+      if (!file.type.startsWith("image/")) {
+        toast.error("Please select an image file");
+        return;
+      }
 
-  if (!draft) {
+      // Validate file size (e.g., max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error("Image size should be less than 5MB");
+        return;
+      }
+
+      // Show loading while processing
+      setIsUploadingAvatar(true);
+
+      // Convert to base64 for preview
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setDraft((prev) =>
+          prev ? { ...prev, avatar: reader.result as string } : null
+        );
+        setIsUploadingAvatar(false);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  if (isLoadingUser || !draft) {
     return <p className="text-sm text-muted-foreground">Loading profile...</p>;
   }
 
@@ -51,10 +88,20 @@ const PersonalInfoForm = () => {
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const user = auth.getCurrentUser();
-    if (!user) return;
+    if (!currentUser || !draft) return;
 
-    setIsLoading(true);
+    let avatarUrl = draft.avatar;
+
+    // If avatar is base64, upload to imgbb first
+    if (draft.avatar && draft.avatar.startsWith("data:")) {
+      try {
+        avatarUrl = await uploadAvatarMutation.mutateAsync(draft.avatar);
+      } catch (error) {
+        console.error("Upload error:", error);
+        toast.error("Failed to upload image");
+        return;
+      }
+    }
 
     try {
       const updateData = {
@@ -62,23 +109,27 @@ const PersonalInfoForm = () => {
         lastName: draft.lastName,
         age: draft.age,
         phone: draft.phone,
-        avatar: draft.avatar,
-        ...(auth.isTourist() && { country: (draft as any).country }),
+        avatar: avatarUrl,
+        ...(currentUser.role === "TOURIST" && {
+          country: (draft as any).country,
+        }),
       };
 
-      const updatedUser = await userAPI.update(user.id, updateData);
+      console.log("Update data:", updateData);
 
-      auth.saveSession(updatedUser);
-      setOriginal({ ...draft });
+      await updateUserMutation.mutateAsync({
+        userId: currentUser.id,
+        userData: updateData,
+      });
+
+      setOriginal({ ...draft, avatar: avatarUrl });
       setIsEditing(false);
       router.refresh();
 
       toast.success("Profile updated successfully!");
     } catch (error) {
-      // console.error("Update failed:", error);
+      console.error("Update failed:", error);
       toast.error("Failed to update profile. Please try again.");
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -173,7 +224,7 @@ const PersonalInfoForm = () => {
             </Field>
 
             {/* Country */}
-            {auth.isTourist() && (
+            {currentUser?.role === "TOURIST" && (
               <Field>
                 <FieldLabel>
                   Country&nbsp;<span className="text-destructive">*</span>
@@ -218,13 +269,43 @@ const PersonalInfoForm = () => {
             <Field className="w-full">
               <FieldLabel className="text-center">Avatar</FieldLabel>
               <div className="flex justify-center md:order-2 order-1">
-                <Avatar className="w-32 h-32 md:w-40 md:h-40 rounded-lg border">
-                  {draft.avatar && <AvatarImage src={draft.avatar} />}
-                  <AvatarFallback className="text-4xl font-bold rounded-none">
-                    {draft.firstName?.[0] ?? "T"}
-                    {draft.lastName?.[0] ?? "B"}
-                  </AvatarFallback>
-                </Avatar>
+                <div className="w-40 h-40 md:w-40 md:h-40 relative">
+                  <Avatar className="rounded-lg border w-full h-full">
+                    {draft.avatar && <AvatarImage src={draft.avatar} />}
+                    <AvatarFallback className="text-4xl font-bold rounded-none">
+                      {isUploadingAvatar ? (
+                        <Spinner className="size-8" />
+                      ) : (
+                        <>
+                          {draft.firstName?.[0] ?? "T"}
+                          {draft.lastName?.[0] ?? "B"}
+                        </>
+                      )}
+                    </AvatarFallback>
+                  </Avatar>
+                  {isEditing && (
+                    <>
+                      {/* Hidden file input */}
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={handleAvatarChange}
+                      />
+                      {/* Camera button */}
+                      <Button
+                        type="button"
+                        size="icon-lg"
+                        variant="outline"
+                        className="absolute -bottom-2 -right-2"
+                        onClick={() => fileInputRef.current?.click()}
+                      >
+                        <TbCamera />
+                      </Button>
+                    </>
+                  )}
+                </div>
               </div>
             </Field>
           </div>
@@ -239,15 +320,15 @@ const PersonalInfoForm = () => {
             <Button
               type="submit"
               disabled={
-                isLoading ||
+                updateUserMutation.isPending ||
                 !draft.firstName ||
                 !draft.lastName ||
                 draft.age < 1 ||
                 !draft.phone ||
-                (auth.isTourist() && !(draft as any).country)
+                (currentUser?.role === "TOURIST" && !(draft as any).country)
               }
             >
-              {isLoading ? "Updating..." : "Update"}
+              {updateUserMutation.isPending ? "Updating..." : "Update"}
             </Button>
           </ButtonGroup>
         )}

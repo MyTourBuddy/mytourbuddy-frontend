@@ -18,33 +18,17 @@ import {
 } from "@/components/ui/breadcrumb";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Guide, Tourist, User } from "@/schemas/user.schema";
-import { userAPI } from "@/lib/api";
-import { useAuth } from "@/context/AuthContext";
+import { useCurrentUser } from "@/hooks/useAuthQueries";
+import { useUserByUsername } from "@/hooks/useUserQueries";
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
 
 const UserProfile = () => {
   const { username } = useParams<{ username: string }>();
-  const { user: currentUser } = useAuth();
-  const [userData, setUserData] = useState<User | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const { data: currentUser } = useCurrentUser();
+  const { data: userData, isLoading, error } = useUserByUsername(username);
 
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const data: User = await userAPI.getByUsername(username);
-        setUserData(data);
-      } catch (err: any) {
-        setError(err.message || "Failed to load user");
-      }
-    };
-    fetchUsers();
-  }, [username]);
-
-  if (error) return <UserNotFound username={username} />;
-  if (!userData) return <div>Loading...</div>;
-
-  const role = userData.role.toLowerCase();
+  if (isLoading) return <div>Loading...</div>;
+  if (error || !userData) return <UserNotFound username={username} />;
 
   return (
     <section className="max-w-4xl w-full mx-auto">
@@ -68,14 +52,14 @@ const UserProfile = () => {
           <ProfileCompletion user={userData as Guide | Tourist} />
         )}
         <Tabs defaultValue="account" className="w-full">
-          {role === "tourist" && (
+          {userData?.role === "TOURIST" && (
             <TabsList className="grid w-full h-full grid-cols-2 gap-1 sm:gap-2">
               <TabsTrigger value="account">Account</TabsTrigger>
               <TabsTrigger value="reviews">Reviews</TabsTrigger>
             </TabsList>
           )}
 
-          {role === "guide" && (
+          {userData?.role === "GUIDE" && (
             <TabsList className="grid w-full h-full grid-cols-2 md:grid-cols-4 gap-1 sm:gap-2">
               <TabsTrigger value="account">Account</TabsTrigger>
               <TabsTrigger value="packages">Packages</TabsTrigger>
@@ -85,7 +69,7 @@ const UserProfile = () => {
           )}
 
           <TabsContent value="account">
-            {role === "tourist" ? (
+            {userData?.role === "TOURIST" ? (
               <TouristProfileInfo user={userData as Tourist} />
             ) : (
               <GuideProfileInfo user={userData as Guide} />

@@ -1,16 +1,13 @@
 "use client"
 
 import EditProfileMenu from "@/components/profile/EditProfileMenu";
-import { authAPI } from "@/lib/api";
 
 const TestView = () => {
-  const getData = async () => {
-    const response = await authAPI.checkUsername("sasmitha");
-    console.log(response);
-  };
+  // Note: Use useCheckUsername hook from @/hooks/useAuthQueries for username availability checking
+  // const { data, isLoading, error } = useCheckUsername("username", true);
+  
   return (
     <div>
-      <button onClick={getData}>Get</button>
       <EditProfileMenu />
     </div>
   );

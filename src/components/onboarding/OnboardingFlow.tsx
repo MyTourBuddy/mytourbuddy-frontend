@@ -11,15 +11,14 @@ import TravelDetails from "./TravelDetails";
 import GuideDetails from "./GuideDetails";
 import { ProfileData } from "@/schemas/onboarding.schema";
 import ProfilePreview from "./ProfilePreview";
-import { useAuth } from "@/context/AuthContext";
+import { useRegister } from "@/hooks/useAuthQueries";
 
 const OnboardingFlow = () => {
+  const { mutate: register, isPending: loading } = useRegister();
   const router = useRouter();
-  const { register } = useAuth();
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState<ProfileData | null>(null);
 
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const TOTAL_STEPS = 5;
@@ -37,26 +36,15 @@ const OnboardingFlow = () => {
     [step, router, formData]
   );
 
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     if (!formData) return;
-
-    setLoading(true);
     setError(null);
 
-    try {
-      const result = await register(formData);
-
-      if (result.success && result.user) {
-        router.push("/dashboard");
-      } else {
-        setError(result.error || "Registration failed");
-        router.push("/");
-      }
-    } catch (error: any) {
-      setError(error.message || "An unexpected error occurred");
-    } finally {
-      setLoading(false);
-    }
+    register(formData, {
+      onError: (error: any) => {
+        setError(error.message || "Registration failed. Please try again.");
+      },
+    });
   };
 
   const handleRoleSelect = useCallback(
@@ -93,7 +81,7 @@ const OnboardingFlow = () => {
   }, []);
 
   return (
-    <div className="flex flex-col items-center gap-3 md:gap-6 py-4 md:py-8">
+    <div className="flex w-full flex-col items-center gap-3 md:gap-6">
       {step > 1 && (
         <div className="w-full">
           <Button

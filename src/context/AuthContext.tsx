@@ -1,10 +1,15 @@
 "use client";
 
-import { auth, authAPI } from "@/lib/api";
+import {
+  useCurrentUser,
+  useLogin,
+  useLogout,
+  useRegister,
+} from "@/hooks/useAuthQueries";
+import { getErrorMessage, isApiError } from "@/lib/api/client";
 import { SigninInput } from "@/schemas/auth.schema";
 import { ProfileData } from "@/schemas/onboarding.schema";
 import { User } from "@/schemas/user.schema";
-import { useRouter } from "next/navigation";
 import {
   createContext,
   ReactNode,
@@ -41,91 +46,99 @@ interface AuthProviderProps {
 
 export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const router = useRouter();
+  const [shouldCheckAuth, setShouldCheckAuth] = useState(false);
 
+  // Check localStorage on mount
   useEffect(() => {
-    const loadUser = async () => {
-      try {
-        const currentUser = auth.getCurrentUser();
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("user");
+      setShouldCheckAuth(!!stored);
+    }
+  }, []);
 
-        if (currentUser) {
-          try {
-            await authAPI.getCurrentUser();
-            setUser(currentUser);
-          } catch (error) {
-            console.error("Failed to verify user session:", error);
-            auth.logout();
-            setUser(null);
-          }
-        } else {
+  // Use the reactive state
+  const { data: currentUser, isLoading } = useCurrentUser(shouldCheckAuth);
+
+  const loginMutation = useLogin();
+  const registerMutation = useRegister();
+  const logoutMutation = useLogout();
+
+  // Sync user from query cache or localStorage
+  useEffect(() => {
+    if (currentUser) {
+      // User from cache (after successful auth)
+      setUser(currentUser);
+      setShouldCheckAuth(true);
+    } else if (shouldCheckAuth && !isLoading && !currentUser) {
+      // Query ran but returned no user - clear everything
+      setUser(null);
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("user");
+      }
+    } else if (typeof window !== "undefined" && !shouldCheckAuth) {
+      // Initial load - check localStorage
+      const storedUser = localStorage.getItem("user");
+      if (storedUser) {
+        try {
+          const parsed = JSON.parse(storedUser);
+          setUser(parsed);
+          setShouldCheckAuth(true);
+        } catch {
+          localStorage.removeItem("user");
           setUser(null);
         }
-      } catch (error) {
-        console.error("Error loading user:", error);
-        setUser(null);
-      } finally {
-        setLoading(false);
       }
-    };
-
-    loadUser();
-  }, []);
+    }
+  }, [currentUser, shouldCheckAuth, isLoading]);
 
   const register = async (userData: ProfileData): Promise<AuthResult> => {
     try {
-      const response = await authAPI.register(userData);
-
-      auth.saveSession(response.user);
-      setUser(response.user);
-
-      return { success: true, user: response.user };
+      const user = await registerMutation.mutateAsync(userData);
+      setUser(user);
+      return { success: true, user };
     } catch (error: any) {
-      console.error("Registration error:", error);
       return {
         success: false,
-        error: error.message || "Registration failed",
-        errors: error.errors,
+        error: getErrorMessage(error),
+        errors: isApiError(error) ? error.errors : undefined,
       };
     }
   };
 
   const login = async (credentials: SigninInput): Promise<AuthResult> => {
     try {
-      const response = await authAPI.login(credentials);
-
-      auth.saveSession(response.user);
-      setUser(response.user);
-
-      return { success: true, user: response.user };
+      const user = await loginMutation.mutateAsync(credentials);
+      setUser(user);
+      return { success: true, user };
     } catch (error: any) {
-      console.error("Login error:", error);
       return {
         success: false,
-        error: error.message || "Login failed",
+        error: getErrorMessage(error),
       };
     }
   };
 
   const logout = async () => {
     try {
-      await auth.logout();
+      await logoutMutation.mutateAsync();
     } catch (error) {
       console.error("Logout error:", error);
     } finally {
       setUser(null);
-      router.push("/login");
+      setShouldCheckAuth(false); // ← Disable query after logout!
     }
   };
 
   const updateUser = (updatedUser: User) => {
     setUser(updatedUser);
-    auth.saveSession(updatedUser);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("user", JSON.stringify(updatedUser));
+    }
   };
 
   const value: AuthContextType = {
     user,
-    loading,
+    loading: isLoading,
     isAuthenticated: !!user,
     isAdmin: user?.role === "ADMIN",
     isTourist: user?.role === "TOURIST",
