@@ -82,7 +82,8 @@ const AccountInfo = ({ stepUp, initialData }: AccountInfoProps) => {
   };
 
   const handleChange = (field: keyof AccountInfoInput, value: string) => {
-    setFormData({ ...formData, [field]: value });
+    const processedValue = field === "username" ? value.toLowerCase() : value;
+    setFormData({ ...formData, [field]: processedValue });
 
     if (errors[field]) {
       setErrors({ ...errors, [field]: undefined });

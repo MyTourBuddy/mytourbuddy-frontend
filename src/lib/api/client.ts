@@ -133,11 +133,11 @@ export async function apiClient<T>(
 
     // Log errors in development (but skip expected 401s for auth checks)
     if (API_CONFIG.features.enableLogging) {
-      const isExpected401 = 
-        error instanceof ApiError && 
-        error.status === 401 && 
+      const isExpected401 =
+        error instanceof ApiError &&
+        error.status === 401 &&
         endpoint === "auth/me";
-      
+
       if (!isExpected401) {
         console.error(`🔴 API Error: ${options.method || "GET"} ${url}`, error);
       }

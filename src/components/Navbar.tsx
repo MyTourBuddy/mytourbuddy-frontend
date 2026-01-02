@@ -19,7 +19,7 @@ const Navbar = () => {
       <div className="flex justify-between items-center">
         <Link href="/">MyTourBuddy</Link>
 
-        {user && <span>Hello {user.firstName}</span>}
+        {user && <Link href={`/${user.username}`}><span>Hello {user.firstName}</span></Link>}
 
         {isAuthenticated ? (
           <Button onClick={handleLogout} disabled={logoutMutation.isPending}>

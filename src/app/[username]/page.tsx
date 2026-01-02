@@ -21,14 +21,15 @@ import { Guide, Tourist, User } from "@/schemas/user.schema";
 import { useCurrentUser } from "@/hooks/useAuthQueries";
 import { useUserByUsername } from "@/hooks/useUserQueries";
 import { useParams } from "next/navigation";
+import LoadingUser from "@/components/profile/LoadingUser";
 
 const UserProfile = () => {
   const { username } = useParams<{ username: string }>();
   const { data: currentUser } = useCurrentUser();
-  const { data: userData, isLoading, error } = useUserByUsername(username);
+  const { data: userData, isLoading } = useUserByUsername(username);
 
-  if (isLoading) return <div>Loading...</div>;
-  if (error || !userData) return <UserNotFound username={username} />;
+  if (!username || isLoading) return <LoadingUser username={username} />;
+  if (!userData) return <UserNotFound username={username} />;
 
   return (
     <section className="max-w-4xl w-full mx-auto">
@@ -48,9 +49,10 @@ const UserProfile = () => {
         <ProfileHeader user={userData} />
 
         {/* display only the current user */}
-        {currentUser?.username === username && (
-          <ProfileCompletion user={userData as Guide | Tourist} />
-        )}
+        {currentUser?.username === username &&
+          !currentUser?.isProfileComplete && (
+            <ProfileCompletion user={userData as Guide | Tourist} />
+          )}
         <Tabs defaultValue="account" className="w-full">
           {userData?.role === "TOURIST" && (
             <TabsList className="grid w-full h-full grid-cols-2 gap-1 sm:gap-2">

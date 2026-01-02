@@ -10,115 +10,36 @@ const ProfileCompletion = ({ user }: ProfileCompletionProps) => {
   const getMissingFields = (): string[] => {
     const missing: string[] = [];
 
-    if (user.role === "guide") {
-      const guide = user as Guide;
+    if (!user.firstName) missing.push("First Name");
+    if (!user.lastName) missing.push("Last Name");
+    if (!user.email) missing.push("Email");
+    if (!user.age) missing.push("Age");
+    if (!user.phone) missing.push("Phone");
 
-      // Personal info
-      if (!guide.firstName?.trim()) missing.push("First Name");
-      if (!guide.lastName?.trim()) missing.push("Last Name");
-      if (!guide.email?.trim()) missing.push("Email");
-      if (typeof guide.age !== 'number') missing.push("Age");
-      if (!guide.avatar?.trim()) missing.push("Profile Photo");
-      if (!guide.phone?.trim()) missing.push("Phone Number");
-
-      // Account info (skip username/password as they're always set)
-
-      // Guide specific
-      if (!guide.languages || guide.languages.length === 0) missing.push("Languages");
-      if (typeof guide.yearsOfExp !== 'number') missing.push("Years of Experience");
-      if (!guide.specializations || guide.specializations.length === 0) missing.push("Specializations");
-      if (typeof guide.dailyRate !== 'number') missing.push("Daily Rate");
-      if (typeof guide.maxGroupSize !== 'number') missing.push("Max Group Size");
-      if (!guide.transportMode?.trim()) missing.push("Transport Mode");
-      if (!guide.ageGroups || guide.ageGroups.length === 0) missing.push("Age Groups");
-      if (!guide.workingDays || guide.workingDays.length === 0) missing.push("Working Days");
+    if ("languages" in user) {
+      // guide only
+      if (!user.languages?.length) missing.push("Languages");
+      if (!user.yearsOfExp) missing.push("Years of Experience");
+      if (!user.specializations?.length) missing.push("Specializations");
+      if (!user.emergencyContact) missing.push("Emergency Contact");
     } else {
-      const tourist = user as Tourist;
-
-      // Personal info
-      if (!tourist.firstName?.trim()) missing.push("First Name");
-      if (!tourist.lastName?.trim()) missing.push("Last Name");
-      if (!tourist.email?.trim()) missing.push("Email");
-      if (typeof tourist.age !== 'number') missing.push("Age");
-      if (!tourist.avatar?.trim()) missing.push("Profile Photo");
-      if (!tourist.phone?.trim()) missing.push("Phone Number");
-      if (!tourist.country?.trim()) missing.push("Country");
-
-      // Account info (skip username/password as they're always set)
-
-      // Tourist specific
-      if (!tourist.travelPreferences || tourist.travelPreferences.length === 0) missing.push("Travel Preferences");
+      // tourist only
+      if (!user.travelPreferences?.length) missing.push("Travel Preferences");
+      if (!user.country) missing.push("Country");
     }
 
     return missing;
   };
 
-  const calculateCompletion = (): number => {
-    if (user.role === "guide") {
-      const guide = user as Guide;
-      let filled = 0;
-      const total = 19; // Total required fields for guides
-
-      // Auto-generated fields (always filled)
-      if (guide.id) filled++;
-      if (guide.role) filled++;
-      if (guide.memberSince) filled++;
-
-      // Personal info
-      if (guide.firstName?.trim()) filled++;
-      if (guide.lastName?.trim()) filled++;
-      if (guide.email?.trim()) filled++;
-      if (typeof guide.age === 'number') filled++;
-      if (guide.avatar?.trim()) filled++;
-      if (guide.phone?.trim()) filled++;
-
-      // Account info
-      if (guide.username?.trim()) filled++;
-      if (guide.password?.trim()) filled++;
-
-      // Guide specific
-      if (guide.languages && guide.languages.length > 0) filled++;
-      if (typeof guide.yearsOfExp === 'number') filled++;
-      if (guide.specializations && guide.specializations.length > 0) filled++;
-      if (typeof guide.dailyRate === 'number') filled++;
-      if (typeof guide.maxGroupSize === 'number') filled++;
-      if (guide.transportMode?.trim()) filled++;
-      if (guide.ageGroups && guide.ageGroups.length > 0) filled++;
-      if (guide.workingDays && guide.workingDays.length > 0) filled++;
-
-      return Math.round((filled / total) * 100);
-    } else {
-      const tourist = user as Tourist;
-      let filled = 0;
-      const total = 13; // Total required fields for tourists
-
-      // Auto-generated fields (always filled)
-      if (tourist.id) filled++;
-      if (tourist.role) filled++;
-      if (tourist.memberSince) filled++;
-
-      // Personal info
-      if (tourist.firstName?.trim()) filled++;
-      if (tourist.lastName?.trim()) filled++;
-      if (tourist.email?.trim()) filled++;
-      if (typeof tourist.age === 'number') filled++;
-      if (tourist.avatar?.trim()) filled++;
-      if (tourist.phone?.trim()) filled++;
-      if (tourist.country?.trim()) filled++;
-
-      // Account info
-      if (tourist.username?.trim()) filled++;
-      if (tourist.password?.trim()) filled++;
-
-      // Tourist specific
-      if (tourist.travelPreferences && tourist.travelPreferences.length > 0) filled++;
-
-      return Math.round((filled / total) * 100);
-    }
-  };
-
-  const completionPercentage = calculateCompletion();
   const missingFields = getMissingFields();
+  const isComplete = missingFields.length === 0;
+
+  // calc percentage
+  const totalFields = "languages" in user ? 9 : 7;
+  const missingCount = missingFields.length;
+  const completionPercentage = Math.round(
+    ((totalFields - missingCount) / totalFields) * 100
+  );
 
   return (
     <Card className="bg-accent/30">
@@ -147,7 +68,7 @@ const ProfileCompletion = ({ user }: ProfileCompletionProps) => {
                 Missing fields:
               </p>
               <div className="flex flex-wrap gap-2">
-                {missingFields.slice(0, 5).map((field) => (
+                {missingFields.slice(0, 5).map((field: string) => (
                   <Badge key={field} variant="outline" className="text-xs">
                     {field}
                   </Badge>

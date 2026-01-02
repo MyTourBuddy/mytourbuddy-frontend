@@ -12,6 +12,7 @@ import GuideDetails from "./GuideDetails";
 import { ProfileData } from "@/schemas/onboarding.schema";
 import ProfilePreview from "./ProfilePreview";
 import { useRegister } from "@/hooks/useAuthQueries";
+import { capitalizeFirstLetter } from "@/utils/helpers";
 
 const OnboardingFlow = () => {
   const { mutate: register, isPending: loading } = useRegister();
@@ -120,8 +121,8 @@ const OnboardingFlow = () => {
           initialData={
             formData
               ? {
-                  firstName: formData.firstName,
-                  lastName: formData.lastName,
+                  firstName: capitalizeFirstLetter(formData.firstName),
+                  lastName: capitalizeFirstLetter(formData.lastName),
                   email: formData.email,
                   age: formData.age,
                 }

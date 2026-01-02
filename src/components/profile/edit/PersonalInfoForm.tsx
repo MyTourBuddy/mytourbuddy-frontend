@@ -22,6 +22,7 @@ import toast from "react-hot-toast";
 import { User } from "@/schemas/user.schema";
 import { useCurrentUser } from "@/hooks/useAuthQueries";
 import { useUpdateUser, useUploadAvatar } from "@/hooks/useUserQueries";
+import { capitalizeFirstLetter } from "@/utils/helpers";
 
 const PersonalInfoForm = () => {
   const router = useRouter();
@@ -163,6 +164,9 @@ const PersonalInfoForm = () => {
                   onChange={(e) =>
                     setDraft({ ...draft, firstName: e.target.value })
                   }
+                  onBlur={(e) =>
+                    setDraft({ ...draft, firstName: capitalizeFirstLetter(e.target.value) })
+                  }
                 />
               </Field>
 
@@ -178,6 +182,9 @@ const PersonalInfoForm = () => {
                   readOnly={!isEditing}
                   onChange={(e) =>
                     setDraft({ ...draft, lastName: e.target.value })
+                  }
+                  onBlur={(e) =>
+                    setDraft({ ...draft, lastName: capitalizeFirstLetter(e.target.value) })
                   }
                 />
               </Field>
