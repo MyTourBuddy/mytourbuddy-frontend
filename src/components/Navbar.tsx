@@ -15,11 +15,15 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="navbar-h z-999 bg-white sticky top-0 px-4 md:px-8 py-4 max-w-6xl w-full mx-auto flex flex-col gap-3">
+    <nav className="navbar-h z-999 bg-white sticky top-0 px-4 md:px-16 py-4 max-w-5xl w-full mx-auto flex flex-col gap-3">
       <div className="flex justify-between items-center">
         <Link href="/">MyTourBuddy</Link>
 
-        {user && <Link href={`/${user.username}`}><span>Hello {user.firstName}</span></Link>}
+        {user && (
+          <Link href={`/${user.username}`}>
+            <span>Hello {user.firstName}</span>
+          </Link>
+        )}
 
         {isAuthenticated ? (
           <Button onClick={handleLogout} disabled={logoutMutation.isPending}>

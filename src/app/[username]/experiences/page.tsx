@@ -50,7 +50,7 @@ const GuideExpsPage = () => {
   }, []);
 
   return (
-    <section className="max-w-5xl mx-auto w-full">
+    <section className="max-w-4xl mx-auto w-full">
       <div className="flex flex-col gap-6">
         <Breadcrumb>
           <BreadcrumbList>

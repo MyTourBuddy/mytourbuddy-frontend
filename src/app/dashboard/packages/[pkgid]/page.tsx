@@ -22,41 +22,16 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import { usePackage } from "@/hooks/usePackageQueries";
 
 const PackagePage = () => {
   const { pkgid } = useParams<{ pkgid: string }>();
 
-  const [pkgDetails, setPkgDetails] = useState<Package>();
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const fetchPackage = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const response = await fetch(`/api/packages/${pkgid}`);
-
-      if (!response.ok) {
-        throw new Error("Failed to load packages");
-      }
-
-      const data: Package = await response.json();
-      setPkgDetails(data);
-    } catch (err) {
-      setError("Couldn't load this package. Please try again later.");
-      console.error("Fetch error:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchPackage();
-  }, []);
+  const { data: pkgDetails, isLoading: loading, error } = usePackage(pkgid);
 
   if (loading) {
     return (
-      <section className="max-w-5xl mx-auto w-full">
+      <section className="max-w-4xl mx-auto w-full">
         <div className="text-center text-muted-foreground flex justify-center md:flex-row flex-col items-center gap-3 md:gap-2 py-8">
           <Spinner className="size-6 md:size-4" />
           Loading tour package
@@ -67,7 +42,7 @@ const PackagePage = () => {
 
   if (!pkgDetails) {
     return (
-      <section className="max-w-5xl mx-auto w-full">
+      <section className="max-w-4xl mx-auto w-full">
         <div className="text-center text-muted-foreground max-w-md flex md:flex-row flex-col justify-center items-center gap-3 md:gap-2 mx-auto py-8">
           <p className="text-2xl md:text-lg">
             <PiSmileySad />
@@ -80,19 +55,19 @@ const PackagePage = () => {
 
   if (error) {
     return (
-      <section className="max-w-5xl mx-auto w-full">
+      <section className="max-w-4xl mx-auto w-full">
         <div className="text-center max-w-md text-red-500 flex md:flex-row flex-col justify-center items-center gap-3 md:gap-2 mx-auto py-8">
           <p className="text-2xl md:text-lg">
             <PiSmileySad />
           </p>
-          {error}
+          {error.message}
         </div>
       </section>
     );
   }
 
   return (
-    <section className="max-w-5xl mx-auto w-full">
+    <section className="max-w-4xl mx-auto w-full">
       <div className="flex flex-col gap-6">
         <Breadcrumb>
           <BreadcrumbList>
@@ -122,8 +97,8 @@ const PackagePage = () => {
                       src={pkgDetails.image}
                       alt={pkgDetails.title}
                       fill
-                      className="object-cover rounded-t-lg"
                       loading="lazy"
+                      className="object-cover rounded-t-lg"
                     />
                   ) : (
                     <div className="flex items-center justify-center h-full bg-gray-200 rounded-t-lg">
