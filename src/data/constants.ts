@@ -192,3 +192,6 @@ export const COUNTRIES: string[] = [
   "Zambia",
   "Zimbabwe",
 ];
+
+export const BLURDATA =
+  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==";

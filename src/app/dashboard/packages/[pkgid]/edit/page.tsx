@@ -9,12 +9,18 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import { usePackage } from "@/hooks/usePackageQueries";
 import { useParams } from "next/navigation";
 
 const EditPackage = () => {
   const { pkgid } = useParams<{ pkgid: string }>();
+
+  const { data: pkgDetails, isLoading: loading, error } = usePackage(pkgid);
+
+  if (!pkgDetails) return <div>Package not found</div>;
+  
   return (
-    <section className="max-w-2xl mx-auto">
+    <section className="max-w-4xl mx-auto">
       <div className="flex flex-col gap-6">
         <Breadcrumb>
           <BreadcrumbList>
@@ -34,7 +40,7 @@ const EditPackage = () => {
           </BreadcrumbList>
         </Breadcrumb>
         <h1 className="text-3xl font-bold tracking-tight">Edit Package</h1>
-        <PackageEditForm />
+        <PackageEditForm pkg={pkgDetails} />
       </div>
     </section>
   );

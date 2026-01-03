@@ -11,6 +11,14 @@ import {
 } from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -18,62 +26,79 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Separator } from "@/components/ui/separator";
 import { Spinner } from "@/components/ui/spinner";
-import { Package } from "@/schemas/package.schema";
+import { BLURDATA } from "@/data/constants";
+import { useCurrentUser } from "@/hooks/useAuthQueries";
+import {
+  useDeletePackage,
+  usePackagesByGuide,
+} from "@/hooks/usePackageQueries";
 import { formatCurrency } from "@/utils/helpers";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import toast from "react-hot-toast";
 import { PiSmileySad } from "react-icons/pi";
 import { TbDots, TbEye, TbPencil, TbPlus, TbTrash } from "react-icons/tb";
 
 const PackagesPage = () => {
-  const [packages, setPackages] = useState<Package[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
   const pathname = usePathname();
+  const {
+    data: user,
+    isLoading: userLoading,
+    error: userError,
+  } = useCurrentUser();
+  const {
+    data: pkgs,
+    isLoading: pkgsLoading,
+    error: pkgError,
+  } = usePackagesByGuide(user?.id || "", !!user?.id);
+  const deletePackageMutation = useDeletePackage();
 
-  const guideId = "guide-001";
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [packageToDelete, setPackageToDelete] = useState<string | null>(null);
 
-  const fetchPackages = async () => {
+  const loading = userLoading || pkgsLoading;
+  const error = userError || pkgError;
+
+  const handleDeleteClick = (packageId: string) => {
+    setPackageToDelete(packageId);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!packageToDelete) return;
+
     try {
-      setLoading(true);
-      setError(null);
-      const response = await fetch(`/api/packages/${guideId}`);
-
-      if (!response.ok) {
-        throw new Error("Failed to load packages");
-      }
-
-      const data: Package[] = await response.json();
-      setPackages(data);
-    } catch (err) {
-      setError("Couldn't load packages. Please try again later.");
-      console.error("Fetch error:", err);
-    } finally {
-      setLoading(false);
+      await deletePackageMutation.mutateAsync(packageToDelete);
+      toast.success("Package deleted successfully!");
+      setDeleteDialogOpen(false);
+      setPackageToDelete(null);
+    } catch (error) {
+      console.error("Failed to delete package:", error);
+      toast.error("Failed to delete package. Please try again.");
     }
   };
 
-  useEffect(() => {
-    fetchPackages();
-  }, []);
+  const handleDeleteCancel = () => {
+    setDeleteDialogOpen(false);
+    setPackageToDelete(null);
+  };
 
   if (loading) {
     return (
-      <section className="max-w-5xl mx-auto w-full">
-        <div className="text-center text-muted-foreground flex justify-center md:flex-row flex-col items-center gap-3 md:gap-2 py-8">
+      <section className="max-w-4xl mx-auto w-full flex justify-center">
+        <div className="text-center text-muted-foreground flex md:flex-row flex-col items-center gap-3 md:gap-2 mx-auto py-8">
           <Spinner className="size-6 md:size-4" />
-          Loading my packages
+          Loading my packages...
         </div>
       </section>
     );
   }
 
-  if (!packages) {
+  if (!pkgs) {
     return (
-      <section className="max-w-5xl mx-auto w-full">
+      <section className="max-w-4xl mx-auto w-full">
         <div className="text-center text-muted-foreground max-w-md flex md:flex-row flex-col justify-center items-center gap-3 md:gap-2 mx-auto py-8">
           <p className="text-2xl md:text-lg">
             <PiSmileySad />
@@ -86,19 +111,19 @@ const PackagesPage = () => {
 
   if (error) {
     return (
-      <section className="max-w-5xl mx-auto w-full">
+      <section className="max-w-4xl mx-auto w-full">
         <div className="text-center max-w-md text-red-500 flex md:flex-row flex-col justify-center items-center gap-3 md:gap-2 mx-auto py-8">
           <p className="text-2xl md:text-lg">
             <PiSmileySad />
           </p>
-          {error}
+          {error.message}
         </div>
       </section>
     );
   }
 
   return (
-    <section className="max-w-3xl mx-auto">
+    <section className="max-w-4xl mx-auto">
       <div className="flex flex-col gap-6">
         <Breadcrumb>
           <BreadcrumbList>
@@ -122,10 +147,10 @@ const PackagesPage = () => {
             <div className="flex flex-col gap-3">
               <h1 className="text-3xl font-bold tracking-tight">My Packages</h1>
               <p className="text-muted-foreground mt-1">
-                Manage your tour packages ({packages.length}/3)
+                Manage your tour packages ({pkgs.length}/3)
               </p>
             </div>
-            {packages.length < 3 && (
+            {pkgs.length < 3 && (
               <Link href={`${pathname}/new`}>
                 <Button className="cursor-pointer">
                   <TbPlus className="mr-2" />
@@ -139,13 +164,13 @@ const PackagesPage = () => {
         </div>
 
         {/* cards */}
-        {packages.length == 0 ? (
+        {pkgs.length == 0 ? (
           <div className="text-center py-12 text-muted-foreground">
             No packages yet. Create your first one to get started.
           </div>
         ) : (
           <div className="flex flex-col gap-4">
-            {packages.map((pkg) => (
+            {pkgs.map((pkg) => (
               <div
                 key={pkg.id}
                 className="flex flex-col md:flex-row gap-4 p-4 border border-border rounded-lg hover:shadow-sm transition-shadow bg-card"
@@ -153,11 +178,13 @@ const PackagesPage = () => {
                 <div className="shrink-0 w-full md:w-32 h-48 md:h-32 rounded-md border border-border overflow-hidden bg-muted">
                   {pkg.image ? (
                     <Image
-                      src={pkg.image || "/placeholder.svg"}
+                      src={pkg.image}
                       alt={pkg.title}
                       width={128}
                       height={128}
                       className="w-full h-full object-cover"
+                      blurDataURL={BLURDATA}
+                      loading="eager"
                     />
                   ) : (
                     <div className="flex items-center justify-center w-full h-full">
@@ -196,8 +223,11 @@ const PackagesPage = () => {
                             Edit
                           </DropdownMenuItem>
                         </Link>
-                        <DropdownMenuItem>
-                          <TbTrash />
+                        <DropdownMenuItem
+                          onClick={() => handleDeleteClick(pkg.id)}
+                          className="text-destructive focus:text-destructive"
+                        >
+                          <TbTrash className="text-destructive" />
                           Delete
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -238,6 +268,35 @@ const PackagesPage = () => {
           </div>
         )}
       </div>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete Package</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete this package? This action cannot
+              be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={handleDeleteCancel}
+              disabled={deletePackageMutation.isPending}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleDeleteConfirm}
+              disabled={deletePackageMutation.isPending}
+            >
+              {deletePackageMutation.isPending ? "Deleting..." : "Delete"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </section>
   );
 };

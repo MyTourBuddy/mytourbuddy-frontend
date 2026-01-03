@@ -9,7 +9,10 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Spinner } from "@/components/ui/spinner";
+import { BLURDATA } from "@/data/constants";
+import { useExperience } from "@/hooks/useExperienceQueries";
 import { Experience } from "@/schemas/experience.schema";
+import { formatDate } from "@/utils/helpers";
 import Image from "next/image";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -17,37 +20,12 @@ import { PiSmileySad } from "react-icons/pi";
 
 const ExperiencePage = () => {
   const { expid, username } = useParams<{ expid: string; username: string }>();
-  const [expDetails, setExpDetails] = useState<Experience>();
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
-  const fetchPackage = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const response = await fetch(`/api/experiences/${expid}`);
-
-      if (!response.ok) {
-        throw new Error("Failed to load experiences");
-      }
-
-      const data: Experience = await response.json();
-      setExpDetails(data);
-    } catch (err) {
-      setError("Couldn't load this experience. Please try again later.");
-      console.error("Fetch error:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchPackage();
-  }, []);
+  const { data: expDetails, isLoading: loading, error } = useExperience(expid);
 
   if (loading) {
     return (
-      <section className="max-w-5xl mx-auto w-full">
+      <section className="max-w-4xl mx-auto w-full">
         <div className="text-center text-muted-foreground flex justify-center md:flex-row flex-col items-center gap-3 md:gap-2 py-8">
           <Spinner className="size-6 md:size-4" />
           Loading {username}'s experience
@@ -58,7 +36,7 @@ const ExperiencePage = () => {
 
   if (!expDetails) {
     return (
-      <section className="max-w-5xl mx-auto w-full">
+      <section className="max-w-4xl mx-auto w-full">
         <div className="text-center text-muted-foreground max-w-md flex md:flex-row flex-col justify-center items-center gap-3 md:gap-2 mx-auto py-8">
           <p className="text-2xl md:text-lg">
             <PiSmileySad />
@@ -71,12 +49,12 @@ const ExperiencePage = () => {
 
   if (error) {
     return (
-      <section className="max-w-5xl mx-auto w-full">
+      <section className="max-w-4xl mx-auto w-full">
         <div className="text-center max-w-md text-red-500 flex md:flex-row flex-col justify-center items-center gap-3 md:gap-2 mx-auto py-8">
           <p className="text-2xl md:text-lg">
             <PiSmileySad />
           </p>
-          {error}
+          {error.message}
         </div>
       </section>
     );
@@ -102,13 +80,13 @@ const ExperiencePage = () => {
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
-        
+
         <div className="flex flex-col gap-1">
           <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
             {expDetails.title}
           </h1>
           <p className="text-sm text-muted-foreground">
-            {new Date(expDetails.experiencedAt).toLocaleDateString(undefined, {
+            {formatDate(expDetails.experiencedAt, {
               year: "numeric",
               month: "long",
               day: "numeric",
@@ -123,7 +101,8 @@ const ExperiencePage = () => {
               alt={expDetails.title}
               fill
               className="object-cover rounded-t-lg"
-              loading="lazy"
+              blurDataURL={BLURDATA}
+              loading="eager"
             />
           ) : (
             <div className="flex items-center justify-center h-full bg-gray-200 rounded-t-lg">

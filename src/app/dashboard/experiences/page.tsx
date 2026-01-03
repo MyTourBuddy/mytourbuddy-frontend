@@ -10,6 +10,14 @@ import {
 } from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -17,53 +25,72 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Separator } from "@/components/ui/separator";
 import { Spinner } from "@/components/ui/spinner";
-import { Experience } from "@/schemas/experience.schema";
+import { BLURDATA } from "@/data/constants";
+import { useCurrentUser } from "@/hooks/useAuthQueries";
+import {
+  useDeleteExperience,
+  useExperiencesByGuide,
+} from "@/hooks/useExperienceQueries";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import toast from "react-hot-toast";
 import { PiSmileySad } from "react-icons/pi";
 import { TbDots, TbEye, TbPencil, TbPlus, TbTrash } from "react-icons/tb";
 
 const ExperiencesPage = () => {
   const pathname = usePathname();
+  const {
+    data: user,
+    isLoading: userLoading,
+    error: userError,
+  } = useCurrentUser();
+  const {
+    data: experiences,
+    isLoading: expLoading,
+    error: expError,
+  } = useExperiencesByGuide(user?.id || "", !!user?.id);
+  const deleteExperienceMutation = useDeleteExperience();
 
-  const [experiences, setExperiences] = useState<Experience[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [experienceToDelete, setExperienceToDelete] = useState<string | null>(
+    null
+  );
 
-  const guideId = "guide-001";
+  const loading = userLoading || expLoading;
+  const error = userError || expError;
 
-  const fetchExperiences = async () => {
+  const handleDeleteClick = (experienceId: string) => {
+    setExperienceToDelete(experienceId);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!experienceToDelete) return;
+
     try {
-      setLoading(true);
-      setError(null);
-      const response = await fetch(`/api/experiences/${guideId}`);
-
-      if (!response.ok) {
-        throw new Error("Failed to load experiences");
-      }
-
-      const data: Experience[] = await response.json();
-      setExperiences(data);
-    } catch (err) {
-      setError("Couldn't load this experience. Please try again later.");
-      console.error("Fetch error:", err);
-    } finally {
-      setLoading(false);
+      await deleteExperienceMutation.mutateAsync(experienceToDelete);
+      toast.success("Experience deleted successfully!");
+      setDeleteDialogOpen(false);
+      setExperienceToDelete(null);
+    } catch (error) {
+      console.error("Failed to delete experience:", error);
+      toast.error("Failed to delete experience. Please try again.");
     }
   };
 
-  useEffect(() => {
-    fetchExperiences();
-  }, []);
+  const handleDeleteCancel = () => {
+    setDeleteDialogOpen(false);
+    setExperienceToDelete(null);
+  };
 
   if (loading) {
     return (
-      <section className="max-w-5xl mx-auto w-full">
-        <div className="text-center text-muted-foreground flex justify-center md:flex-row flex-col items-center gap-3 md:gap-2 py-8">
+      <section className="max-w-4xl mx-auto w-full flex justify-center">
+        <div className="text-center text-muted-foreground flex md:flex-row flex-col items-center gap-3 md:gap-2 mx-auto py-8">
           <Spinner className="size-6 md:size-4" />
-          Loading guide's experiences
+          Loading my experiences...
         </div>
       </section>
     );
@@ -71,7 +98,7 @@ const ExperiencesPage = () => {
 
   if (!experiences) {
     return (
-      <section className="max-w-5xl mx-auto w-full">
+      <section className="max-w-4xl mx-auto w-full">
         <div className="text-center text-muted-foreground max-w-md flex md:flex-row flex-col justify-center items-center gap-3 md:gap-2 mx-auto py-8">
           <p className="text-2xl md:text-lg">
             <PiSmileySad />
@@ -84,18 +111,19 @@ const ExperiencesPage = () => {
 
   if (error) {
     return (
-      <section className="max-w-5xl mx-auto w-full">
+      <section className="max-w-4xl mx-auto w-full">
         <div className="text-center max-w-md text-red-500 flex md:flex-row flex-col justify-center items-center gap-3 md:gap-2 mx-auto py-8">
           <p className="text-2xl md:text-lg">
             <PiSmileySad />
           </p>
-          {error}
+          {error.message}
         </div>
       </section>
     );
   }
+
   return (
-    <section className="max-w-3xl mx-auto">
+    <section className="max-w-4xl mx-auto">
       <div className="flex flex-col gap-6">
         {/* breadcrumb */}
         <Breadcrumb>
@@ -136,7 +164,7 @@ const ExperiencesPage = () => {
         {/* cards */}
         {experiences.length == 0 ? (
           <div className="text-center py-12 text-muted-foreground">
-            No packages yet. Create your first one to get started.
+            No experiences yet. Create your first one to get started.
           </div>
         ) : (
           <div className="flex flex-col gap-4">
@@ -148,11 +176,13 @@ const ExperiencesPage = () => {
                 <div className="shrink-0 w-full md:w-32 h-48 md:h-32 rounded-md border border-border overflow-hidden bg-muted">
                   {exp.image ? (
                     <Image
-                      src={exp.image || "/placeholder.svg"}
+                      src={exp.image}
                       alt={exp.title}
                       width={128}
                       height={128}
                       className="w-full h-full object-cover"
+                      blurDataURL={BLURDATA}
+                      loading="eager"
                     />
                   ) : (
                     <div className="flex items-center justify-center w-full h-full">
@@ -191,8 +221,11 @@ const ExperiencesPage = () => {
                             Edit
                           </DropdownMenuItem>
                         </Link>
-                        <DropdownMenuItem>
-                          <TbTrash />
+                        <DropdownMenuItem
+                          onClick={() => handleDeleteClick(exp.id)}
+                          className="text-destructive focus:text-destructive"
+                        >
+                          <TbTrash className="text-destructive" />
                           Delete
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -208,6 +241,35 @@ const ExperiencesPage = () => {
           </div>
         )}
       </div>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete Experience</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete this experience? This action
+              cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={handleDeleteCancel}
+              disabled={deleteExperienceMutation.isPending}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleDeleteConfirm}
+              disabled={deleteExperienceMutation.isPending}
+            >
+              {deleteExperienceMutation.isPending ? "Deleting..." : "Delete"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </section>
   );
 };

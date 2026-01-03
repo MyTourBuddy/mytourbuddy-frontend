@@ -78,16 +78,13 @@ const UserProfile = () => {
             )}
           </TabsContent>
           <TabsContent value="packages">
-            <p>packages</p>
-            {/* <PackagesSection user={userData as Guide} /> */}
+            <PackagesSection user={userData as Guide} />
           </TabsContent>
           <TabsContent value="experience">
-            <p>exp</p>
-            {/* <ExperiencesSection user={userData as Guide} /> */}
+            <ExperiencesSection user={userData as Guide} />
           </TabsContent>
           <TabsContent value="reviews">
-            <p>reviews</p>
-            {/* <ReviewsSection user={userData} /> */}
+            <ReviewsSection user={userData} />
           </TabsContent>
         </Tabs>
       </div>

@@ -6,7 +6,6 @@ export const reviewSchema = z.object({
   touristId: z.string(),
   message: z.string().min(1, "Message is required"),
   rating: z.number().optional(),
-  image: z.string().optional(),
   createdAt: z.string(),
 });
 

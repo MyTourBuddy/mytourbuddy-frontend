@@ -5,6 +5,15 @@ export const formatCurrency = (amount: number) => {
   }).format(amount);
 };
 
+export const formatDate = (date: string | Date, options?: Intl.DateTimeFormatOptions) => {
+  const dateObj = typeof date === 'string' ? new Date(date) : date;
+  return dateObj.toLocaleDateString("en-US", options || {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+};
+
 export const getHostname = (url: string): string => {
   try {
     return new URL(url).hostname.replace("www.", "");
