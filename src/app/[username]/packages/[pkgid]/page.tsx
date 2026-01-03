@@ -23,10 +23,19 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { usePackage } from "@/hooks/usePackageQueries";
+import { useUser } from "@/hooks/useUserQueries";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import Link from "next/link";
+import { BLURDATA } from "@/data/constants";
 
 const PackagePage = () => {
   const { pkgid, username } = useParams<{ pkgid: string; username: string }>();
   const { data: pkgDetails, isLoading, error } = usePackage(pkgid);
+  const {
+    data: userDetails,
+    isLoading: userLoading,
+    error: userError,
+  } = useUser(pkgDetails?.guideId || "", !!pkgDetails?.guideId);
 
   if (isLoading) {
     return (
@@ -43,7 +52,7 @@ const PackagePage = () => {
     return (
       <section className="max-w-4xl mx-auto w-full">
         <div className="text-center text-muted-foreground max-w-md flex md:flex-row flex-col justify-center items-center gap-3 md:gap-2 mx-auto py-8">
-          <p className="text-2xl md:text-lg">
+          <p>
             <PiSmileySad />
           </p>
           Package not found
@@ -56,7 +65,7 @@ const PackagePage = () => {
     return (
       <section className="max-w-4xl mx-auto w-full">
         <div className="text-center max-w-md text-red-500 flex md:flex-row flex-col justify-center items-center gap-3 md:gap-2 mx-auto py-8">
-          <p className="text-2xl md:text-lg">
+          <p>
             <PiSmileySad />
           </p>
           {error.message}
@@ -87,8 +96,8 @@ const PackagePage = () => {
         </Breadcrumb>
 
         {/* content */}
-        <div className="grid grid-cols-1 md:grid-cols-6 gap-2">
-          <Card className="col-span-1 md:col-span-4">
+        <div className="grid grid-cols-1 md:grid-cols-6 gap-2 text-sm md:text-base">
+          <Card className="col-span-1 md:col-span-4 px-0">
             <CardContent>
               <div className="flex flex-col gap-6">
                 <div className="relative aspect-video rounded-t-lg">
@@ -98,90 +107,110 @@ const PackagePage = () => {
                       alt={pkgDetails.title}
                       fill
                       className="object-cover rounded-t-lg"
-                      loading="lazy"
+                      blurDataURL={BLURDATA}
+                      loading="eager"
                     />
                   ) : (
                     <div className="flex items-center justify-center h-full bg-gray-200 rounded-t-lg">
-                      <span className="text-gray-400 text-sm">No image</span>
+                      <span className="text-gray-400">No image</span>
                     </div>
                   )}
                 </div>
 
-                <div className="flex flex-col gap-4">
-                  <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
+                <div className="flex flex-col gap-4 md:gap-6">
+                  <h1 className="font-bold text-foreground text-2xl md:text-3xl">
                     {pkgDetails.title}
                   </h1>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div className="flex md:hidden items-center gap-2">
-                      <GrCurrency className="text-primary text-base" />
-                      <p>
-                        <span className="font-semibold text-lg text-primary">
-                          {formatCurrency(pkgDetails.price)}
-                        </span>
-                        <span className="text-sm">/person</span>
-                      </p>
-                    </div>
-
-                    <div className="flex md:hidden items-center gap-2">
-                      <LuAlarmClock className="text-primary text-base" />
-                      <span className="text-sm">{pkgDetails.duration}</span>
-                    </div>
-
-                    <div className="flex md:hidden items-center gap-2 sm:col-span-2">
-                      <GrMap className="text-primary text-base" />
-                      <span className="text-sm">{pkgDetails.location}</span>
-                    </div>
-
-                    {pkgDetails.maxGroupSize && (
-                      <div className="flex md:hidden items-center gap-2 sm:col-span-2">
-                        <HiUserGroup className="text-primary text-base" />
-                        <span className="text-sm">
-                          Max {pkgDetails.maxGroupSize} people
-                        </span>
-                      </div>
+                  <div className="flex flex-col gap-3">
+                    {userDetails && (
+                      <Link
+                        href={`/${userDetails.username}`}
+                        className="flex items-center gap-3 text-sm hover:opacity-80 transition-opacity"
+                      >
+                        <Avatar>
+                          <AvatarImage
+                            src={userDetails.avatar}
+                            alt={`${userDetails.firstName} ${userDetails.lastName}`}
+                          />
+                          <AvatarFallback>
+                            {userDetails.firstName?.[0]?.toUpperCase()}
+                            {userDetails.lastName?.[0]?.toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="flex flex-col">
+                          <span className="text-muted-foreground font-medium uppercase tracking-wide">
+                            Guide
+                          </span>
+                          <span className="font-semibold text-foreground">
+                            {userDetails.username}
+                          </span>
+                        </div>
+                      </Link>
                     )}
 
-                    <div className="flex items-center gap-2 sm:col-span-2">
-                      <GrUserWorker className="text-primary text-base" />
-                      <span className="text-sm text-muted-foreground">
-                        by {pkgDetails.guideId}
-                      </span>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div className="flex md:hidden items-center gap-2">
+                        <GrCurrency className="text-primary" />
+                        <p>
+                          <span className="font-semibold text-primary">
+                            {formatCurrency(pkgDetails.price)}
+                          </span>
+                          <span>/person</span>
+                        </p>
+                      </div>
+
+                      <div className="flex md:hidden items-center gap-2">
+                        <LuAlarmClock className="text-primary" />
+                        <span>{pkgDetails.duration}</span>
+                      </div>
+
+                      <div className="flex md:hidden items-center gap-2 sm:col-span-2">
+                        <GrMap className="text-primary" />
+                        <span>{pkgDetails.location}</span>
+                      </div>
+
+                      {pkgDetails.maxGroupSize && (
+                        <div className="flex md:hidden items-center gap-2 sm:col-span-2">
+                          <HiUserGroup className="text-primary" />
+                          <span>Max {pkgDetails.maxGroupSize} people</span>
+                        </div>
+                      )}
                     </div>
                   </div>
 
-                  <h2 className="text-base sm:text-lg font-semibold">
-                    Overview
-                  </h2>
-                  <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
+                  <h2 className="font-semibold text-lg md:text-xl">Overview</h2>
+                  <p className="text-muted-foreground leading-relaxed">
                     {pkgDetails.description}
                   </p>
 
-                  <div className="flex flex-col gap-2">
-                    <h2 className="text-base sm:text-lg font-semibold">
-                      What's Included
-                    </h2>
-                    <ul className="space-y-2">
-                      {pkgDetails.included.map((item, index) => (
-                        <li key={index} className="flex gap-3">
-                          <GiCheckMark className="mt-1 text-primary" />
-                          <span className="text-sm sm:text-base">{item}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
+                  {pkgDetails.included && pkgDetails.included.length > 0 && (
+                    <div className="flex flex-col gap-2">
+                      <h2 className="font-semibold text-lg md:text-xl">
+                        What's Included
+                      </h2>
+                      <ul className="space-y-2">
+                        {pkgDetails.included.map((item, index) => (
+                          <li key={index} className="flex gap-3">
+                            <GiCheckMark className="mt-1 text-primary" />
+                            <span>{item}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
 
                   {pkgDetails.notIncluded &&
                     pkgDetails.notIncluded.length > 0 && (
                       <div className="flex flex-col gap-2">
-                        <h2 className="text-base sm:text-lg font-semibold">
+                        <h2 className="font-semibold text-lg md:text-xl">
                           Not Included
                         </h2>
                         <ul className="space-y-2">
                           {pkgDetails.notIncluded.map((item, index) => (
                             <li key={index} className="flex gap-3">
                               <TbX className="mt-1 text-destructive" />
-                              <span className="text-sm sm:text-base text-muted-foreground">
+                              <span className="text-muted-foreground">
                                 {item}
                               </span>
                             </li>
@@ -203,29 +232,31 @@ const PackagePage = () => {
           </Card>
 
           {/* pricing card */}
-          <Card className="col-span-1 md:col-span-2 h-fit">
+          <Card className="col-span-1 md:col-span-2 h-fit md:sticky md:top-20">
             <CardContent className="flex flex-col gap-6">
               <div className="md:flex hidden flex-col gap-4">
-                <div className="flex flex-col gap-3">
-                  <p className="text-muted-foreground">Price per person</p>
-                  <p className="text-primary font-bold text-2xl">
+                <div className="flex flex-col gap-1">
+                  <p className="text-muted-foreground text-sm">
+                    Price per person
+                  </p>
+                  <p className="text-primary text-2xl font-bold">
                     {formatCurrency(pkgDetails.price)}
                   </p>
                 </div>
 
-                <div className="flex flex-col gap-3">
-                  <p className="text-muted-foreground">Duration</p>
+                <div className="flex flex-col gap-1">
+                  <p className="text-muted-foreground text-sm">Duration</p>
                   <p>{pkgDetails.duration}</p>
                 </div>
 
-                <div className="flex flex-col gap-3">
-                  <p className="text-muted-foreground">Location</p>
+                <div className="flex flex-col gap-1">
+                  <p className="text-muted-foreground text-sm">Location</p>
                   <p>{pkgDetails.location}</p>
                 </div>
 
                 {pkgDetails.maxGroupSize && (
-                  <div className="flex flex-col gap-3">
-                    <p className="text-muted-foreground">Group size</p>
+                  <div className="flex flex-col gap-1">
+                    <p className="text-muted-foreground text-sm">Group size</p>
                     <p>Up to {pkgDetails.maxGroupSize} people</p>
                   </div>
                 )}
@@ -244,7 +275,7 @@ const PackagePage = () => {
                 </Button>
               </div>
 
-              <p className="text-xs text-center text-muted-foreground">
+              <p className="text-center text-muted-foreground text-sm">
                 You won't be charged yet
               </p>
             </CardContent>

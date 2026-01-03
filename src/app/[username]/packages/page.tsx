@@ -1,6 +1,6 @@
 "use client";
 
-import PackageCard from "@/components/packages/PackageCard";
+import PackageCard from "@/components/PackageCard";
 import UserNotFound from "@/components/profile/UserNotFound";
 import {
   Breadcrumb,

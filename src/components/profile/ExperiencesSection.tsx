@@ -7,60 +7,64 @@ import {
   CardDescription,
   CardTitle,
 } from "@/components/ui/card";
-import { getExperiences } from "@/lib/api";
 import { Experience } from "@/schemas/experience.schema";
 import { User } from "@/schemas/user.schema";
+import ExperienceCard from "../ExperienceCard";
+import { Spinner } from "../ui/spinner";
+import { PiSmileySad } from "react-icons/pi";
+import { useExperiencesByGuide } from "@/hooks/useExperienceQueries";
 
 const ExperiencesSection = ({ user }: { user: User }) => {
-  const [experiences, setExperiences] = useState<Experience[]>([]);
-  const [loading, setLoading] = useState(true);
+  const {
+    data: experiences,
+    isLoading: loading,
+    error,
+  } = useExperiencesByGuide(user.id);
 
-  useEffect(() => {
-    const fetchExperiences = async () => {
-      try {
-        const data = await getExperiences(user.id);
-        setExperiences(data);
-      } catch (error) {
-        console.error("Failed to fetch experiences:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const pathname = `/${user.username}/experiences`;
 
-    fetchExperiences();
-  }, [user.id]);
+  if (loading) {
+    return (
+      <section className="mx-auto max-w-4xl w-full">
+        <div className="flex flex-col justify-center py-10 md:py-20 md:flex-row gap-2 items-center">
+          <Spinner className="size-6 md:size-4" />
+          Loading experiences...
+        </div>
+      </section>
+    );
+  }
+
+  if (!experiences) {
+    return (
+      <section className="mx-auto max-w-4xl w-full">
+        <div className="flex flex-col justify-center py-10 md:py-20 md:flex-row gap-2 items-center">
+          <p className="text-2xl md:text-lg">
+            <PiSmileySad />
+          </p>
+          No experiences found
+        </div>
+      </section>
+    );
+  }
+
+  if (error) {
+    return (
+      <section className="mx-auto max-w-4xl w-full text-destructive">
+        <div className="flex flex-col justify-center py-10 md:py-20 md:flex-row gap-2 items-center">
+          <p className="text-2xl md:text-lg">
+            <PiSmileySad />
+          </p>
+          {error.message}
+        </div>
+      </section>
+    );
+  }
 
   return (
-    <div className="space-y-4 mt-6 md:mt-8">
-      {loading ? (
-        <Card className="text-center">
-          <CardContent>
-            <p className="text-muted-foreground">Loading experiences...</p>
-          </CardContent>
-        </Card>
-      ) : experiences.length > 0 ? (
-        <div className="space-y-4 grid grid-cols-1 md:grid-cols-3 gap-4">
-          {experiences.map((exp) => (
-            <Card key={exp.id} className="h-full">
-              <CardContent className="px-2 flex flex-col gap-4">
-                <div className="aspect-video bg-muted rounded-lg shrink-0"></div>
-                <div className="flex-1 flex flex-col gap-3">
-                  <CardTitle>{exp.title}</CardTitle>
-                  <CardDescription>{exp.description}</CardDescription>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      ) : (
-        <Card className="text-center">
-          <CardContent>
-            <p className="text-muted-foreground">
-              No experiences shared yet. Start by adding your first experience!
-            </p>
-          </CardContent>
-        </Card>
-      )}
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
+      {experiences.map((exp) => (
+        <ExperienceCard key={exp.id} exp={exp} pathname={pathname} />
+      ))}
     </div>
   );
 };

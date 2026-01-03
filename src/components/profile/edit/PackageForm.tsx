@@ -15,6 +15,7 @@ import { TbCamera, TbPlus, TbX } from "react-icons/tb";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Spinner } from "@/components/ui/spinner";
+import { BLURDATA } from "@/data/constants";
 
 export const PackageCreateForm = () => {
   const router = useRouter();
@@ -137,7 +138,7 @@ export const PackageCreateForm = () => {
         <FieldGroup className="col-span-5 order-2 md:order-1">
           <Field>
             <FieldLabel htmlFor="title" className="text-sm md:text-balance">
-              Package Title <span className="text-red-500">*</span>
+              Package Title&nbsp;<span className="text-destructive">*</span>
             </FieldLabel>
             <Input
               type="text"
@@ -155,7 +156,8 @@ export const PackageCreateForm = () => {
               htmlFor="description"
               className="text-sm md:text-balance"
             >
-              Package Description <span className="text-red-500">*</span>
+              Package Description&nbsp;
+              <span className="text-destructive">*</span>
             </FieldLabel>
             <Textarea
               rows={3}
@@ -170,7 +172,7 @@ export const PackageCreateForm = () => {
 
           <Field>
             <FieldLabel htmlFor="price" className="text-sm md:text-balance">
-              Price (LKR) <span className="text-red-500">*</span>
+              Price (LKR)&nbsp;<span className="text-destructive">*</span>
             </FieldLabel>
             <Input
               type="number"
@@ -198,7 +200,7 @@ export const PackageCreateForm = () => {
 
           <Field>
             <FieldLabel htmlFor="duration" className="text-sm md:text-balance">
-              Duration <span className="text-red-500">*</span>
+              Duration&nbsp;<span className="text-destructive">*</span>
             </FieldLabel>
             <Input
               type="text"
@@ -213,7 +215,7 @@ export const PackageCreateForm = () => {
 
           <Field>
             <FieldLabel htmlFor="location" className="text-sm md:text-balance">
-              Location <span className="text-red-500">*</span>
+              Location&nbsp;<span className="text-destructive">*</span>
             </FieldLabel>
             <Input
               type="text"
@@ -228,7 +230,7 @@ export const PackageCreateForm = () => {
 
           <Field>
             <FieldLabel>
-              What’s Included <span className="text-red-500">*</span>
+              What’s Included&nbsp;<span className="text-destructive">*</span>
             </FieldLabel>
 
             <div className="flex flex-col gap-2">
@@ -341,6 +343,8 @@ export const PackageCreateForm = () => {
                     alt="Package preview"
                     fill
                     className="object-cover"
+                    blurDataURL={BLURDATA}
+                    loading="eager"
                   />
                 ) : (
                   <div className="flex items-center justify-center h-full">
@@ -380,7 +384,20 @@ export const PackageCreateForm = () => {
         <Button type="button" variant="outline" onClick={handleCancel}>
           Cancel
         </Button>
-        <Button type="submit">Create Package</Button>
+        <Button
+          type="submit"
+          disabled={
+            createPackageMutation.isPending ||
+            !title.trim() ||
+            !description.trim() ||
+            !price ||
+            !duration.trim() ||
+            !location.trim() ||
+            included.filter((item) => item.trim() !== "").length === 0
+          }
+        >
+          {createPackageMutation.isPending ? "Creating..." : "Create Package"}
+        </Button>
       </ButtonGroup>
     </form>
   );
@@ -514,7 +531,7 @@ export const PackageEditForm = ({ pkg }: { pkg: Package }) => {
         <FieldGroup className="col-span-5 order-2 md:order-1">
           <Field>
             <FieldLabel htmlFor="title" className="text-sm md:text-balance">
-              Package Title <span className="text-red-500">*</span>
+              Package Title&nbsp;<span className="text-destructive">*</span>
             </FieldLabel>
             <Input
               type="text"
@@ -532,7 +549,8 @@ export const PackageEditForm = ({ pkg }: { pkg: Package }) => {
               htmlFor="description"
               className="text-sm md:text-balance"
             >
-              Package Description <span className="text-red-500">*</span>
+              Package Description&nbsp;
+              <span className="text-destructive">*</span>
             </FieldLabel>
             <Textarea
               name="description"
@@ -548,7 +566,7 @@ export const PackageEditForm = ({ pkg }: { pkg: Package }) => {
 
           <Field>
             <FieldLabel htmlFor="price" className="text-sm md:text-balance">
-              Price (LKR) <span className="text-red-500">*</span>
+              Price (LKR)&nbsp;<span className="text-destructive">*</span>
             </FieldLabel>
             <Input
               type="number"
@@ -580,7 +598,7 @@ export const PackageEditForm = ({ pkg }: { pkg: Package }) => {
 
           <Field>
             <FieldLabel htmlFor="duration" className="text-sm md:text-balance">
-              Duration <span className="text-red-500">*</span>
+              Duration&nbsp;<span className="text-destructive">*</span>
             </FieldLabel>
             <Input
               type="text"
@@ -597,7 +615,7 @@ export const PackageEditForm = ({ pkg }: { pkg: Package }) => {
 
           <Field>
             <FieldLabel htmlFor="location" className="text-sm md:text-balance">
-              Location <span className="text-red-500">*</span>
+              Location&nbsp;<span className="text-destructive">*</span>
             </FieldLabel>
             <Input
               type="text"
@@ -614,7 +632,7 @@ export const PackageEditForm = ({ pkg }: { pkg: Package }) => {
 
           <Field>
             <FieldLabel>
-              What’s Included <span className="text-red-500">*</span>
+              What’s Included&nbsp;<span className="text-destructive">*</span>
             </FieldLabel>
 
             <div className="flex flex-col gap-2">
@@ -727,6 +745,8 @@ export const PackageEditForm = ({ pkg }: { pkg: Package }) => {
                     alt="Package preview"
                     fill
                     className="object-cover"
+                    blurDataURL={BLURDATA}
+                    loading="eager"
                   />
                 ) : (
                   <div className="flex items-center justify-center h-full">
@@ -766,7 +786,18 @@ export const PackageEditForm = ({ pkg }: { pkg: Package }) => {
         <Button type="button" variant="outline" onClick={handleCancel}>
           Cancel
         </Button>
-        <Button type="submit" disabled={updatePackageMutation.isPending}>
+        <Button
+          type="submit"
+          disabled={
+            updatePackageMutation.isPending ||
+            !draft?.title?.trim() ||
+            !draft?.description?.trim() ||
+            !draft?.price ||
+            !draft?.duration?.trim() ||
+            !draft?.location?.trim() ||
+            included.filter((item) => item.trim() !== "").length === 0
+          }
+        >
           {updatePackageMutation.isPending ? "Updating..." : "Update Package"}
         </Button>
       </ButtonGroup>

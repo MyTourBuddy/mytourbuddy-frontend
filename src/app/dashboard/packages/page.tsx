@@ -26,8 +26,12 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Separator } from "@/components/ui/separator";
 import { Spinner } from "@/components/ui/spinner";
+import { BLURDATA } from "@/data/constants";
 import { useCurrentUser } from "@/hooks/useAuthQueries";
-import { useDeletePackage, usePackagesByGuide } from "@/hooks/usePackageQueries";
+import {
+  useDeletePackage,
+  usePackagesByGuide,
+} from "@/hooks/usePackageQueries";
 import { formatCurrency } from "@/utils/helpers";
 import Image from "next/image";
 import Link from "next/link";
@@ -44,7 +48,11 @@ const PackagesPage = () => {
     isLoading: userLoading,
     error: userError,
   } = useCurrentUser();
-  const { data: pkgs, isLoading: pkgsLoading, error: pkgError } = usePackagesByGuide(user?.id || "", !!user?.id);
+  const {
+    data: pkgs,
+    isLoading: pkgsLoading,
+    error: pkgError,
+  } = usePackagesByGuide(user?.id || "", !!user?.id);
   const deletePackageMutation = useDeletePackage();
 
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -174,8 +182,9 @@ const PackagesPage = () => {
                       alt={pkg.title}
                       width={128}
                       height={128}
-                      loading="lazy"
                       className="w-full h-full object-cover"
+                      blurDataURL={BLURDATA}
+                      loading="eager"
                     />
                   ) : (
                     <div className="flex items-center justify-center w-full h-full">
@@ -218,7 +227,7 @@ const PackagesPage = () => {
                           onClick={() => handleDeleteClick(pkg.id)}
                           className="text-destructive focus:text-destructive"
                         >
-                          <TbTrash />
+                          <TbTrash className="text-destructive" />
                           Delete
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -266,8 +275,8 @@ const PackagesPage = () => {
           <DialogHeader>
             <DialogTitle>Delete Package</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete this package? This action cannot be
-              undone.
+              Are you sure you want to delete this package? This action cannot
+              be undone.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>

@@ -6,6 +6,8 @@ import { User } from "@/schemas/user.schema";
 import { useAuth } from "@/context/AuthContext";
 import EditProfileMenu from "./EditProfileMenu";
 import Image from "next/image";
+import { BLURDATA } from "@/data/constants";
+import { formatDate } from "@/utils/helpers";
 
 const ProfileHeader = ({ user }: { user: User }) => {
   const { user: currentUser } = useAuth();
@@ -19,7 +21,7 @@ const ProfileHeader = ({ user }: { user: User }) => {
       : "";
 
   const formattedDate = memberSince
-    ? new Date(memberSince).toLocaleDateString("en-US", {
+    ? formatDate(memberSince, {
         month: "short",
         day: "numeric",
         year: "numeric",
@@ -37,8 +39,9 @@ const ProfileHeader = ({ user }: { user: User }) => {
                 alt={`${fullName}'s avatar`}
                 fill
                 className="rounded-full object-cover"
-                loading="lazy"
                 sizes="80px"
+                blurDataURL={BLURDATA}
+                loading="eager"
               />
             ) : (
               initials
@@ -60,8 +63,9 @@ const ProfileHeader = ({ user }: { user: User }) => {
                 alt={`${fullName}'s avatar`}
                 fill
                 className="rounded-full object-cover"
-                loading="lazy"
                 sizes="112px"
+                blurDataURL={BLURDATA}
+                loading="eager"
               />
             ) : (
               initials

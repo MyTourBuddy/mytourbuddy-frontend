@@ -1,66 +1,62 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardTitle,
-} from "@/components/ui/card";
 import { Guide } from "@/schemas/user.schema";
-import { getPackages } from "@/lib/api";
-import { Package } from "@/schemas/package.schema";
+import { usePackagesByGuide } from "@/hooks/usePackageQueries";
+import PackageCard from "../PackageCard";
+import { Spinner } from "../ui/spinner";
+import { PiSmileySad } from "react-icons/pi";
 
 const PackagesSection = ({ user }: { user: Guide }) => {
-  const [packages, setPackages] = useState<Package[]>([]);
-  const [loading, setLoading] = useState(true);
+  const {
+    data: packages,
+    isLoading: loading,
+    error,
+  } = usePackagesByGuide(user.id);
 
-  useEffect(() => {
-    const fetchPackages = async () => {
-      try {
-        const data = await getPackages(user.id);
-        setPackages(data);
-      } catch (error) {
-        console.error("Failed to fetch packages:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const pathname = `/${user.username}/packages`;
 
-    fetchPackages();
-  }, [user.id]);
+  if (loading) {
+    return (
+      <section className="mx-auto max-w-4xl w-full">
+        <div className="flex flex-col justify-center py-10 md:py-20 md:flex-row gap-2 items-center">
+          <Spinner className="size-6 md:size-4" />
+          Loading packages...
+        </div>
+      </section>
+    );
+  }
+
+  if (!packages) {
+    return (
+      <section className="mx-auto max-w-4xl w-full">
+        <div className="flex flex-col justify-center py-10 md:py-20 md:flex-row gap-2 items-center">
+          <p className="text-2xl md:text-lg">
+            <PiSmileySad />
+          </p>
+          No packages found
+        </div>
+      </section>
+    );
+  }
+
+  if (error) {
+    return (
+      <section className="mx-auto max-w-4xl w-full text-destructive">
+        <div className="flex flex-col justify-center py-10 md:py-20 md:flex-row gap-2 items-center">
+          <p className="text-2xl md:text-lg">
+            <PiSmileySad />
+          </p>
+          {error.message}
+        </div>
+      </section>
+    );
+  }
 
   return (
-    <div className="space-y-4 mt-6 md:mt-8">
-      {loading ? (
-        <Card className="text-center">
-          <CardContent>
-            <p className="text-muted-foreground">Loading packages...</p>
-          </CardContent>
-        </Card>
-      ) : packages.length > 0 ? (
-        <div className="space-y-4 grid grid-cols-1 md:grid-cols-3 gap-4">
-          {packages.map((pkg) => (
-            <Card key={pkg.id} className="h-full">
-              <CardContent className="px-2 flex flex-col gap-4">
-                <div className="aspect-video bg-muted rounded-lg shrink-0"></div>
-                <div className="flex-1 flex flex-col gap-3">
-                  <CardTitle>{pkg.title}</CardTitle>
-                  <CardDescription>{pkg.description}</CardDescription>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      ) : (
-        <Card className="text-center">
-          <CardContent>
-            <p className="text-muted-foreground">
-              No packages added yet. Create your first package!
-            </p>
-          </CardContent>
-        </Card>
-      )}
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
+      {packages.map((pkg) => (
+        <PackageCard key={pkg.id} pkg={pkg} pathname={pathname} />
+      ))}
     </div>
   );
 };

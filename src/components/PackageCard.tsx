@@ -1,9 +1,10 @@
 import Link from "next/link";
-import { Card } from "../ui/card";
+import { Card } from "./ui/card";
 import Image from "next/image";
-import { Badge } from "../ui/badge";
+import { Badge } from "./ui/badge";
 import { formatCurrency } from "@/utils/helpers";
 import { Package } from "@/schemas/package.schema";
+import { BLURDATA } from "@/data/constants";
 
 interface PackageCardProps {
   pkg: Package;
@@ -17,11 +18,13 @@ const PackageCard = ({ pkg, pathname }: PackageCardProps) => {
         <div className="relative aspect-video bg-gray-100">
           {pkg.image ? (
             <Image
-              src={pkg.image || "/placeholder.svg"}
+              src={pkg.image}
               alt={pkg.title}
               fill
-              loading="lazy"
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
               className="object-cover"
+              blurDataURL={BLURDATA}
+              loading="eager"
             />
           ) : (
             <div className="flex items-center justify-center h-full bg-gray-200 rounded-t-lg">

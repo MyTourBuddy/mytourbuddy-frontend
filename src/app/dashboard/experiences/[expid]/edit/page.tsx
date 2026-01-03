@@ -9,10 +9,15 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import { useExperience } from "@/hooks/useExperienceQueries";
 import { useParams } from "next/navigation";
 
 const EditExperience = () => {
   const { expid } = useParams<{ expid: string }>();
+
+  const { data: expDetails, isLoading: loading, error } = useExperience(expid);
+
+  if (!expDetails) return <div>Experience not found</div>;
 
   return (
     <section className="max-w-2xl mx-auto">
@@ -36,7 +41,7 @@ const EditExperience = () => {
         </Breadcrumb>
 
         <h1 className="text-3xl font-bold tracking-tight">Edit Experience</h1>
-        <EditExperienceForm />
+        <EditExperienceForm data={expDetails} />
       </div>
     </section>
   );

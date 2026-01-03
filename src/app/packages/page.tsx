@@ -1,6 +1,6 @@
 "use client";
 
-import PackageCard from "@/components/packages/PackageCard";
+import PackageCard from "@/components/PackageCard";
 import { Badge } from "@/components/ui/badge";
 import {
   Breadcrumb,

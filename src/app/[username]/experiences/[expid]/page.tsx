@@ -9,7 +9,10 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Spinner } from "@/components/ui/spinner";
+import { BLURDATA } from "@/data/constants";
+import { useExperience } from "@/hooks/useExperienceQueries";
 import { Experience } from "@/schemas/experience.schema";
+import { formatDate } from "@/utils/helpers";
 import Image from "next/image";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -17,33 +20,8 @@ import { PiSmileySad } from "react-icons/pi";
 
 const ExperiencePage = () => {
   const { expid, username } = useParams<{ expid: string; username: string }>();
-  const [expDetails, setExpDetails] = useState<Experience>();
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
-  const fetchPackage = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const response = await fetch(`/api/experiences/${expid}`);
-
-      if (!response.ok) {
-        throw new Error("Failed to load experiences");
-      }
-
-      const data: Experience = await response.json();
-      setExpDetails(data);
-    } catch (err) {
-      setError("Couldn't load this experience. Please try again later.");
-      console.error("Fetch error:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchPackage();
-  }, []);
+  const { data: expDetails, isLoading: loading, error } = useExperience(expid);
 
   if (loading) {
     return (
@@ -76,7 +54,7 @@ const ExperiencePage = () => {
           <p className="text-2xl md:text-lg">
             <PiSmileySad />
           </p>
-          {error}
+          {error.message}
         </div>
       </section>
     );
@@ -102,13 +80,13 @@ const ExperiencePage = () => {
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
-        
+
         <div className="flex flex-col gap-1">
           <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
             {expDetails.title}
           </h1>
           <p className="text-sm text-muted-foreground">
-            {new Date(expDetails.experiencedAt).toLocaleDateString(undefined, {
+            {formatDate(expDetails.experiencedAt, {
               year: "numeric",
               month: "long",
               day: "numeric",
@@ -123,7 +101,8 @@ const ExperiencePage = () => {
               alt={expDetails.title}
               fill
               className="object-cover rounded-t-lg"
-              loading="lazy"
+              blurDataURL={BLURDATA}
+              loading="eager"
             />
           ) : (
             <div className="flex items-center justify-center h-full bg-gray-200 rounded-t-lg">

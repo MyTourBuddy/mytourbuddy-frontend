@@ -6,7 +6,6 @@ const reviewCard: Review = {
   touristId: "",
   message: "",
   rating: 0,
-  image: "",
   createdAt: "",
 };
 
