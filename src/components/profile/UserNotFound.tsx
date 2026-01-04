@@ -10,42 +10,37 @@ interface UsernamePropes {
 
 const UserNotFound = ({ username }: UsernamePropes) => {
   return (
-    <div className="flex flex-col items-center justify-center px-4 navbar-offset">
-      <div className="flex flex-col items-center text-center gap-y-6 max-w-md">
-        <Image
-          src={notfound}
-          alt={`${username} not found`}
-          height={240}
-          width={240}
-          priority
-          className="opacity-80"
-        />
-        
-        <div className="space-y-2">
-          <h1 className="text-3xl font-bold tracking-tight">
-            User Not Found
-          </h1>
-          <p className="text-muted-foreground text-lg">
-            We couldn't find a user with the username <span className="font-semibold text-foreground">@{username}</span>
-          </p>
-        </div>
+    <div className="flex flex-col items-center justify-center navbar-offset px-4">
+      <Image
+        src={notfound}
+        alt={`${username} not found`}
+        priority
+        className="opacity-80 h-48 w-48 md:h-60 md:w-60"
+      />
 
-        <p className="text-sm text-muted-foreground">
-          The user may have changed their username or deleted their account.
+      <div className="text-center flex flex-col gap-3">
+        <h1 className="text-2xl md:text-3xl font-bold tracking-tight">
+          User Not Found
+        </h1>
+        <p className="text-muted-foreground text-base md:text-lg">
+          We couldn't find a user with the username&nbsp;
+          <span className="font-semibold text-foreground">@{username}</span>
         </p>
+      </div>
 
-        <div className="flex gap-3 pt-4">
-          <Button asChild variant="default">
-            <Link href="/">
-              <TbHome/>&nbsp;Go to Home
-            </Link>
-          </Button>
-          <Button asChild variant="outline">
-            <Link href="/packages">
-              <TbPackage/>&nbsp;Browse Packages
-            </Link>
-          </Button>
-        </div>
+      <div className="flex md:flex-row flex-col gap-3 pt-4">
+        <Button asChild variant="default">
+          <Link href="/">
+            <TbHome />
+            &nbsp;Go to Home
+          </Link>
+        </Button>
+        <Button asChild variant="outline">
+          <Link href="/packages">
+            <TbPackage />
+            &nbsp;Browse Packages
+          </Link>
+        </Button>
       </div>
     </div>
   );

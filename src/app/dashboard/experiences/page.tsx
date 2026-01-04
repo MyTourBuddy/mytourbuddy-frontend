@@ -87,7 +87,7 @@ const ExperiencesPage = () => {
 
   if (loading) {
     return (
-      <section className="max-w-4xl mx-auto w-full flex justify-center">
+      <section className="max-w-4xl mx-auto w-full flex justify-center px-4">
         <div className="text-center text-muted-foreground flex md:flex-row flex-col items-center gap-3 md:gap-2 mx-auto py-8">
           <Spinner className="size-6 md:size-4" />
           Loading my experiences...
@@ -98,7 +98,7 @@ const ExperiencesPage = () => {
 
   if (!experiences) {
     return (
-      <section className="max-w-4xl mx-auto w-full">
+      <section className="max-w-4xl mx-auto w-full px-4">
         <div className="text-center text-muted-foreground max-w-md flex md:flex-row flex-col justify-center items-center gap-3 md:gap-2 mx-auto py-8">
           <p className="text-2xl md:text-lg">
             <PiSmileySad />
@@ -111,7 +111,7 @@ const ExperiencesPage = () => {
 
   if (error) {
     return (
-      <section className="max-w-4xl mx-auto w-full">
+      <section className="max-w-4xl mx-auto w-full px-4">
         <div className="text-center max-w-md text-red-500 flex md:flex-row flex-col justify-center items-center gap-3 md:gap-2 mx-auto py-8">
           <p className="text-2xl md:text-lg">
             <PiSmileySad />
@@ -123,7 +123,7 @@ const ExperiencesPage = () => {
   }
 
   return (
-    <section className="max-w-4xl mx-auto">
+    <section className="max-w-4xl mx-auto w-full pt-3 px-4">
       <div className="flex flex-col gap-6">
         {/* breadcrumb */}
         <Breadcrumb>

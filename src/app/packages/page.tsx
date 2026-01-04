@@ -25,7 +25,7 @@ const PackagesPage = () => {
   const { data: packages, isLoading: loading, error } = usePackages();
 
   return (
-    <section className="max-w-4xl mx-auto w-full pt-3">
+    <section className="max-w-4xl mx-auto w-full pt-3 px-4">
       <div className="flex flex-col gap-6">
         <Breadcrumb>
           <BreadcrumbList>

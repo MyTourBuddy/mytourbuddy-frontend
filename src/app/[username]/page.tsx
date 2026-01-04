@@ -32,7 +32,7 @@ const UserProfile = () => {
   if (!userData) return <UserNotFound username={username} />;
 
   return (
-    <section className="max-w-4xl w-full mx-auto">
+    <section className="max-w-4xl w-full mx-auto pt-3 px-4">
       <div className="flex flex-col gap-6">
         <Breadcrumb>
           <BreadcrumbList>
@@ -45,6 +45,7 @@ const UserProfile = () => {
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
+        
         <h1 className="text-3xl font-bold tracking-tight">My Profile</h1>
         <ProfileHeader user={userData} />
 

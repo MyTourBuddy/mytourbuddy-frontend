@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { poppins } from "@/utils/fonts";
-import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { AuthProvider } from "@/context/AuthContext";
 import { Toaster } from "react-hot-toast";
 import { QueryProvider } from "@/lib/query/provider";
+import Navbar from "@/components/navbar/Navbar";
 
 export const metadata: Metadata = {
   title: "MyTourBuddy",
@@ -23,7 +23,7 @@ export default function RootLayout({
         <QueryProvider>
           <AuthProvider>
             <Navbar />
-            <main className="flex-1 px-4 md:px-8">{children}</main>
+            <main className="flex-1">{children}</main>
             <Footer />
             <Toaster position="bottom-right" reverseOrder={false} />
           </AuthProvider>

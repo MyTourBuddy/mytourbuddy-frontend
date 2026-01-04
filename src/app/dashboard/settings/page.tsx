@@ -25,7 +25,7 @@ const ProfileSettingsPage = () => {
   const { data: user } = useCurrentUser();
 
   return (
-    <section className="max-w-4xl w-full mx-auto">
+    <section className="max-w-4xl w-full mx-auto pt-3 px-4">
       <div className="flex flex-col gap-6">
         <Breadcrumb>
           <BreadcrumbList>
