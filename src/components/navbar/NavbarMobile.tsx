@@ -62,12 +62,12 @@ const NavbarMobile = () => {
               <Link
                 href={
                   isAuthenticated && user?.role === "TOURIST"
-                    ? "/dashboard/findbuddy"
+                    ? "/dashboard/tour-planner"
                     : "/signin"
                 }
                 className="text-lg font-medium"
               >
-                Find Buddy
+                Tour Planner
               </Link>
             </SheetClose>
           )}
@@ -89,12 +89,18 @@ const NavbarMobile = () => {
           {isAuthenticated ? (
             <>
               <SheetClose asChild>
-                <Link href={`/${user?.username}`} className="text-lg font-medium">
+                <Link
+                  href={`/${user?.username}`}
+                  className="text-lg font-medium"
+                >
                   My Profile
                 </Link>
               </SheetClose>
               <SheetClose asChild>
-                <Link href="/dashboard/settings" className="text-lg font-medium">
+                <Link
+                  href="/dashboard/settings"
+                  className="text-lg font-medium"
+                >
                   Settings
                 </Link>
               </SheetClose>

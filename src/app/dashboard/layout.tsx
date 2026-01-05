@@ -7,9 +7,9 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    <section className="bg-red-300 navbar-offset flex">
+    <section className="navbar-offset max-w-7xl mx-auto w-full flex">
       <Sidebar />
-      <div className="flex-1">{children}</div>
+      <div className="flex-1 px-4 md:px-8">{children}</div>
     </section>
   );
 }

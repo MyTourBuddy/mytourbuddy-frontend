@@ -50,7 +50,7 @@ const Navbar = () => {
 
           {!isAuthenticated ||
             (user?.role === "TOURIST" && (
-              <Link href="/dashboard/findbuddy">Find Buddy</Link>
+              <Link href="/dashboard/tour-planner">Tour Planner</Link>
             ))}
 
           {(user?.role === "GUIDE" || user?.role === "ADMIN") && (

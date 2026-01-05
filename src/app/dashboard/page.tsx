@@ -23,7 +23,7 @@ const UserDashboard = () => {
         </>
       )}
 
-      <Link href="/dashboard/findbuddy">Find your buddy</Link>
+      <Link href="/dashboard/tour-planner">Tour Planner</Link>
       <Link href="/dashboard/settings">Settings</Link>
       <Link href="/">Back to home</Link>
     </div>
