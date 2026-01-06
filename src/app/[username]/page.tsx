@@ -32,7 +32,7 @@ const UserProfile = () => {
   if (!userData) return <UserNotFound username={username} />;
 
   return (
-    <section className="max-w-4xl w-full mx-auto pt-3 px-4">
+    <section className="max-w-5xl w-full mx-auto pt-3 px-4">
       <div className="flex flex-col gap-6">
         <Breadcrumb>
           <BreadcrumbList>

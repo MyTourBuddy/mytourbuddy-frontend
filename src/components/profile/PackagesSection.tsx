@@ -17,7 +17,7 @@ const PackagesSection = ({ user }: { user: Guide }) => {
 
   if (loading) {
     return (
-      <section className="mx-auto max-w-4xl w-full">
+      <section className="mx-auto max-w-5xl w-full">
         <div className="flex flex-col justify-center py-10 md:py-20 md:flex-row gap-2 items-center">
           <Spinner className="size-6 md:size-4" />
           Loading packages...
@@ -28,7 +28,7 @@ const PackagesSection = ({ user }: { user: Guide }) => {
 
   if (!packages) {
     return (
-      <section className="mx-auto max-w-4xl w-full">
+      <section className="mx-auto max-w-5xl w-full">
         <div className="flex flex-col justify-center py-10 md:py-20 md:flex-row gap-2 items-center">
           <p className="text-2xl md:text-lg">
             <PiSmileySad />
@@ -41,7 +41,7 @@ const PackagesSection = ({ user }: { user: Guide }) => {
 
   if (error) {
     return (
-      <section className="mx-auto max-w-4xl w-full text-destructive">
+      <section className="mx-auto max-w-5xl w-full text-destructive">
         <div className="flex flex-col justify-center py-10 md:py-20 md:flex-row gap-2 items-center">
           <p className="text-2xl md:text-lg">
             <PiSmileySad />

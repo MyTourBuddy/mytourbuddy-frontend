@@ -48,10 +48,12 @@ const Navbar = () => {
           <Link href="/">Home</Link>
           <Link href="/packages">Packages</Link>
 
-          {!isAuthenticated ||
-            (user?.role === "TOURIST" && (
-              <Link href="/dashboard/tour-planner">Tour Planner</Link>
-            ))}
+          {!isAuthenticated && (
+            <Link href="/dashboard/buddy-ai">TourBuddy Ai</Link>
+          )}
+          {isAuthenticated && user?.role === "TOURIST" && (
+            <Link href="/dashboard/buddy-ai">TourBuddy Ai</Link>
+          )}
 
           {(user?.role === "GUIDE" || user?.role === "ADMIN") && (
             <Link href={user.role === "GUIDE" ? "/dashboard" : "/admin"}>

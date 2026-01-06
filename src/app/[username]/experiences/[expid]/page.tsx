@@ -24,7 +24,7 @@ const ExperiencePage = () => {
 
   if (loading) {
     return (
-      <section className="max-w-4xl mx-auto w-full px-4">
+      <section className="max-w-5xl mx-auto w-full px-4">
         <div className="text-center text-muted-foreground flex justify-center md:flex-row flex-col items-center gap-3 md:gap-2 py-8">
           <Spinner className="size-6 md:size-4" />
           Loading {username}'s experience
@@ -35,7 +35,7 @@ const ExperiencePage = () => {
 
   if (!expDetails) {
     return (
-      <section className="max-w-4xl mx-auto w-full px-4">
+      <section className="max-w-5xl mx-auto w-full px-4">
         <div className="text-center text-muted-foreground max-w-md flex md:flex-row flex-col justify-center items-center gap-3 md:gap-2 mx-auto py-8">
           <p className="text-2xl md:text-lg">
             <PiSmileySad />
@@ -48,7 +48,7 @@ const ExperiencePage = () => {
 
   if (error) {
     return (
-      <section className="max-w-4xl mx-auto w-full px-4">
+      <section className="max-w-5xl mx-auto w-full px-4">
         <div className="text-center max-w-md text-red-500 flex md:flex-row flex-col justify-center items-center gap-3 md:gap-2 mx-auto py-8">
           <p className="text-2xl md:text-lg">
             <PiSmileySad />

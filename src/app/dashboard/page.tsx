@@ -13,7 +13,7 @@ const UserDashboard = () => {
   const isGuide = user.role === "GUIDE";
 
   return (
-    <div className="flex flex-col items-center gap-6 py-10 max-w-4xl mx-auto w-full px-4">
+    <div className="flex flex-col items-center gap-6 py-10 max-w-5xl mx-auto w-full px-4">
       <h1>Tourists and Guides dashboard will be here</h1>
 
       {isGuide && (
