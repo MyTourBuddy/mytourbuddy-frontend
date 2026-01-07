@@ -10,6 +10,7 @@ export const packageKeys = {
   details: () => [...packageKeys.all, "detail"] as const,
   detail: (id: string) => [...packageKeys.details(), id] as const,
   byGuide: (guideId: string) => [...packageKeys.all, "guide", guideId] as const,
+  search: (title: string) => [...packageKeys.all, "search", title] as const,
 };
 
 // get all packages
@@ -43,6 +44,17 @@ export function usePackagesByGuide(guideId: string, enabled: boolean = true) {
     enabled: enabled && !!guideId,
     refetchOnMount: "always",
     refetchOnWindowFocus: true,
+  });
+}
+
+// search packages by title or location
+export function useSearchPackages(query: string, enabled: boolean = true) {
+  return useQuery({
+    queryKey: packageKeys.search(query),
+    queryFn: async () => {
+      return await apiClient<Package[]>(`packages/search?q=${encodeURIComponent(query)}`);
+    },
+    enabled: enabled && !!query && query.length >= 3,
   });
 }
 

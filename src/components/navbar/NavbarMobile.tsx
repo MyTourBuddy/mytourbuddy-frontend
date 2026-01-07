@@ -26,7 +26,7 @@ const NavbarMobile = () => {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button variant="outline" size="icon-sm">
+        <Button className="text-xl" variant="outline" size="icon-sm">
           <TbMenu />
         </Button>
       </SheetTrigger>
