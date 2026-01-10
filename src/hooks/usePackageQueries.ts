@@ -52,7 +52,9 @@ export function useSearchPackages(query: string, enabled: boolean = true) {
   return useQuery({
     queryKey: packageKeys.search(query),
     queryFn: async () => {
-      return await apiClient<Package[]>(`packages/search?q=${encodeURIComponent(query)}`);
+      return await apiClient<Package[]>(
+        `packages/search?q=${encodeURIComponent(query)}`
+      );
     },
     enabled: enabled && !!query && query.length >= 3,
   });

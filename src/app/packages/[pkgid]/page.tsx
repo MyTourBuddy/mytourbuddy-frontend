@@ -27,6 +27,9 @@ import { useUser } from "@/hooks/useUserQueries";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Link from "next/link";
 import { BLURDATA } from "@/data/constants";
+import { FieldLabel, FieldSet } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import BookingForm from "@/components/BookingForm";
 
 const PackagePage = () => {
   const { pkgid } = useParams<{ pkgid: string }>();
@@ -128,10 +131,6 @@ const PackagePage = () => {
       </section>
     );
   }
-
-  const firstName = userDetails.firstName;
-  const lastName = userDetails.lastName;
-  const fullName = firstName + " " + lastName;
 
   return (
     <section className="max-w-5xl mx-auto w-full pt-3 px-4">
@@ -288,7 +287,7 @@ const PackagePage = () => {
           </Card>
 
           {/* pricing card */}
-          <Card className="col-span-1 md:col-span-2 h-fit md:sticky md:top-20">
+          <Card className="col-span-1 md:col-span-2 h-fit md:sticky md:top-24">
             <CardContent className="flex flex-col gap-6">
               <div className="md:flex hidden flex-col gap-4">
                 <div className="flex flex-col gap-1">
@@ -319,9 +318,7 @@ const PackagePage = () => {
               </div>
 
               <div className="flex flex-col gap-2">
-                <Button size="lg" className="w-full">
-                  Book Now
-                </Button>
+                <BookingForm pricePerPerson={pkgDetails.price} maxCount={pkgDetails.maxGroupSize}/>
                 <Button
                   size="lg"
                   variant="outline"

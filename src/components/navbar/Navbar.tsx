@@ -65,13 +65,13 @@ const Navbar = () => {
             />
           </Link>
           <div className="relative">
-            <InputGroup className="rounded-full shadow-md hidden md:flex">
+            <InputGroup className="rounded-full shadow-md hidden md:flex bg-white/50">
               <InputGroupInput
                 name="search"
                 placeholder="Find the best package..."
                 value={searchQuery}
                 onChange={handleSearchChange}
-                onBlur={() => setTimeout(() => setIsDropdownOpen(false), 150)} // delay to allow click
+                onBlur={() => setTimeout(() => setIsDropdownOpen(false), 150)}
               />
               <InputGroupAddon align="inline-end">
                 <InputGroupButton

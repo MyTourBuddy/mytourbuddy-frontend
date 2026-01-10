@@ -64,7 +64,7 @@ Include:
 - Day-by-day itinerary
 - Places to visit
 - Activities
-- Estimated daily cost (LKR)
+- Estimated daily cost (USD)
 - Travel tips
 `;
 

@@ -107,7 +107,7 @@ export const PackageCreateForm = () => {
         title,
         description,
         price: Number(price),
-        maxGroupSize: Number(maxGroupSize) || undefined,
+        maxGroupSize: Number(maxGroupSize),
         duration,
         location,
         image: imageUrl || "",
@@ -172,7 +172,7 @@ export const PackageCreateForm = () => {
 
           <Field>
             <FieldLabel htmlFor="price" className="text-sm md:text-balance">
-              Price (LKR)&nbsp;<span className="text-destructive">*</span>
+              Price (USD)&nbsp;<span className="text-destructive">*</span>
             </FieldLabel>
             <Input
               type="number"
@@ -187,7 +187,9 @@ export const PackageCreateForm = () => {
           </Field>
 
           <Field>
-            <FieldLabel>Max Group Size</FieldLabel>
+            <FieldLabel>
+              Max Group Size&nbsp;<span className="text-destructive">*</span>
+            </FieldLabel>
             <Input
               type="number"
               name="maxGroupSize"
@@ -195,6 +197,7 @@ export const PackageCreateForm = () => {
               onChange={(e) => setMaxGroupSize(Number(e.target.value))}
               placeholder="e.g. 10"
               min={1}
+              required
             />
           </Field>
 
@@ -391,6 +394,7 @@ export const PackageCreateForm = () => {
             !title.trim() ||
             !description.trim() ||
             !price ||
+            !maxGroupSize ||
             !duration.trim() ||
             !location.trim() ||
             included.filter((item) => item.trim() !== "").length === 0
@@ -566,7 +570,7 @@ export const PackageEditForm = ({ pkg }: { pkg: Package }) => {
 
           <Field>
             <FieldLabel htmlFor="price" className="text-sm md:text-balance">
-              Price (LKR)&nbsp;<span className="text-destructive">*</span>
+              Price (USD)&nbsp;<span className="text-destructive">*</span>
             </FieldLabel>
             <Input
               type="number"
@@ -583,7 +587,9 @@ export const PackageEditForm = ({ pkg }: { pkg: Package }) => {
           </Field>
 
           <Field>
-            <FieldLabel>Max Group Size</FieldLabel>
+            <FieldLabel>
+              Max Group Size&nbsp;<span className="text-destructive">*</span>
+            </FieldLabel>
             <Input
               type="number"
               name="maxGroupSize"
@@ -593,6 +599,7 @@ export const PackageEditForm = ({ pkg }: { pkg: Package }) => {
               }
               placeholder="e.g. 10"
               min={1}
+              required
             />
           </Field>
 
@@ -793,6 +800,7 @@ export const PackageEditForm = ({ pkg }: { pkg: Package }) => {
             !draft?.title?.trim() ||
             !draft?.description?.trim() ||
             !draft?.price ||
+            !draft?.maxGroupSize ||
             !draft?.duration?.trim() ||
             !draft?.location?.trim() ||
             included.filter((item) => item.trim() !== "").length === 0

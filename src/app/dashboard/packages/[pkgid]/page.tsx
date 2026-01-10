@@ -3,12 +3,10 @@
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Card, CardContent } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
-import { Package } from "@/schemas/package.schema";
 import Image from "next/image";
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
 import { GiCheckMark } from "react-icons/gi";
-import { GrCurrency, GrMap, GrUserWorker } from "react-icons/gr";
+import { GrCurrency, GrMap } from "react-icons/gr";
 import { LuAlarmClock } from "react-icons/lu";
 import { PiSmileySad } from "react-icons/pi";
 import { TbAlertCircle, TbX } from "react-icons/tb";
@@ -31,12 +29,19 @@ import { BLURDATA } from "@/data/constants";
 const PackagePage = () => {
   const { pkgid } = useParams<{ pkgid: string }>();
 
-  const { data: pkgDetails, isLoading: loading, error } = usePackage(pkgid);
+  const {
+    data: pkgDetails,
+    isLoading: pkgLoading,
+    error: pkgError,
+  } = usePackage(pkgid);
   const {
     data: userDetails,
     isLoading: userLoading,
     error: userError,
   } = useUser(pkgDetails?.guideId || "", !!pkgDetails?.guideId);
+
+  const loading = pkgLoading || userLoading;
+  const error = pkgError || userError;
 
   if (loading) {
     return (
