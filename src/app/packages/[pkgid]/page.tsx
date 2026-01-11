@@ -318,7 +318,11 @@ const PackagePage = () => {
               </div>
 
               <div className="flex flex-col gap-2">
-                <BookingForm pricePerPerson={pkgDetails.price} maxCount={pkgDetails.maxGroupSize}/>
+                <BookingForm
+                  pricePerPerson={pkgDetails.price}
+                  maxCount={pkgDetails.maxGroupSize}
+                  packageId={pkgid}
+                />
                 <Button
                   size="lg"
                   variant="outline"

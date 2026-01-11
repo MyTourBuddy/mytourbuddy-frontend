@@ -102,8 +102,14 @@ export async function apiClient<T>(
       }
     }
 
-    if (!response.ok) {
-      if (response.status === 403 || response.status === 404) {
+    if (!response.ok) {      // For 403, try to parse error message but still return null to indicate "not allowed"
+      if (response.status === 403) {
+        // Log the error message for debugging
+        if (API_CONFIG.features.enableLogging) {
+          console.error("🚫 API Error 403:", data.error || data.message || "Forbidden");
+        }
+        return null as T;
+      }      if (response.status === 403 || response.status === 404) {
         return null as T;
       }
       throw new ApiError(
