@@ -29,7 +29,7 @@ import Link from "next/link";
 import { BLURDATA } from "@/data/constants";
 import { FieldLabel, FieldSet } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import BookingForm from "@/components/BookingForm";
+import BookingForm from "@/components/bookings/BookingForm";
 
 const PackagePage = () => {
   const { pkgid } = useParams<{ pkgid: string }>();

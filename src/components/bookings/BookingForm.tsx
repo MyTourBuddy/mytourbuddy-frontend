@@ -11,15 +11,15 @@ import {
   TbUser,
 } from "react-icons/tb";
 
-import { Field, FieldLabel, FieldSet } from "./ui/field";
-import { Button } from "./ui/button";
+import { Field, FieldLabel, FieldSet } from "../ui/field";
+import { Button } from "../ui/button";
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupButton,
   InputGroupInput,
-} from "./ui/input-group";
-import { Input } from "./ui/input";
+} from "../ui/input-group";
+import { Input } from "../ui/input";
 
 import { formatCurrency } from "@/utils/helpers";
 import { useCreateBooking } from "@/hooks/useBookingQueries";

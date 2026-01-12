@@ -27,7 +27,7 @@ import { useUser } from "@/hooks/useUserQueries";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Link from "next/link";
 import { BLURDATA } from "@/data/constants";
-import BookingForm from "@/components/BookingForm";
+import BookingForm from "@/components/bookings/BookingForm";
 
 const PackagePage = () => {
   const { pkgid, username } = useParams<{ pkgid: string; username: string }>();

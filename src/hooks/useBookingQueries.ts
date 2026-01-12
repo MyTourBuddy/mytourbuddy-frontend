@@ -10,6 +10,7 @@ export const bookingKeys = {
   details: () => [...bookingKeys.all, "detail"] as const,
   detail: (id: string) => [...bookingKeys.details(), id] as const,
   my: () => [...bookingKeys.all, "my"] as const,
+  guide: () => [...bookingKeys.all, "guide"] as const,
 };
 
 // get all bookings
@@ -28,6 +29,16 @@ export function useMyBookings() {
     queryKey: bookingKeys.my(),
     queryFn: async () => {
       return await apiClient<Booking[]>("bookings/my");
+    },
+  });
+}
+
+// get guide bookings
+export function useGuideBookings() {
+  return useQuery({
+    queryKey: bookingKeys.guide(),
+    queryFn: async () => {
+      return await apiClient<Booking[]>("bookings/guide");
     },
   });
 }
@@ -99,6 +110,7 @@ export function useUpdateBooking() {
       );
       await queryClient.invalidateQueries({ queryKey: bookingKeys.lists() });
       await queryClient.invalidateQueries({ queryKey: bookingKeys.my() });
+      await queryClient.invalidateQueries({ queryKey: bookingKeys.guide() });
     },
     onError: (error) => {
       // Log for debugging - this helps track booking update failures

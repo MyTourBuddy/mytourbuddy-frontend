@@ -1,16 +1,16 @@
 "use client";
 
+import { useAuth } from "@/context/AuthContext";
 import { useCurrentUser } from "@/hooks/useAuthQueries";
 import Link from "next/link";
 
 const UserDashboard = () => {
   const { data: user, isLoading: loading, error } = useCurrentUser();
+  const { isGuide } = useAuth();
 
   if (loading) return <p>loading...</p>;
   if (!user) return <p>user not found</p>;
   if (error) return <p>{error?.message}</p>;
-
-  const isGuide = user.role === "GUIDE";
 
   return (
     <div className="flex flex-col items-center gap-6 py-10 max-w-5xl mx-auto w-full px-4">

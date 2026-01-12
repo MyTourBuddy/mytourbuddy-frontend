@@ -8,7 +8,6 @@ import { useRouter } from "next/navigation";
 import { Button } from "../ui/button";
 import { useAuth } from "@/context/AuthContext";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { User } from "@/schemas/user.schema";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -29,7 +28,7 @@ import { TbSearch } from "react-icons/tb";
 import SearchDialogBox from "./SearchDialogBox";
 
 const Navbar = () => {
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, isGuide } = useAuth();
   const logoutMutation = useLogout();
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
@@ -60,7 +59,7 @@ const Navbar = () => {
           <Link href="/">
             <Image
               src={logo}
-              alt="mytourbuddy lofo"
+              alt="mytourbuddy logo"
               className="h-14 w-14 md:h-16 md:w-16"
             />
           </Link>
@@ -94,17 +93,22 @@ const Navbar = () => {
                     </div>
                   ) : searchResults?.length ? (
                     searchResults.slice(0, 5).map((pkg) => (
-                      <Link
+                      <div
                         key={pkg.id}
-                        href={`/packages/${pkg.id}`}
-                        onClick={() => setIsDropdownOpen(false)}
-                        className="block p-3 hover:bg-gray-50 border-b last:border-b-0"
+                        onMouseDown={(e) => {
+                          e.preventDefault();
+                          console.log("Link clicked:", pkg.id);
+                          setIsDropdownOpen(false);
+                          setSearchQuery("");
+                          router.push(`/packages/${pkg.id}`);
+                        }}
+                        className="block p-3 hover:bg-gray-50 border-b last:border-b-0 cursor-pointer"
                       >
                         <div className="font-medium">{pkg.title}</div>
                         <div className="text-sm text-gray-500">
                           {pkg.location}
                         </div>
-                      </Link>
+                      </div>
                     ))
                   ) : (
                     <div className="p-4 text-center text-gray-500">
@@ -128,7 +132,7 @@ const Navbar = () => {
           )}
 
           {(user?.role === "GUIDE" || user?.role === "ADMIN") && (
-            <Link href={user.role === "GUIDE" ? "/dashboard" : "/admin"}>
+            <Link href={isGuide ? "/dashboard" : "/admin"}>
               Dashboard
             </Link>
           )}
@@ -172,7 +176,7 @@ const Navbar = () => {
 
         {/* for mobile navbar */}
         <div className="flex items-center md:hidden">
-          <SearchDialogBox/>
+          <SearchDialogBox />
           <NavbarMobile />
         </div>
       </div>

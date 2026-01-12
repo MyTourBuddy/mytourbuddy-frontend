@@ -16,7 +16,7 @@ import { useAuth } from "@/context/AuthContext";
 import { useLogout } from "@/hooks/useAuthQueries";
 
 const NavbarMobile = () => {
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, isGuide, isTourist, isAdmin } = useAuth();
   const logoutMutation = useLogout();
 
   const handleLogout = () => {
@@ -56,33 +56,31 @@ const NavbarMobile = () => {
             </Link>
           </SheetClose>
 
-          {(!isAuthenticated ||
-            (isAuthenticated && user?.role === "TOURIST")) && (
+          {(!isAuthenticated || (isAuthenticated && isTourist)) && (
             <SheetClose asChild>
               <Link
                 href={
-                  isAuthenticated && user?.role === "TOURIST"
-                    ? "/dashboard/tour-planner"
+                  isAuthenticated && isTourist
+                    ? "/dashboard/buddy-ai"
                     : "/signin"
                 }
                 className="text-lg font-medium"
               >
-                Tour Planner
+                TourBuddy Ai
               </Link>
             </SheetClose>
           )}
 
-          {isAuthenticated &&
-            (user?.role === "GUIDE" || user?.role === "ADMIN") && (
-              <SheetClose asChild>
-                <Link
-                  href={user.role === "GUIDE" ? "/dashboard" : "/admin"}
-                  className="text-lg font-medium"
-                >
-                  Dashboard
-                </Link>
-              </SheetClose>
-            )}
+          {isAuthenticated && (isGuide || isAdmin) && (
+            <SheetClose asChild>
+              <Link
+                href={isGuide ? "/dashboard" : "/admin"}
+                className="text-lg font-medium"
+              >
+                Dashboard
+              </Link>
+            </SheetClose>
+          )}
 
           <Separator />
 
