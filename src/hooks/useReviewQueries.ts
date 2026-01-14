@@ -1,6 +1,7 @@
 import { apiClient, getErrorMessage } from "@/lib/api/client";
 import { Review } from "@/schemas/review.schema";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { bookingKeys } from "./useBookingQueries";
 
 export const reviewKeys = {
   all: ["reviews"] as const,
@@ -75,14 +76,25 @@ export function useCreateReview() {
         body: JSON.stringify(reviewData),
       });
     },
-    onSuccess: async (newReview) => {
+    onSuccess: async (newReview, reviewData) => {
       await queryClient.invalidateQueries({ queryKey: reviewKeys.lists() });
-      await queryClient.invalidateQueries({
-        queryKey: reviewKeys.byGuide(newReview.guideId),
-      });
-      await queryClient.invalidateQueries({
-        queryKey: reviewKeys.byTourist(newReview.touristId),
-      });
+      await queryClient.invalidateQueries({ queryKey: bookingKeys.my() });
+      if (newReview && newReview.guideId && newReview.touristId) {
+        await queryClient.invalidateQueries({
+          queryKey: reviewKeys.byGuide(newReview.guideId),
+        });
+        await queryClient.invalidateQueries({
+          queryKey: reviewKeys.byTourist(newReview.touristId),
+        });
+      } else if (reviewData.guideId && reviewData.touristId) {
+        // Fallback: use the data we sent if the response doesn't include it
+        await queryClient.invalidateQueries({
+          queryKey: reviewKeys.byGuide(reviewData.guideId),
+        });
+        await queryClient.invalidateQueries({
+          queryKey: reviewKeys.byTourist(reviewData.touristId),
+        });
+      }
     },
     onError: (error) => {
       console.error("Create review failed:", getErrorMessage(error));

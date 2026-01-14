@@ -1,14 +1,15 @@
 "use client";
 
-import { User } from "@/schemas/user.schema";
 import { useReviewsByGuide } from "@/hooks/useReviewQueries";
-import { useQueries } from "@tanstack/react-query";
-import { apiClient } from "@/lib/api/client";
-import ReviewCard from "../ReviewCard";
+import GuideReviewCard from "./GuideReviewCard";
 import { Spinner } from "../ui/spinner";
 import { PiSmileySad } from "react-icons/pi";
+import { useQueries } from "@tanstack/react-query";
+import { userKeys } from "@/hooks/useUserQueries";
+import { apiClient } from "@/lib/api/client";
+import { Guide } from "@/schemas/user.schema";
 
-const ReviewsSection = ({ user }: { user: User }) => {
+const GuidesReviewsSection = ({ user }: { user: Guide }) => {
   const {
     data: reviews,
     isLoading: loading,
@@ -17,14 +18,13 @@ const ReviewsSection = ({ user }: { user: User }) => {
 
   const touristQueries = useQueries({
     queries: (reviews || []).map((review) => ({
-      queryKey: ["users", review.touristId],
-      queryFn: () => apiClient<User>(`users/${review.touristId}`),
+      queryKey: userKeys.detail(review.touristId),
+      queryFn: () => apiClient<Guide>(`users/${review.touristId}`),
       enabled: !!reviews,
     })),
   });
 
-  const allTouristsLoaded = touristQueries.every((query) => !query.isLoading);
-  const hasTouristError = touristQueries.some((query) => query.error);
+  const allTouristsLoaded = touristQueries.every((query) => query.isSuccess);
 
   if (loading || !allTouristsLoaded) {
     return (
@@ -50,28 +50,34 @@ const ReviewsSection = ({ user }: { user: User }) => {
     );
   }
 
-  if (error || hasTouristError) {
+  if (error) {
     return (
       <section className="mx-auto max-w-5xl w-full text-destructive">
         <div className="flex flex-col justify-center py-10 md:py-20 md:flex-row gap-2 items-center">
           <p className="text-2xl md:text-lg">
             <PiSmileySad />
           </p>
-          {error?.message || "Failed to load tourist info"}
+          {error?.message}
         </div>
       </section>
     );
   }
 
+  const touristsMap = new Map(
+    touristQueries.map((query, index) => [reviews[index].touristId, query.data])
+  );
+
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
-      {reviews.map((review, index) => {
-        const tourist = touristQueries[index].data;
-        if (!tourist) return null;
-        return <ReviewCard key={review.id} review={review} tourist={tourist} />;
-      })}
+      {reviews?.map((review) => (
+        <GuideReviewCard
+          review={review}
+          tourist={touristsMap.get(review.touristId)!}
+          key={review.id}
+        />
+      ))}
     </div>
   );
 };
 
-export default ReviewsSection;
+export default GuidesReviewsSection;

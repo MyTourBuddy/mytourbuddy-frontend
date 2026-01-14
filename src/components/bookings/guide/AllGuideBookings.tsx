@@ -19,7 +19,7 @@ const AllGuideBookings = () => {
     );
   }
 
-  if (!bookings) {
+  if (!bookings || bookings.length === 0) {
     return (
       <section className="mx-auto max-w-5xl w-full">
         <div className="flex flex-col justify-center py-10 md:py-20 md:flex-row gap-2 items-center">
@@ -46,10 +46,15 @@ const AllGuideBookings = () => {
   }
   return (
     <div className="max-w-5xl mx-auto w-full">
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-        {bookings.map((booking) => (
-          <GuideBookingCard key={booking.id} data={booking} />
-        ))}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        {bookings
+          .sort(
+            (a, b) =>
+              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          )
+          .map((booking) => (
+            <GuideBookingCard key={booking.id} data={booking} />
+          ))}
       </div>
     </div>
   );

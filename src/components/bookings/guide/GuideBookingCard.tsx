@@ -46,6 +46,19 @@ const GuideBookingCard = ({ data }: { data: Booking }) => {
     }
   };
 
+  const handleCompleteBooking = async () => {
+    try {
+      await updateBookingMutation.mutateAsync({
+        bookingId: data.id,
+        bookingData: { bookingStatus: "COMPLETED" },
+      });
+      toast.success("Booking completed successfully!");
+    } catch (error) {
+      toast.error("Failed to complete booking. Please try again.");
+      console.error("Complete booking error:", error);
+    }
+  };
+
   return (
     <Card>
       <CardHeader className="-space-y-2">
@@ -97,10 +110,19 @@ const GuideBookingCard = ({ data }: { data: Booking }) => {
             <Button className="w-full" onClick={handleConfirmBooking}>
               Confirm
             </Button>
-            <Button variant="destructive" className="w-full" onClick={handleCancelBooking}>
+            <Button
+              variant="destructive"
+              className="w-full"
+              onClick={handleCancelBooking}
+            >
               Cancel
             </Button>
           </div>
+        )}
+        {data.bookingStatus === "CONFIRMED" && (
+          <Button className="w-full" onClick={handleCompleteBooking}>
+            Complete Tour
+          </Button>
         )}
         <Button variant="outline" className="w-full">
           Contact Tourist

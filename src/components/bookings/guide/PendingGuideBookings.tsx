@@ -64,7 +64,7 @@ const PendingGuideBookings = () => {
 
   return (
     <div className="max-w-5xl mx-auto w-full">
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
         {pendingBookings.map((booking) => (
           <GuideBookingCard key={booking.id} data={booking} />
         ))}

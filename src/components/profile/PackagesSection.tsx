@@ -26,7 +26,7 @@ const PackagesSection = ({ user }: { user: Guide }) => {
     );
   }
 
-  if (!packages) {
+  if (!packages || packages.length === 0) {
     return (
       <section className="mx-auto max-w-5xl w-full">
         <div className="flex flex-col justify-center py-10 md:py-20 md:flex-row gap-2 items-center">

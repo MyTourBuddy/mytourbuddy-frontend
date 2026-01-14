@@ -23,6 +23,7 @@ import { Input } from "../ui/input";
 
 import { formatCurrency } from "@/utils/helpers";
 import { useCreateBooking } from "@/hooks/useBookingQueries";
+import { useAuth } from "@/context/AuthContext";
 
 type BookingFormProps = {
   maxCount: number;
@@ -40,6 +41,7 @@ const BookingForm = ({
   const [bookingDate, setBookingDate] = useState("");
 
   const createBooking = useCreateBooking();
+  const { isAuthenticated, isGuide, isAdmin } = useAuth();
 
   const totalCount = adults + children;
   const isFormComplete = bookingDate.trim() !== "" && totalCount > 0;
@@ -181,14 +183,16 @@ const BookingForm = ({
         </div>
       </FieldSet>
 
-      <Button
-        type="submit"
-        size="lg"
-        className="w-full"
-        disabled={createBooking.isPending || !isFormComplete}
-      >
-        {createBooking.isPending ? "Creating Booking..." : "Book Now"}
-      </Button>
+      {!(isGuide || isAdmin) && (
+        <Button
+          type="submit"
+          size="lg"
+          className="w-full"
+          disabled={createBooking.isPending || !isFormComplete}
+        >
+          {createBooking.isPending ? "Creating Booking..." : "Book Now"}
+        </Button>
+      )}
     </form>
   );
 };

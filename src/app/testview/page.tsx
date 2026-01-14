@@ -1,6 +1,8 @@
+'use client'
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { TbArrowRight } from "react-icons/tb";
+import { TbArrowRight, TbStar } from "react-icons/tb";
 import { LuCompass, LuMap, LuMousePointerClick } from "react-icons/lu";
 import {
   Breadcrumb,
@@ -11,6 +13,7 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import Link from "next/link";
+import { CreateReviewForm } from "@/components/reviews/ReviewForm";
 
 const FindYourBuddy = () => {
   return (
@@ -125,6 +128,28 @@ const FindYourBuddy = () => {
               </CardContent>
             </Card>
           </div>
+
+          {/* Test Review Form */}
+          {/* <div className="mt-8 text-center">
+            <h2 className="text-xl font-semibold mb-4">Test Review Form</h2>
+            <CreateReviewForm
+              booking={{
+                id: "test-booking",
+                pkgId: "test-pkg",
+                bookingDate: "2026-01-15",
+                totalCount: 2,
+                totalPrice: 200,
+                bookingStatus: "COMPLETED",
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+              }}
+              trigger={
+                <Button variant="outline">
+                  <TbStar className="mr-2" /> Open Review Form
+                </Button>
+              }
+            />
+          </div> */}
         </div>
       </div>
     </section>

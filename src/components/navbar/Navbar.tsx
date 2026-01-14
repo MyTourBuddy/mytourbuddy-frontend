@@ -12,6 +12,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { useLogout } from "@/hooks/useAuthQueries";
@@ -24,11 +25,20 @@ import {
   InputGroupButton,
   InputGroupInput,
 } from "../ui/input-group";
-import { TbSearch } from "react-icons/tb";
 import SearchDialogBox from "./SearchDialogBox";
+import {
+  TbCalendar,
+  TbLogout,
+  TbNote,
+  TbPackage,
+  TbSearch,
+  TbSettings,
+  TbStar,
+  TbUser,
+} from "react-icons/tb";
 
 const Navbar = () => {
-  const { user, isAuthenticated, isGuide } = useAuth();
+  const { user, isAuthenticated, isGuide, isTourist } = useAuth();
   const logoutMutation = useLogout();
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
@@ -132,9 +142,7 @@ const Navbar = () => {
           )}
 
           {(user?.role === "GUIDE" || user?.role === "ADMIN") && (
-            <Link href={isGuide ? "/dashboard" : "/admin"}>
-              Dashboard
-            </Link>
+            <Link href={isGuide ? "/dashboard" : "/admin"}>Dashboard</Link>
           )}
 
           {isAuthenticated ? (
@@ -150,12 +158,46 @@ const Navbar = () => {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="z-1000">
                 <Link href={`/${user?.username}`}>
-                  <DropdownMenuItem>My Profile</DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <TbUser className="mr-2" /> My Profile
+                  </DropdownMenuItem>
                 </Link>
+                <DropdownMenuSeparator />
+                <Link href="/dashboard/bookings">
+                  <DropdownMenuItem>
+                    <TbCalendar className="mr-2" />{" "}
+                    {isTourist ? "My Bookings" : "Bookings"}
+                  </DropdownMenuItem>
+                </Link>
+                {isTourist && (
+                  <Link href="/dashboard/reviews">
+                    <DropdownMenuItem>
+                      <TbStar className="mr-2" /> My Reviews
+                    </DropdownMenuItem>
+                  </Link>
+                )}
+                {isGuide && (
+                  <>
+                    <Link href="/dashboard/packages">
+                      <DropdownMenuItem>
+                        <TbPackage className="mr-2" /> My Packages
+                      </DropdownMenuItem>
+                    </Link>
+                    <Link href="/dashboard/experiences">
+                      <DropdownMenuItem>
+                        <TbNote className="mr-2" /> My Experiences
+                      </DropdownMenuItem>
+                    </Link>
+                  </>
+                )}
+                <DropdownMenuSeparator />
                 <Link href="/dashboard/settings">
-                  <DropdownMenuItem>Settings</DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <TbSettings className="mr-2" /> Settings
+                  </DropdownMenuItem>
                 </Link>
                 <DropdownMenuItem onClick={handleLogout}>
+                  <TbLogout className="mr-2" />{" "}
                   {logoutMutation.isPending ? "Logging out..." : "Logout"}
                 </DropdownMenuItem>
               </DropdownMenuContent>

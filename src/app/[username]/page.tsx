@@ -5,7 +5,6 @@ import GuideProfileInfo from "@/components/profile/GuideProfileInfo";
 import PackagesSection from "@/components/profile/PackagesSection";
 import ProfileCompletion from "@/components/profile/ProfileCompletion";
 import ProfileHeader from "@/components/profile/ProfileHeader";
-import ReviewsSection from "@/components/profile/ReviewsSection";
 import TouristProfileInfo from "@/components/profile/TouristProfileInfo";
 import UserNotFound from "@/components/profile/UserNotFound";
 import {
@@ -22,6 +21,8 @@ import { useCurrentUser } from "@/hooks/useAuthQueries";
 import { useUserByUsername } from "@/hooks/useUserQueries";
 import { useParams } from "next/navigation";
 import LoadingUser from "@/components/profile/LoadingUser";
+import GuidesReviewsSection from "@/components/reviews/GuidesReviewsSection";
+import TouristReviewSection from "@/components/reviews/TouristReviewSection";
 
 const UserProfile = () => {
   const { username } = useParams<{ username: string }>();
@@ -45,7 +46,7 @@ const UserProfile = () => {
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
-        
+
         <h1 className="text-3xl font-bold tracking-tight">My Profile</h1>
         <ProfileHeader user={userData} />
 
@@ -85,7 +86,11 @@ const UserProfile = () => {
             <ExperiencesSection user={userData as Guide} />
           </TabsContent>
           <TabsContent value="reviews">
-            <ReviewsSection user={userData} />
+            {userData.role === "TOURIST" ? (
+              <TouristReviewSection user={userData as Tourist} />
+            ) : (
+              <GuidesReviewsSection user={userData as Guide} />
+            )}
           </TabsContent>
         </Tabs>
       </div>

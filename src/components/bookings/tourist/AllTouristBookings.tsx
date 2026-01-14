@@ -20,20 +20,20 @@ const AllTouristBookings = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
 
-  const sortedBookings = bookings
-    ? [...bookings].sort(
-        (a, b) =>
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-      )
-    : [];
-
   const totalPages =
-    sortedBookings.length > 0
-      ? Math.ceil(sortedBookings.length / itemsPerPage)
+    bookings && bookings.length > 0
+      ? Math.ceil(bookings.length / itemsPerPage)
       : 0;
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const currentBookings = sortedBookings.slice(startIndex, endIndex);
+  const currentBookings = bookings
+    ? bookings
+        .sort(
+          (a, b) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        )
+        .slice(startIndex, endIndex)
+    : [];
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -50,7 +50,7 @@ const AllTouristBookings = () => {
     );
   }
 
-  if (!bookings) {
+  if (!bookings || bookings.length === 0) {
     return (
       <section className="mx-auto max-w-5xl w-full">
         <div className="flex flex-col justify-center py-10 md:py-20 md:flex-row gap-2 items-center">
@@ -78,7 +78,7 @@ const AllTouristBookings = () => {
 
   return (
     <div className="max-w-5xl mx-auto w-full">
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
         {currentBookings.map((booking) => (
           <TouristBookingCard key={booking.id} data={booking} />
         ))}

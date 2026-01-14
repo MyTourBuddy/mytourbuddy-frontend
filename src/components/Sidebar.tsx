@@ -12,12 +12,17 @@ const Sidebar = () => {
         <Link href="/dashboard/settings">Settings</Link>
 
         {isGuide && (
-          <>
+          <div className="flex flex-col gap-3">
             <Link href="/dashboard/packages">Packages</Link>
             <Link href="/dashboard/experiences">Experiences</Link>
-          </>
+          </div>
         )}
-        {isTourist && <Link href="/dashboard/buddy-ai">TourBuddy Ai</Link>}
+        {isTourist && (
+          <div className="flex flex-col gap-3">
+            <Link href="/dashboard/buddy-ai">TourBuddy Ai</Link>
+            <Link href="/dashboard/reviews">My Reviews</Link>
+          </div>
+        )}
         <Link href="/dashboard/bookings">Bookings</Link>
         <Link href="/dashboard/support">Support</Link>
       </div>

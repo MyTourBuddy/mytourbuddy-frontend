@@ -32,3 +32,7 @@ export const capitalizeFirstLetter = (str: string): string => {
   if (!str) return "";
   return str.trim().charAt(0).toUpperCase() + str.trim().slice(1).toLowerCase();
 };
+
+export const getInitials = (firstName: string, lastName: string) => {
+  return (firstName[0] + lastName[0]).toUpperCase();
+};

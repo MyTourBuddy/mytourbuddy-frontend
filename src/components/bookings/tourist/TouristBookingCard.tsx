@@ -1,14 +1,14 @@
 "use client";
 
-import { TbCalendar, TbCurrencyDollar, TbUser, TbUsers } from "react-icons/tb";
-import { Badge } from "../../ui/badge";
 import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "../../ui/card";
+  TbCalendar,
+  TbCurrencyDollar,
+  TbUser,
+  TbUsers,
+  TbStar,
+} from "react-icons/tb";
+import { Badge } from "../../ui/badge";
+import { Card, CardContent, CardFooter, CardHeader } from "../../ui/card";
 import { Separator } from "../../ui/separator";
 import { Booking } from "@/schemas/booking.schema";
 import { usePackage } from "@/hooks/usePackageQueries";
@@ -17,6 +17,7 @@ import { useUpdateBooking } from "@/hooks/useBookingQueries";
 import { formatCurrency } from "@/utils/helpers";
 import { Button } from "../../ui/button";
 import toast from "react-hot-toast";
+import { CreateReviewForm } from "@/components/reviews/ReviewForm";
 
 const TouristBookingCard = ({ data }: { data: Booking }) => {
   const { data: pkgData } = usePackage(data.pkgId);
@@ -103,7 +104,6 @@ const TouristBookingCard = ({ data }: { data: Booking }) => {
           {(data.bookingStatus === "PENDING" ||
             data.bookingStatus === "CONFIRMED") && (
             <div className="flex flex-col gap-2 w-full">
-              <Button variant="outline">Contact Guide</Button>
               <Button
                 variant="destructive"
                 onClick={handleCancelBooking}
@@ -115,9 +115,19 @@ const TouristBookingCard = ({ data }: { data: Booking }) => {
               </Button>
             </div>
           )}
-          {data.bookingStatus === "COMPLETED" && (
-            <Button className="w-full">Write a review</Button>
+          {data.bookingStatus === "COMPLETED" && !data.isReviewed && (
+            <CreateReviewForm
+              booking={data}
+              trigger={
+                <Button className="w-full">
+                  <TbStar className="mr-2" /> Write a Review
+                </Button>
+              }
+            />
           )}
+          <Button asChild variant="outline" className="w-full">
+            <a href={`tel:${guideData.phone}`}>Contact Guide</a>
+          </Button>
         </CardFooter>
       )}
     </Card>

@@ -17,7 +17,6 @@ import {
 } from "@/components/ui/breadcrumb";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/context/AuthContext";
-import GuideBookingCard from "@/components/bookings/guide/GuideBookingCard";
 import AllGuideBookings from "@/components/bookings/guide/AllGuideBookings";
 import PendingGuideBookings from "@/components/bookings/guide/PendingGuideBookings";
 import AcceptedGuideBookings from "@/components/bookings/guide/AcceptedGuideBookings";

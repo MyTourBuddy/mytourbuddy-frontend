@@ -10,6 +10,7 @@ export const bookingSchema = z.object({
   bookingStatus: z.enum(["PENDING", "CONFIRMED", "COMPLETED", "CANCELLED"]),
   bookingDate: z.date(),
   createdAt: z.date(),
+  isReviewed: z.boolean().default(false),
 });
 
 export type Booking = z.infer<typeof bookingSchema>;

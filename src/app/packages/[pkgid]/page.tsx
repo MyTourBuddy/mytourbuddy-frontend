@@ -7,11 +7,10 @@ import { Spinner } from "@/components/ui/spinner";
 import Image from "next/image";
 import { useParams } from "next/navigation";
 import { GiCheckMark } from "react-icons/gi";
-import { GrCurrency, GrMap, GrUserWorker } from "react-icons/gr";
+import { GrCurrency, GrMap } from "react-icons/gr";
 import { LuAlarmClock } from "react-icons/lu";
 import { PiSmileySad } from "react-icons/pi";
-import { TbAlertCircle, TbX } from "react-icons/tb";
-import { IoChatbubbleOutline } from "react-icons/io5";
+import { TbAlertCircle, TbX, TbPhone } from "react-icons/tb";
 import { HiUserGroup } from "react-icons/hi2";
 import { formatCurrency } from "@/utils/helpers";
 import {
@@ -324,11 +323,14 @@ const PackagePage = () => {
                   packageId={pkgid}
                 />
                 <Button
+                  asChild
                   size="lg"
                   variant="outline"
                   className="w-full flex items-center justify-center"
                 >
-                  <IoChatbubbleOutline /> Contact Guide
+                  <a href={`tel:${userDetails.phone}`}>
+                    <TbPhone /> Contact Guide
+                  </a>
                 </Button>
               </div>
 

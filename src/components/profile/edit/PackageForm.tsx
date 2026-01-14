@@ -336,7 +336,7 @@ export const PackageCreateForm = () => {
         <div className="col-span-3 order-1 md:order-2">
           <Field>
             <FieldLabel className="text-center text-sm md:text-balance">
-              Package Image
+              Package Image&nbsp;<span className="text-destructive">*</span>
             </FieldLabel>
             <div className="relative aspect-square w-full">
               <div className="relative w-full h-full rounded-lg border-2 border-dashed border-border overflow-hidden bg-muted">
@@ -397,6 +397,7 @@ export const PackageCreateForm = () => {
             !maxGroupSize ||
             !duration.trim() ||
             !location.trim() ||
+            !imagePreview ||
             included.filter((item) => item.trim() !== "").length === 0
           }
         >
@@ -742,7 +743,7 @@ export const PackageEditForm = ({ pkg }: { pkg: Package }) => {
         <div className="col-span-3 order-1 md:order-2">
           <Field>
             <FieldLabel className="text-center text-sm md:text-balance">
-              Package Image
+              Package Image&nbsp;<span className="text-destructive">*</span>
             </FieldLabel>
             <div className="relative aspect-square w-full">
               <div className="relative w-full h-full rounded-lg border-2 border-dashed border-border overflow-hidden bg-muted">
@@ -803,6 +804,7 @@ export const PackageEditForm = ({ pkg }: { pkg: Package }) => {
             !draft?.maxGroupSize ||
             !draft?.duration?.trim() ||
             !draft?.location?.trim() ||
+            !imagePreview ||
             included.filter((item) => item.trim() !== "").length === 0
           }
         >
