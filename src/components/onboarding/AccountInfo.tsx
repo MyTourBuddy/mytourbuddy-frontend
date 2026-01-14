@@ -20,6 +20,7 @@ import { z } from "zod";
 import { useDebounce } from "@/hooks/useDebounce";
 import { Spinner } from "../ui/spinner";
 import { useCheckUsername } from "@/hooks/useAuthQueries";
+import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
 
 interface AccountInfoProps {
   stepUp: (data: AccountInfoInput) => void;
@@ -120,8 +121,14 @@ const AccountInfo = ({ stepUp, initialData }: AccountInfoProps) => {
         <FieldGroup className="flex flex-col gap-3">
           <Field>
             <Label htmlFor="username">Username</Label>
-            <div className="relative">
-              <Input
+            <InputGroup className={
+              usernameAvailable === true
+                ? "border-green-500"
+                : usernameAvailable === false
+                ? "border-red-500"
+                : ""
+            }>
+              <InputGroupInput
                 type="text"
                 id="username"
                 name="username"
@@ -129,25 +136,12 @@ const AccountInfo = ({ stepUp, initialData }: AccountInfoProps) => {
                 value={formData.username || ""}
                 onChange={(e) => handleChange("username", e.target.value)}
                 aria-invalid={!!errors.username || usernameAvailable === false}
-                className={
-                  usernameAvailable === true
-                    ? "border-green-500 pr-10"
-                    : usernameAvailable === false
-                    ? "border-red-500"
-                    : ""
-                }
               />
-              {isCheckingUsername && (
-                <span className="absolute right-3 top-1/2 -translate-y-1/2">
-                  <Spinner />
-                </span>
-              )}
-              {usernameAvailable === true && !isCheckingUsername && (
-                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-green-500">
-                  <TbCheck className="h-5 w-5" />
-                </span>
-              )}
-            </div>
+              <InputGroupAddon align="inline-end">
+                {isCheckingUsername && <Spinner />}
+                {usernameAvailable === true && !isCheckingUsername && <TbCheck className="h-5 w-5 text-green-500" />}
+              </InputGroupAddon>
+            </InputGroup>
             {errors.username && (
               <p className="text-xs text-red-500 mt-1">{errors.username}</p>
             )}
