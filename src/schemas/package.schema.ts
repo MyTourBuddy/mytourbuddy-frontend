@@ -10,7 +10,7 @@ export const packageSchema = z.object({
 
   duration: z.string().min(1, "Duration is required"),
   location: z.string().min(1, "Location is required"),
-  image: z.string().optional(),
+  image: z.string(),
 
   maxGroupSize: z.number().int().positive(),
 

@@ -6,7 +6,7 @@ const HomePage =() => {
   
   return (
     <div className="flex flex-col max-w-md w-full mx-auto items-center py-10 gap-8">
-      <Image src={logo} alt="tourbuddy logo" width={100} height={100} />
+      <Image src={logo} alt="tourbuddy logo" width={100} height={100} placeholder="empty" />
       <p>Heyy im your tour buddy 🦧</p>
 
       <div className="flex flex-col gap-6">
