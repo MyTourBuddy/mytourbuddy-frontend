@@ -20,7 +20,7 @@ import { TbArrowRight, TbLocation } from "react-icons/tb";
 import { FaFlagCheckered } from "react-icons/fa";
 
 // Gemini SDK
-import { GoogleGenerativeAI } from "@google/generative-ai";
+// import { GoogleGenerativeAI } from "@google/generative-ai";
 
 interface SendingProps {
   firstName: string;
@@ -48,7 +48,7 @@ const BuddyAi = () => {
   }
 
   // Initialize Gemini client
-  const genAI = new GoogleGenerativeAI(apiKey);
+  // const genAI = new GoogleGenerativeAI(apiKey);
 
   const generateTourPlan = async (payload: SendingProps) => {
     const prompt = `
@@ -68,10 +68,12 @@ Include:
 - Travel tips
 `;
 
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    return response.text();
+    // const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+    // const result = await model.generateContent(prompt);
+    // const response = await result.response;
+    // return response.text();
+
+    return null;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {

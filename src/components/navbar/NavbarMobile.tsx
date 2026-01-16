@@ -69,7 +69,7 @@ const NavbarMobile = () => {
             </Link>
           </SheetClose>
 
-          {(!isAuthenticated || (isAuthenticated && isTourist)) && (
+          {(!isAuthenticated || isTourist) && (
             <SheetClose asChild>
               <Link
                 href={
@@ -119,7 +119,11 @@ const NavbarMobile = () => {
                   </SheetClose>
                   <SheetClose asChild>
                     <Link
-                      href="/dashboard/bookings"
+                      href={
+                        user?.isProfileComplete
+                          ? "/dashboard/bookings"
+                          : "/dashboard/settings"
+                      }
                       className="font-medium block"
                     >
                       {isTourist ? "My Bookings" : "Bookings"}
@@ -128,7 +132,11 @@ const NavbarMobile = () => {
                   {isTourist && (
                     <SheetClose asChild>
                       <Link
-                        href="/dashboard/reviews"
+                        href={
+                          user?.isProfileComplete
+                            ? "/dashboard/reviews"
+                            : "/dashboard/settings"
+                        }
                         className="font-medium block"
                       >
                         My Reviews
@@ -139,7 +147,11 @@ const NavbarMobile = () => {
                     <>
                       <SheetClose asChild>
                         <Link
-                          href="/dashboard/packages"
+                          href={
+                            user?.isProfileComplete
+                              ? "/dashboard/packages"
+                              : "/dashboard/settings"
+                          }
                           className="font-medium block"
                         >
                           My Packages
@@ -147,7 +159,11 @@ const NavbarMobile = () => {
                       </SheetClose>
                       <SheetClose asChild>
                         <Link
-                          href="/dashboard/experiences"
+                          href={
+                            user?.isProfileComplete
+                              ? "/dashboard/experiences"
+                              : "/dashboard/settings"
+                          }
                           className="font-medium block"
                         >
                           My Experiences
