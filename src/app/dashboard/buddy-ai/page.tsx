@@ -19,87 +19,41 @@ import { LuMousePointerClick } from "react-icons/lu";
 import { TbArrowRight, TbLocation } from "react-icons/tb";
 import { FaFlagCheckered } from "react-icons/fa";
 
-// Gemini SDK
-// import { GoogleGenerativeAI } from "@google/generative-ai";
-
-interface SendingProps {
-  firstName: string;
-  lastName: string;
-  age: number;
-  travelPrefs: string[];
-  startDest: string;
-  endDest: string;
-}
+import { useGenerateGuide } from "@/hooks/useBuddyAiQueries";
+import { BuddyAiRequest } from "@/schemas/buddy-ai.schema";
 
 const BuddyAi = () => {
-  const [startDest, setStartDest] = useState("");
-  const [endDest, setEndDest] = useState("");
-  const [submitted, setSubmitted] = useState<SendingProps | null>(null);
+  const [startLocation, setStartLocation] = useState("");
+  const [endDestination, setEndDestination] = useState("");
+  const [submitted, setSubmitted] = useState<BuddyAiRequest | null>(null);
   const [aiPlan, setAiPlan] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
 
   const { user } = useAuth();
+  const generateGuideMutation = useGenerateGuide();
+
   if (!user) return null;
-
-  const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
-  if (!apiKey) {
-    console.error("api key not found");
-    return;
-  }
-
-  // Initialize Gemini client
-  // const genAI = new GoogleGenerativeAI(apiKey);
-
-  const generateTourPlan = async (payload: SendingProps) => {
-    const prompt = `
-Create a personalized tour plan.
-
-Name: ${payload.firstName}
-Age: ${payload.age}
-Preferences: ${payload.travelPrefs.join(", ") || "General travel"}
-Start location: ${payload.startDest}
-Destination: ${payload.endDest}
-
-Include:
-- Day-by-day itinerary
-- Places to visit
-- Activities
-- Estimated daily cost (USD)
-- Travel tips
-`;
-
-    // const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
-    // const result = await model.generateContent(prompt);
-    // const response = await result.response;
-    // return response.text();
-
-    return null;
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
 
-    const payload: SendingProps = {
+    const payload: BuddyAiRequest = {
       firstName: user.firstName,
       lastName: user.lastName,
       age: user.age,
-      travelPrefs: user.role === "TOURIST" ? user.travelPreferences : [],
-      startDest,
-      endDest,
+      travelPrefs: user.role === "TOURIST" ? (user.travelPreferences || []) : [],
+      startLocation,
+      endDestination,
     };
 
+    console.log("Payload:", payload);
     setSubmitted(payload);
     setAiPlan(null);
 
     try {
-      const plan = await generateTourPlan(payload);
-      setAiPlan(plan);
+      const response = await generateGuideMutation.mutateAsync(payload);
+      setAiPlan(response.generatedGuide);
     } catch (err) {
       console.error(err);
       setAiPlan("Failed to generate tour plan.");
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -161,7 +115,7 @@ Include:
               <FieldGroup className="flex flex-col md:flex-row gap-2">
                 <Field>
                   <FieldLabel
-                    htmlFor="startDest"
+                    htmlFor="startLocation"
                     className="text-base font-medium"
                   >
                     <TbLocation className="text-primary text-base" /> Start
@@ -169,16 +123,16 @@ Include:
                   </FieldLabel>
                   <Input
                     type="text"
-                    name="startDest"
-                    value={startDest}
-                    onChange={(e) => setStartDest(e.target.value)}
+                    name="startLocation"
+                    value={startLocation}
+                    onChange={(e) => setStartLocation(e.target.value)}
                     placeholder="e.g., Colombo"
                     required
                   />
                 </Field>
                 <Field>
                   <FieldLabel
-                    htmlFor="endDest"
+                    htmlFor="endDestination"
                     className="text-base font-medium"
                   >
                     <FaFlagCheckered className="text-primary text-base" />{" "}
@@ -186,9 +140,9 @@ Include:
                   </FieldLabel>
                   <Input
                     type="text"
-                    name="endDest"
-                    value={endDest}
-                    onChange={(e) => setEndDest(e.target.value)}
+                    name="endDestination"
+                    value={endDestination}
+                    onChange={(e) => setEndDestination(e.target.value)}
                     placeholder="e.g., Kandy"
                     required
                   />
@@ -211,7 +165,7 @@ Include:
       {submitted && (
         <Card className="max-w-2xl w-full">
           <CardContent className="space-y-4">
-            {loading ? (
+            {generateGuideMutation.isPending ? (
               <p className="text-muted-foreground">
                 Generating your tour plan…
               </p>
