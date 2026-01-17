@@ -96,7 +96,7 @@ const PackagesContent = () => {
 
         {/* header */}
         <div className="flex md:items-center flex-col md:flex-row justify-between gap-y-4">
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-2 md:gap-3">
             <h1 className="text-3xl font-bold tracking-tight">Tour Packages</h1>
             <p className="text-muted-foreground mt-1">
               Discover hand-picked experiences from trusted local guides

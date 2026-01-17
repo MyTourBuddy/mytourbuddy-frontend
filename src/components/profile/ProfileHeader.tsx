@@ -40,8 +40,7 @@ const ProfileHeader = ({ user }: { user: User }) => {
                 fill
                 className="rounded-full object-cover"
                 sizes="80px"
-                blurDataURL={BLURDATA}
-                loading="eager"
+                loading="lazy"
               />
             ) : (
               initials
@@ -64,8 +63,7 @@ const ProfileHeader = ({ user }: { user: User }) => {
                 fill
                 className="rounded-full object-cover"
                 sizes="112px"
-                blurDataURL={BLURDATA}
-                loading="eager"
+                loading="lazy"
               />
             ) : (
               initials

@@ -42,7 +42,8 @@ const ProfileSettingsPage = () => {
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
-        <div>
+        
+        <div className="flex flex-col gap-2 md:gap-3">
           <h1 className="text-3xl font-bold tracking-tight">Edit Profile</h1>
           <p className="text-sm sm:text-base text-muted-foreground mt-2">
             Update your information to complete your profile

@@ -102,8 +102,7 @@ const ExperiencePage = () => {
                   alt={expDetails.title}
                   fill
                   className="object-cover rounded-t-lg"
-                  blurDataURL={BLURDATA}
-                  loading="eager"
+                  loading="lazy"
                 />
               ) : (
                 <div className="flex items-center justify-center h-full bg-gray-200 rounded-t-lg">

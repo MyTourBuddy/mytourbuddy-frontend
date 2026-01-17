@@ -346,8 +346,7 @@ export const PackageCreateForm = () => {
                     alt="Package preview"
                     fill
                     className="object-cover"
-                    blurDataURL={BLURDATA}
-                    loading="eager"
+                    loading="lazy"
                   />
                 ) : (
                   <div className="flex items-center justify-center h-full">
@@ -753,8 +752,7 @@ export const PackageEditForm = ({ pkg }: { pkg: Package }) => {
                     alt="Package preview"
                     fill
                     className="object-cover"
-                    blurDataURL={BLURDATA}
-                    loading="eager"
+                    loading="lazy"
                   />
                 ) : (
                   <div className="flex items-center justify-center h-full">

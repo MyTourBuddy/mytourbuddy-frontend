@@ -144,7 +144,7 @@ const PackagesPage = () => {
         {/* header */}
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-3 md:flex-row md:items-end justify-between">
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-2 md:gap-3">
               <h1 className="text-3xl font-bold tracking-tight">My Packages</h1>
               <p className="text-muted-foreground mt-1">
                 Manage your tour packages ({pkgs.length}/3)
@@ -183,8 +183,7 @@ const PackagesPage = () => {
                       width={128}
                       height={128}
                       className="w-full h-full object-cover"
-                      blurDataURL={BLURDATA}
-                      loading="eager"
+                      loading="lazy"
                     />
                   ) : (
                     <div className="flex items-center justify-center w-full h-full">

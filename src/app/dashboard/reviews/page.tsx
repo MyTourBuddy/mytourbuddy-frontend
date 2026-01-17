@@ -84,7 +84,7 @@ const MyReviews = () => {
         </Breadcrumb>
 
         <div className="flex flex-col gap-4">
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-2 md:gap-3">
             <h1 className="text-3xl font-bold tracking-tight">My Reviews</h1>
             <p className="text-muted-foreground mt-1">
               View and manage your reviews

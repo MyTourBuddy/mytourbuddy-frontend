@@ -73,7 +73,7 @@ const GuideBookingStats = () => {
           </div>
           <Separator />
         </CardHeader>
-        <CardContent className="mx-auto text-3xl">{pendingCount}</CardContent>
+        <CardContent className="mx-auto text-3xl font-semibold">{pendingCount}</CardContent>
       </Card>
       <Card>
         <CardHeader>
@@ -83,7 +83,7 @@ const GuideBookingStats = () => {
           </div>
           <Separator />
         </CardHeader>
-        <CardContent className="mx-auto text-3xl">{acceptedCount}</CardContent>
+        <CardContent className="mx-auto text-3xl font-semibold">{acceptedCount}</CardContent>
       </Card>
       <Card>
         <CardHeader>
@@ -93,7 +93,7 @@ const GuideBookingStats = () => {
           </div>
           <Separator />
         </CardHeader>
-        <CardContent className="mx-auto text-3xl">{completedCount}</CardContent>
+        <CardContent className="mx-auto text-3xl font-semibold">{completedCount}</CardContent>
       </Card>
       <Card>
         <CardHeader>
@@ -103,7 +103,7 @@ const GuideBookingStats = () => {
           </div>
           <Separator />
         </CardHeader>
-        <CardContent className="mx-auto text-3xl">{canceledCount}</CardContent>
+        <CardContent className="mx-auto text-3xl font-semibold">{canceledCount}</CardContent>
       </Card>
     </div>
   );
