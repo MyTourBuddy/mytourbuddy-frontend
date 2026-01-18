@@ -117,18 +117,20 @@ const NavbarMobile = () => {
                       Overview
                     </Link>
                   </SheetClose>
-                  <SheetClose asChild>
-                    <Link
-                      href={
-                        user?.isProfileComplete
-                          ? "/dashboard/bookings"
-                          : "/dashboard/settings"
-                      }
-                      className="font-medium block"
-                    >
-                      {isTourist ? "My Bookings" : "Bookings"}
-                    </Link>
-                  </SheetClose>
+                  {(isGuide || isTourist) && (
+                    <SheetClose asChild>
+                      <Link
+                        href={
+                          user?.isProfileComplete
+                            ? "/dashboard/bookings"
+                            : "/dashboard/settings"
+                        }
+                        className="font-medium block"
+                      >
+                        {isTourist ? "My Bookings" : "Bookings"}
+                      </Link>
+                    </SheetClose>
+                  )}
                   {isTourist && (
                     <SheetClose asChild>
                       <Link
@@ -171,14 +173,49 @@ const NavbarMobile = () => {
                       </SheetClose>
                     </>
                   )}
-                  <SheetClose asChild>
-                    <Link
-                      href="/dashboard/support"
-                      className="font-medium block"
-                    >
-                      Support
-                    </Link>
-                  </SheetClose>
+                  {(isGuide || isTourist) && (
+                    <SheetClose asChild>
+                      <Link
+                        href="/dashboard/support"
+                        className="font-medium block"
+                      >
+                        Support
+                      </Link>
+                    </SheetClose>
+                  )}
+                  {isAdmin && (
+                    <>
+                      <SheetClose asChild>
+                        <Link
+                          href="/admin/tickets"
+                          className="font-medium block"
+                        >
+                          Tickets
+                        </Link>
+                      </SheetClose>
+                      <SheetClose asChild>
+                        <Link
+                          href="/admin/bookings"
+                          className="font-medium block"
+                        >
+                          Bookings
+                        </Link>
+                      </SheetClose>
+                      <SheetClose asChild>
+                        <Link href="/admin/users" className="font-medium block">
+                          Users
+                        </Link>
+                      </SheetClose>
+                      <SheetClose asChild>
+                        <Link
+                          href="/admin/packages"
+                          className="font-medium block"
+                        >
+                          Packages
+                        </Link>
+                      </SheetClose>
+                    </>
+                  )}
                 </CollapsibleContent>
               </Collapsible>
               <Separator />
@@ -202,7 +239,7 @@ const NavbarMobile = () => {
                   </SheetClose>
                   <SheetClose asChild>
                     <Link
-                      href="/dashboard/settings"
+                      href={isAdmin ? "/admin/settings" : "/dashboard/settings"}
                       className="font-medium block"
                     >
                       Settings

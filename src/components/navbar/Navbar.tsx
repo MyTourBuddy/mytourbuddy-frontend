@@ -27,6 +27,7 @@ import {
 } from "../ui/input-group";
 import SearchDialogBox from "./SearchDialogBox";
 import {
+  TbBookmark,
   TbCalendar,
   TbLogout,
   TbNote,
@@ -34,6 +35,7 @@ import {
   TbSearch,
   TbSettings,
   TbStar,
+  TbTicket,
   TbUser,
 } from "react-icons/tb";
 
@@ -155,70 +157,90 @@ const Navbar = () => {
                 </Avatar>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="z-1000">
-                <Link href={`/${user?.username}`}>
-                  <DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href={`/${user?.username}`}>
                     <TbUser className="mr-2" /> My Profile
-                  </DropdownMenuItem>
-                </Link>
-                <DropdownMenuSeparator />
-                <Link
-                  href={
-                    user?.isProfileComplete
-                      ? "/dashboard/bookings"
-                      : "/dashboard/settings"
-                  }
-                >
-                  <DropdownMenuItem>
-                    <TbCalendar className="mr-2" />{" "}
-                    {isTourist ? "My Bookings" : "Bookings"}
-                  </DropdownMenuItem>
-                </Link>
-                {isTourist && (
-                  <Link
-                    href={
-                      user?.isProfileComplete
-                        ? "/dashboard/reviews"
-                        : "/dashboard/settings"
-                    }
-                  >
-                    <DropdownMenuItem>
-                      <TbStar className="mr-2" /> My Reviews
-                    </DropdownMenuItem>
                   </Link>
-                )}
-                {isGuide && (
-                  <>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                {(isTourist || isGuide) && (
+                  <DropdownMenuItem asChild>
                     <Link
                       href={
                         user?.isProfileComplete
-                          ? "/dashboard/packages"
+                          ? "/dashboard/bookings"
                           : "/dashboard/settings"
                       }
                     >
-                      <DropdownMenuItem>
-                        <TbPackage className="mr-2" /> My Packages
-                      </DropdownMenuItem>
+                      <TbCalendar className="mr-2" />
+                      {isTourist ? "My Bookings" : "Bookings"}
                     </Link>
+                  </DropdownMenuItem>
+                )}
+                {isTourist && (
+                  <DropdownMenuItem asChild>
                     <Link
                       href={
                         user?.isProfileComplete
                           ? "/dashboard/reviews"
-                          : "/dashboard/experiences"
+                          : "/dashboard/settings"
                       }
                     >
-                      <DropdownMenuItem>
-                        <TbNote className="mr-2" /> My Experiences
-                      </DropdownMenuItem>
+                      <TbStar className="mr-2" /> My Reviews
                     </Link>
+                  </DropdownMenuItem>
+                )}
+                {isGuide && (
+                  <>
+                    <DropdownMenuItem asChild>
+                      <Link
+                        href={
+                          user?.isProfileComplete
+                            ? "/dashboard/packages"
+                            : "/dashboard/settings"
+                        }
+                      >
+                        <TbPackage className="mr-2" /> My Packages
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link
+                        href={
+                          user?.isProfileComplete
+                            ? "/dashboard/reviews"
+                            : "/dashboard/experiences"
+                        }
+                      >
+                        <TbNote className="mr-2" /> My Experiences
+                      </Link>
+                    </DropdownMenuItem>
+                  </>
+                )}
+                {isAdmin && (
+                  <>
+                    <DropdownMenuItem asChild>
+                      <Link href="/admin/tickets">
+                        <TbTicket className="mr-2" />
+                        Tickets
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href="/admin/bookings">
+                        <TbBookmark className="mr-2" />
+                        Bookings
+                      </Link>
+                    </DropdownMenuItem>
                   </>
                 )}
                 <DropdownMenuSeparator />
-                <Link href="/dashboard/settings">
-                  <DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link
+                    href={isAdmin ? "/admin/settings" : "/dashboard/settings"}
+                  >
                     <TbSettings className="mr-2" /> Settings
-                  </DropdownMenuItem>
-                </Link>
-                <DropdownMenuItem onClick={handleLogout}>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild onClick={handleLogout}>
                   <TbLogout className="mr-2" />
                   {logoutMutation.isPending ? "Logging out..." : "Logout"}
                 </DropdownMenuItem>

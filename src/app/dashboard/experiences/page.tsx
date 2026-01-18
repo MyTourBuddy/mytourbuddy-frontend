@@ -55,7 +55,7 @@ const ExperiencesPage = () => {
 
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [experienceToDelete, setExperienceToDelete] = useState<string | null>(
-    null
+    null,
   );
 
   const loading = userLoading || expLoading;
@@ -208,19 +208,19 @@ const ExperiencesPage = () => {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <Link href={`${pathname}/${exp.id}`}>
-                          <DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Link href={`${pathname}/${exp.id}`}>
                             <TbEye />
                             View
-                          </DropdownMenuItem>
-                        </Link>
-                        <Link href={`${pathname}/${exp.id}/edit`}>
-                          <DropdownMenuItem>
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Link href={`${pathname}/${exp.id}/edit`}>
                             <TbPencil />
                             Edit
-                          </DropdownMenuItem>
-                        </Link>
-                        <DropdownMenuItem
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild
                           onClick={() => handleDeleteClick(exp.id)}
                           className="text-destructive focus:text-destructive"
                         >

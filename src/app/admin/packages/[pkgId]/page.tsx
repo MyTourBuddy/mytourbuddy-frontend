@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -6,8 +8,10 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import { useParams } from "next/navigation";
 
-const UsersPage = () => {
+const PackagePage = () => {
+  const { pkgId } = useParams<{ pkgId: string }>();
   return (
     <section className="max-w-5xl mx-auto w-full pt-3 px-4">
       <div className="flex flex-col gap-6">
@@ -18,19 +22,18 @@ const UsersPage = () => {
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbLink href="/admin">Dashboard</BreadcrumbLink>
+              <BreadcrumbLink href="/admin/packages">Packages</BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbPage>Users</BreadcrumbPage>
+              <BreadcrumbPage>{pkgId}</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
-
-        <div>users</div>
+        PackagePage
       </div>
     </section>
   );
 };
 
-export default UsersPage;
+export default PackagePage;

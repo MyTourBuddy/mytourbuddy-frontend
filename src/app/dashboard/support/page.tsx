@@ -22,25 +22,31 @@ import {
   ItemMedia,
   ItemTitle,
 } from "@/components/ui/item";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 import { Separator } from "@/components/ui/separator";
 import { Spinner } from "@/components/ui/spinner";
 import { useTickets } from "@/hooks/useTicketQueries";
 import Link from "next/link";
+import { useState } from "react";
 import { PiSmileySad } from "react-icons/pi";
 import {
   TbCircleCheck,
   TbCircleDot,
-  TbClockShield,
-  TbDots,
   TbDotsVertical,
-  TbFolderCheck,
-  TbFolderOpen,
-  TbLockOpen,
   TbPlus,
 } from "react-icons/tb";
 
 const SupportPage = () => {
   const { data: tickets, isLoading: loading, error } = useTickets();
+
+  const [page, setPage] = useState(1);
 
   if (loading) {
     return (
@@ -79,6 +85,24 @@ const SupportPage = () => {
     );
   }
 
+  const sortedTickets = [...tickets].sort((a, b) => {
+    if (a.createdAt && b.createdAt) {
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    }
+    return 0;
+  });
+
+  // Pagination logic
+  const pageSize = 10;
+  const totalPages = Math.ceil(sortedTickets.length / pageSize);
+  const paginatedTickets = sortedTickets.slice(
+    (page - 1) * pageSize,
+    page * pageSize,
+  );
+
+  const handlePrev = () => setPage((p) => Math.max(1, p - 1));
+  const handleNext = () => setPage((p) => Math.min(totalPages, p + 1));
+
   return (
     <section className="max-w-3xl mx-auto w-full pt-3 px-4">
       <div className="flex flex-col gap-6">
@@ -115,7 +139,7 @@ const SupportPage = () => {
           </div>
 
           <div className="flex flex-col gap-3">
-            {tickets.map((ticket) => {
+            {paginatedTickets.map((ticket) => {
               return (
                 <Item variant="outline" key={ticket.id}>
                   <ItemMedia className="text-lg">
@@ -144,6 +168,47 @@ const SupportPage = () => {
               );
             })}
           </div>
+          {/* Pagination Controls */}
+          {totalPages > 1 && (
+            <Pagination>
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious
+                    onClick={handlePrev}
+                    className={
+                      page === 1 ? "pointer-events-none opacity-50" : ""
+                    }
+                  />
+                </PaginationItem>
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                  (pageNum) => (
+                    <PaginationItem key={pageNum}>
+                      <PaginationLink
+                        onClick={() => setPage(pageNum)}
+                        className={
+                          page === pageNum
+                            ? "bg-primary text-primary-foreground"
+                            : ""
+                        }
+                      >
+                        {pageNum}
+                      </PaginationLink>
+                    </PaginationItem>
+                  ),
+                )}
+                <PaginationItem>
+                  <PaginationNext
+                    onClick={handleNext}
+                    className={
+                      page === totalPages
+                        ? "pointer-events-none opacity-50"
+                        : ""
+                    }
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+          )}
         </div>
       </div>
     </section>

@@ -210,19 +210,20 @@ const PackagesPage = () => {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <Link href={`${pathname}/${pkg.id}`}>
-                          <DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Link href={`${pathname}/${pkg.id}`}>
                             <TbEye />
                             View
-                          </DropdownMenuItem>
-                        </Link>
-                        <Link href={`${pathname}/${pkg.id}/edit`}>
-                          <DropdownMenuItem>
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Link href={`${pathname}/${pkg.id}/edit`}>
                             <TbPencil />
                             Edit
-                          </DropdownMenuItem>
-                        </Link>
+                          </Link>
+                        </DropdownMenuItem>
                         <DropdownMenuItem
+                          asChild
                           onClick={() => handleDeleteClick(pkg.id)}
                           className="text-destructive focus:text-destructive"
                         >
