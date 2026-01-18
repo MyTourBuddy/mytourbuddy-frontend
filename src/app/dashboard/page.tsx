@@ -213,6 +213,18 @@ const UserDashboard = () => {
                   </p>
                 </div>
               </Link>
+              <Link
+                href="/dashboard/support"
+                className="flex items-center gap-3 p-4 border rounded-lg hover:bg-muted transition-colors"
+              >
+                <TbCalendar className="text-lg" />
+                <div>
+                  <p className="font-medium">Support Center</p>
+                  <p className="text-sm text-muted-foreground">
+                    View and manage your support tickets
+                  </p>
+                </div>
+              </Link>
             </div>
           )}
           {isTourist && (
@@ -262,6 +274,18 @@ const UserDashboard = () => {
                   <p className="font-medium">Settings</p>
                   <p className="text-sm text-muted-foreground">
                     Update your profile and preferences
+                  </p>
+                </div>
+              </Link>
+              <Link
+                href="/dashboard/support"
+                className="flex items-center gap-3 p-4 border rounded-lg hover:bg-muted transition-colors"
+              >
+                <TbCalendar className="text-lg" />
+                <div>
+                  <p className="font-medium">Support Center</p>
+                  <p className="text-sm text-muted-foreground">
+                    View and manage your support tickets
                   </p>
                 </div>
               </Link>

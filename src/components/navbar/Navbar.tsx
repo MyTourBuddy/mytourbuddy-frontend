@@ -107,7 +107,6 @@ const Navbar = () => {
                         key={pkg.id}
                         onMouseDown={(e) => {
                           e.preventDefault();
-                          console.log("Link clicked:", pkg.id);
                           setIsDropdownOpen(false);
                           setSearchQuery("");
                           router.push(`/packages/${pkg.id}`);
