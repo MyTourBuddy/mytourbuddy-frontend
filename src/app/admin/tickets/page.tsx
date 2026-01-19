@@ -82,6 +82,7 @@ const SupportTickets = () => {
       </section>
     );
   }
+  
   const sortedTickets = [...tickets].sort((a, b) => {
     if (a.createdAt && b.createdAt) {
       return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();

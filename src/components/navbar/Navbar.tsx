@@ -240,7 +240,7 @@ const Navbar = () => {
                     <TbSettings className="mr-2" /> Settings
                   </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem asChild onClick={handleLogout}>
+                <DropdownMenuItem onClick={handleLogout}>
                   <TbLogout className="mr-2" />
                   {logoutMutation.isPending ? "Logging out..." : "Logout"}
                 </DropdownMenuItem>

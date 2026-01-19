@@ -127,9 +127,7 @@ const TicketPage = () => {
             {ticket.status === "CLOSED" ? (
               <div className="flex flex-col gap-2">
                 <h2 className="text-sm font-semibold">Admin Response</h2>
-                <span className="text-muted-foreground">
-                  {ticket.adminResponse}
-                </span>
+                <p className="text-muted-foreground">{ticket.adminResponse}</p>
               </div>
             ) : (
               <form onSubmit={handleSubmit}>

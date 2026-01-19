@@ -113,11 +113,11 @@ const TicketPage = () => {
             <div className="flex flex-col gap-2">
               <h2 className="text-sm font-semibold">Admin Response</h2>
               {ticket.adminResponse ? (
-                ticket.adminResponse
+                <p className="text-muted-foreground">{ticket.adminResponse}</p>
               ) : (
-                <span className="text-muted-foreground">
+                <p className="text-muted-foreground">
                   No response from admin yet. Please check back later.
-                </span>
+                </p>
               )}
             </div>
           </CardContent>
