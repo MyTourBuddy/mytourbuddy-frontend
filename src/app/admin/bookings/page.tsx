@@ -76,12 +76,12 @@ const BookingsPage = () => {
     return pkg?.title || "Unknown Package";
   };
 
-  // Sort bookings by createdAt (latest first)
+  // sort bookings - latest first
   const sortedBookings = bookings?.sort((a, b) =>
     new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
   ) || [];
 
-  // Filter bookings based on search term
+  // filter bookings by search
   const filteredBookings =
     sortedBookings.filter((booking) => {
       const packageName = getPackageName(booking.pkgId);
@@ -94,14 +94,14 @@ const BookingsPage = () => {
       );
     });
 
-  // Calculate pagination based on filtered results
+  // pagination calc
   const totalItems = filteredBookings.length;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const currentBookings = filteredBookings.slice(startIndex, endIndex);
 
-  // Reset to page 1 if current page is invalid after filtering
+  // reset page on filter
   useEffect(() => {
     if (currentPage > totalPages && totalPages > 0) {
       setCurrentPage(1);
