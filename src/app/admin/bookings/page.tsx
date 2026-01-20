@@ -43,7 +43,7 @@ import {
   TbCancel,
   TbCircleCheck,
   TbClock,
-  TbDotsVertical,
+  TbDots,
   TbEye,
   TbRun,
 } from "react-icons/tb";
@@ -210,7 +210,7 @@ const BookingsPage = () => {
                 <ItemActions>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <TbDotsVertical className="text-lg" />
+                      <TbDots className="text-lg" />
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                       <DropdownMenuItem asChild>

@@ -39,7 +39,7 @@ import { PiSmileySad } from "react-icons/pi";
 import {
   TbCircleCheck,
   TbCircleDot,
-  TbDotsVertical,
+  TbDots,
   TbPlus,
 } from "react-icons/tb";
 
@@ -155,7 +155,7 @@ const SupportPage = () => {
                   <ItemActions>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <TbDotsVertical className="text-lg" />
+                        <TbDots className="text-lg" />
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <Link href={`/dashboard/support/${ticket.id}`}>

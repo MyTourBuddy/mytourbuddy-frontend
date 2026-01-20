@@ -201,12 +201,8 @@ const PackagesPage = () => {
                     </h3>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="h-8 w-8 p-0 shrink-0"
-                        >
-                          <TbDots className="h-4 w-4" />
+                        <Button variant="outline" size="icon-sm">
+                          <TbDots className="text-lg" />
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">

@@ -40,7 +40,7 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import { PiSmileySad } from "react-icons/pi";
-import { TbDotsVertical, TbEye, TbTrash } from "react-icons/tb";
+import { TbDots, TbEye, TbTrash } from "react-icons/tb";
 
 const PackagesPage = () => {
   const { data: packages, isLoading: loading, error } = usePackages();
@@ -189,7 +189,7 @@ const PackagesPage = () => {
                 <ItemActions>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <TbDotsVertical className="text-lg" />
+                      <TbDots className="text-lg" />
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                       <DropdownMenuItem asChild>

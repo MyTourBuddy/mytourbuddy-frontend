@@ -202,9 +202,8 @@ const ExperiencesPage = () => {
                         <Button
                           variant="outline"
                           size="sm"
-                          className="h-8 w-8 p-0 shrink-0"
                         >
-                          <TbDots className="h-4 w-4" />
+                          <TbDots className="text-lg" />
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
