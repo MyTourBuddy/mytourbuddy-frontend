@@ -42,12 +42,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { TbDots, TbPlus, TbSearch, TbTrash } from "react-icons/tb";
 import { formatDate, getInitials } from "@/utils/helpers";
 import { useDeleteUser, useUsers } from "@/hooks/useUserQueries";
 import { Spinner } from "@/components/ui/spinner";
 import { PiSmileySad } from "react-icons/pi";
 import { User } from "@/schemas/user.schema";
+import Link from "next/link";
 
 type Role = "ALL" | "ADMIN" | "GUIDE" | "TOURIST";
 
@@ -57,6 +59,8 @@ const UsersPage = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [deleteDialog, setDeleteDialog] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   const { data: usersList, isLoading: loading, error } = useUsers();
   const deleteUser = useDeleteUser();
@@ -66,6 +70,10 @@ const UsersPage = () => {
       setUsers(usersList);
     }
   }, [usersList]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, roleFilter]);
 
   const filteredUsers = useMemo(() => {
     return users.filter((user) => {
@@ -80,6 +88,12 @@ const UsersPage = () => {
       return matchesSearch && matchesRole;
     });
   }, [users, searchQuery, roleFilter]);
+
+  const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
+  const paginatedUsers = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return filteredUsers.slice(startIndex, startIndex + itemsPerPage);
+  }, [filteredUsers, currentPage, itemsPerPage]);
 
   if (loading) {
     return (
@@ -174,9 +188,11 @@ const UsersPage = () => {
             Manage guides, tourists, and admin accounts.
           </p>
         </div>
-        <Button size="sm" className="w-fit">
-          <TbPlus />
-          Create Admin
+        <Button size="sm" className="w-fit" asChild>
+          <Link href="/admin/users/new-admin">
+            <TbPlus />
+            Create Admin
+          </Link>
         </Button>
       </div>
 
@@ -223,8 +239,8 @@ const UsersPage = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredUsers.length > 0 ? (
-                filteredUsers.map((user) => (
+              {paginatedUsers.length > 0 ? (
+                paginatedUsers.map((user) => (
                   <TableRow key={user.id} className="hover:bg-muted/50">
                     <TableCell>
                       <div className="flex items-center gap-3">
@@ -295,6 +311,37 @@ const UsersPage = () => {
           </Table>
         </div>
       </div>
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <Pagination>
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious
+                onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+              />
+            </PaginationItem>
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              <PaginationItem key={page}>
+                <PaginationLink
+                  onClick={() => setCurrentPage(page)}
+                  isActive={currentPage === page}
+                  className="cursor-pointer"
+                >
+                  {page}
+                </PaginationLink>
+              </PaginationItem>
+            ))}
+            <PaginationItem>
+              <PaginationNext
+                onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+                className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
+              />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
+      )}
 
       {/* Delete Dialog */}
       <Dialog open={deleteDialog} onOpenChange={setDeleteDialog}>
