@@ -21,6 +21,7 @@ import { useDebounce } from "@/hooks/useDebounce";
 import { Spinner } from "../ui/spinner";
 import { useCheckEmail } from "@/hooks/useAuthQueries";
 import { capitalizeFirstLetter } from "@/utils/helpers";
+import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
 
 interface PersonalInfoProps {
   stepUp: (data: PersonalInfoInput) => void;
@@ -152,8 +153,14 @@ const PersonalInfo = ({ stepUp, initialData }: PersonalInfoProps) => {
 
           <Field>
             <Label htmlFor="email">Email</Label>
-            <div className="relative">
-              <Input
+            <InputGroup className={
+              emailAvailable === true
+                ? "border-green-500"
+                : emailAvailable === false
+                ? "border-red-500"
+                : ""
+            }>
+              <InputGroupInput
                 type="email"
                 id="email"
                 name="email"
@@ -161,25 +168,12 @@ const PersonalInfo = ({ stepUp, initialData }: PersonalInfoProps) => {
                 value={formData.email || ""}
                 onChange={(e) => handleChange("email", e.target.value)}
                 aria-invalid={!!errors.email || emailAvailable === false}
-                className={
-                  emailAvailable === true
-                    ? "border-green-500 pr-10"
-                    : emailAvailable === false
-                    ? "border-red-500"
-                    : ""
-                }
               />
-              {isCheckingEmail && (
-                <span className="absolute right-3 top-1/2 -translate-y-1/2">
-                  <Spinner />
-                </span>
-              )}
-              {emailAvailable === true && !isCheckingEmail && (
-                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-green-500">
-                  <TbCheck className="h-5 w-5" />
-                </span>
-              )}
-            </div>
+              <InputGroupAddon align="inline-end">
+                {isCheckingEmail && <Spinner />}
+                {emailAvailable === true && !isCheckingEmail && <TbCheck className="h-5 w-5 text-green-500" />}
+              </InputGroupAddon>
+            </InputGroup>
             {errors.email && (
               <p className="text-xs text-red-500 mt-1">{errors.email}</p>
             )}

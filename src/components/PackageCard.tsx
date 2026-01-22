@@ -23,8 +23,7 @@ const PackageCard = ({ pkg, pathname }: PackageCardProps) => {
               fill
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
               className="object-cover"
-              blurDataURL={BLURDATA}
-              loading="eager"
+              loading="lazy"
             />
           ) : (
             <div className="flex items-center justify-center h-full bg-gray-200 rounded-t-lg">

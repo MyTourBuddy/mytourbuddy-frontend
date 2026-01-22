@@ -173,8 +173,7 @@ export const AddExperienceForm = () => {
                         alt="Experience preview"
                         fill
                         className="object-cover"
-                        blurDataURL={BLURDATA}
-                        loading="eager"
+                        loading="lazy"
                       />
                     ) : (
                       <div className="flex items-center justify-center h-full">
@@ -392,8 +391,7 @@ export const EditExperienceForm = ({ data }: { data: Experience }) => {
                         alt="Experience preview"
                         fill
                         className="object-cover"
-                        blurDataURL={BLURDATA}
-                        loading="eager"
+                        loading="lazy"
                       />
                     ) : (
                       <div className="flex items-center justify-center h-full">

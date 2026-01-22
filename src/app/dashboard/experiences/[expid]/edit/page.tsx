@@ -20,7 +20,7 @@ const EditExperience = () => {
   if (!expDetails) return <div>Experience not found</div>;
 
   return (
-    <section className="max-w-2xl mx-auto">
+    <section className="max-w-2xl mx-auto w-full pt-3 px-4">
       <div className="flex flex-col gap-6">
         <Breadcrumb>
           <BreadcrumbList>

@@ -1,10 +1,11 @@
 import { apiClient, getErrorMessage, isApiError } from "@/lib/api/client";
 import { SigninInput } from "@/schemas/auth.schema";
-import { ProfileData } from "@/schemas/onboarding.schema";
+import { ProfileData, AdminProfile } from "@/schemas/onboarding.schema";
 import { User } from "@/schemas/user.schema";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import { userKeys } from "./useUserQueries";
 
 interface AuthResponse {
   user: User;
@@ -126,6 +127,33 @@ export function useRegister() {
   });
 }
 
+export function useRegisterAdmin() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (userData: AdminProfile) => {
+      const response = await apiClient<AuthResponse>("auth/register-admin", {
+        method: "POST",
+        body: JSON.stringify(userData),
+      });
+      return response.user;
+    },
+    onSuccess: (user) => {
+      if (typeof window !== "undefined") {
+        localStorage.setItem("user", JSON.stringify(user));
+      }
+
+      queryClient.setQueryData(authKeys.currentUser(), user);
+
+      // Invalidate users list to update the admin users page
+      queryClient.invalidateQueries({ queryKey: userKeys.lists() });
+    },
+    onError: (error) => {
+      console.error("Admin registration failed:", getErrorMessage(error));
+    },
+  });
+}
+
 export function useLogout() {
   const queryClient = useQueryClient();
   const router = useRouter();
@@ -172,7 +200,7 @@ export function useCheckUsername(username: string, enabled: boolean = false) {
     queryKey: authKeys.checkUsername(username),
     queryFn: async () => {
       const response = await apiClient<{ available: boolean; message: string }>(
-        `auth/check-username?username=${encodeURIComponent(username)}`
+        `auth/check-username?username=${encodeURIComponent(username)}`,
       );
       return response;
     },
@@ -186,7 +214,7 @@ export function useCheckEmail(email: string, enabled: boolean = false) {
     queryKey: authKeys.checkEmail(email),
     queryFn: async () => {
       const response = await apiClient<{ available: boolean; message: string }>(
-        `auth/check-email?email=${encodeURIComponent(email)}`
+        `auth/check-email?email=${encodeURIComponent(email)}`,
       );
       return response;
     },

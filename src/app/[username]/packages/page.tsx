@@ -35,7 +35,7 @@ const PackagesPage = () => {
 
   if (userLoading) {
     return (
-      <section className="max-w-4xl mx-auto w-full flex justify-center">
+      <section className="max-w-5xl mx-auto w-full flex justify-center px-4">
         <div className="text-center text-muted-foreground flex md:flex-row flex-col items-center gap-3 md:gap-2 mx-auto py-8">
           <Spinner className="size-6 md:size-4" />
           Loading {username} packages...
@@ -47,7 +47,7 @@ const PackagesPage = () => {
     return <UserNotFound username={username} />;
   } else if (pkgsLoading) {
     return (
-      <section className="max-w-4xl mx-auto w-full flex justify-center">
+      <section className="max-w-5xl mx-auto w-full flex justify-center px-4">
         <div className="text-center text-muted-foreground flex md:flex-row flex-col items-center gap-3 md:gap-2 mx-auto py-8">
           <Spinner className="size-6 md:size-4" />
           Loading {username} packages...
@@ -57,7 +57,7 @@ const PackagesPage = () => {
   }
 
   return (
-    <section className="max-w-4xl mx-auto w-full pt-3">
+    <section className="max-w-5xl mx-auto w-full pt-3 px-4">
       <div className="flex flex-col gap-6">
         <Breadcrumb>
           <BreadcrumbList>

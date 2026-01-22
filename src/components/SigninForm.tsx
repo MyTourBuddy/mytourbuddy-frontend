@@ -53,8 +53,8 @@ const SigninForm = () => {
 
   return (
     <Card className="w-full">
-      <CardHeader className="text-center mb-3 flex flex-col items-center gap-2 md:gap-4">
-        <div className="w-24 h-24 md:w-32 md:h-32 mb-3 md:mb-4 relative mx-auto">
+      <CardHeader className="text-center flex flex-col items-center gap-2 md:gap-4">
+        <div className="w-24 h-24 md:w-32 md:h-32 relative mx-auto">
           <Image
             src={img3}
             alt="signin to mytourbuddy"

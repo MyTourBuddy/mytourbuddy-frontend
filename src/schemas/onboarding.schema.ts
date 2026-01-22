@@ -62,4 +62,8 @@ export type GuideProfile = RoleSelectionInput &
   AccountInfoInput &
   GuideDetailsInput;
 
-export type ProfileData = TouristProfile | GuideProfile;
+export type AdminProfile = RoleSelectionInput &
+  PersonalInfoInput &
+  Omit<AccountInfoInput, "confirmPassword">;
+
+export type ProfileData = TouristProfile | GuideProfile | AdminProfile;

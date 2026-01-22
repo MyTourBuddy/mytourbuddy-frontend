@@ -103,6 +103,15 @@ export async function apiClient<T>(
     }
 
     if (!response.ok) {
+      if (response.status === 403) {
+        if (API_CONFIG.features.enableLogging) {
+          console.error(
+            "🚫 API Error 403:",
+            data.error || data.message || "Forbidden"
+          );
+        }
+        return null as T;
+      }
       if (response.status === 403 || response.status === 404) {
         return null as T;
       }

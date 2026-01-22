@@ -87,7 +87,7 @@ const PackagesPage = () => {
 
   if (loading) {
     return (
-      <section className="max-w-4xl mx-auto w-full flex justify-center">
+      <section className="max-w-5xl mx-auto w-full flex justify-center px-4">
         <div className="text-center text-muted-foreground flex md:flex-row flex-col items-center gap-3 md:gap-2 mx-auto py-8">
           <Spinner className="size-6 md:size-4" />
           Loading my packages...
@@ -98,7 +98,7 @@ const PackagesPage = () => {
 
   if (!pkgs) {
     return (
-      <section className="max-w-4xl mx-auto w-full">
+      <section className="max-w-5xl mx-auto w-full px-4">
         <div className="text-center text-muted-foreground max-w-md flex md:flex-row flex-col justify-center items-center gap-3 md:gap-2 mx-auto py-8">
           <p className="text-2xl md:text-lg">
             <PiSmileySad />
@@ -111,7 +111,7 @@ const PackagesPage = () => {
 
   if (error) {
     return (
-      <section className="max-w-4xl mx-auto w-full">
+      <section className="max-w-5xl mx-auto w-full px-4">
         <div className="text-center max-w-md text-red-500 flex md:flex-row flex-col justify-center items-center gap-3 md:gap-2 mx-auto py-8">
           <p className="text-2xl md:text-lg">
             <PiSmileySad />
@@ -123,7 +123,7 @@ const PackagesPage = () => {
   }
 
   return (
-    <section className="max-w-4xl mx-auto">
+    <section className="max-w-5xl mx-auto w-full pt-3 px-4">
       <div className="flex flex-col gap-6">
         <Breadcrumb>
           <BreadcrumbList>
@@ -144,7 +144,7 @@ const PackagesPage = () => {
         {/* header */}
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-3 md:flex-row md:items-end justify-between">
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-2 md:gap-3">
               <h1 className="text-3xl font-bold tracking-tight">My Packages</h1>
               <p className="text-muted-foreground mt-1">
                 Manage your tour packages ({pkgs.length}/3)
@@ -183,8 +183,7 @@ const PackagesPage = () => {
                       width={128}
                       height={128}
                       className="w-full h-full object-cover"
-                      blurDataURL={BLURDATA}
-                      loading="eager"
+                      loading="lazy"
                     />
                   ) : (
                     <div className="flex items-center justify-center w-full h-full">
@@ -202,28 +201,25 @@ const PackagesPage = () => {
                     </h3>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="h-8 w-8 p-0 shrink-0"
-                        >
-                          <TbDots className="h-4 w-4" />
+                        <Button variant="outline" size="icon-sm">
+                          <TbDots className="text-lg" />
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <Link href={`${pathname}/${pkg.id}`}>
-                          <DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Link href={`${pathname}/${pkg.id}`}>
                             <TbEye />
                             View
-                          </DropdownMenuItem>
-                        </Link>
-                        <Link href={`${pathname}/${pkg.id}/edit`}>
-                          <DropdownMenuItem>
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Link href={`${pathname}/${pkg.id}/edit`}>
                             <TbPencil />
                             Edit
-                          </DropdownMenuItem>
-                        </Link>
+                          </Link>
+                        </DropdownMenuItem>
                         <DropdownMenuItem
+                          asChild
                           onClick={() => handleDeleteClick(pkg.id)}
                           className="text-destructive focus:text-destructive"
                         >

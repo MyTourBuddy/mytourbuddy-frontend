@@ -107,7 +107,7 @@ export const PackageCreateForm = () => {
         title,
         description,
         price: Number(price),
-        maxGroupSize: Number(maxGroupSize) || undefined,
+        maxGroupSize: Number(maxGroupSize),
         duration,
         location,
         image: imageUrl || "",
@@ -172,7 +172,7 @@ export const PackageCreateForm = () => {
 
           <Field>
             <FieldLabel htmlFor="price" className="text-sm md:text-balance">
-              Price (LKR)&nbsp;<span className="text-destructive">*</span>
+              Price (USD)&nbsp;<span className="text-destructive">*</span>
             </FieldLabel>
             <Input
               type="number"
@@ -187,7 +187,9 @@ export const PackageCreateForm = () => {
           </Field>
 
           <Field>
-            <FieldLabel>Max Group Size</FieldLabel>
+            <FieldLabel>
+              Max Group Size&nbsp;<span className="text-destructive">*</span>
+            </FieldLabel>
             <Input
               type="number"
               name="maxGroupSize"
@@ -195,6 +197,7 @@ export const PackageCreateForm = () => {
               onChange={(e) => setMaxGroupSize(Number(e.target.value))}
               placeholder="e.g. 10"
               min={1}
+              required
             />
           </Field>
 
@@ -333,7 +336,7 @@ export const PackageCreateForm = () => {
         <div className="col-span-3 order-1 md:order-2">
           <Field>
             <FieldLabel className="text-center text-sm md:text-balance">
-              Package Image
+              Package Image&nbsp;<span className="text-destructive">*</span>
             </FieldLabel>
             <div className="relative aspect-square w-full">
               <div className="relative w-full h-full rounded-lg border-2 border-dashed border-border overflow-hidden bg-muted">
@@ -343,8 +346,7 @@ export const PackageCreateForm = () => {
                     alt="Package preview"
                     fill
                     className="object-cover"
-                    blurDataURL={BLURDATA}
-                    loading="eager"
+                    loading="lazy"
                   />
                 ) : (
                   <div className="flex items-center justify-center h-full">
@@ -391,8 +393,10 @@ export const PackageCreateForm = () => {
             !title.trim() ||
             !description.trim() ||
             !price ||
+            !maxGroupSize ||
             !duration.trim() ||
             !location.trim() ||
+            !imagePreview ||
             included.filter((item) => item.trim() !== "").length === 0
           }
         >
@@ -566,7 +570,7 @@ export const PackageEditForm = ({ pkg }: { pkg: Package }) => {
 
           <Field>
             <FieldLabel htmlFor="price" className="text-sm md:text-balance">
-              Price (LKR)&nbsp;<span className="text-destructive">*</span>
+              Price (USD)&nbsp;<span className="text-destructive">*</span>
             </FieldLabel>
             <Input
               type="number"
@@ -583,7 +587,9 @@ export const PackageEditForm = ({ pkg }: { pkg: Package }) => {
           </Field>
 
           <Field>
-            <FieldLabel>Max Group Size</FieldLabel>
+            <FieldLabel>
+              Max Group Size&nbsp;<span className="text-destructive">*</span>
+            </FieldLabel>
             <Input
               type="number"
               name="maxGroupSize"
@@ -593,6 +599,7 @@ export const PackageEditForm = ({ pkg }: { pkg: Package }) => {
               }
               placeholder="e.g. 10"
               min={1}
+              required
             />
           </Field>
 
@@ -735,7 +742,7 @@ export const PackageEditForm = ({ pkg }: { pkg: Package }) => {
         <div className="col-span-3 order-1 md:order-2">
           <Field>
             <FieldLabel className="text-center text-sm md:text-balance">
-              Package Image
+              Package Image&nbsp;<span className="text-destructive">*</span>
             </FieldLabel>
             <div className="relative aspect-square w-full">
               <div className="relative w-full h-full rounded-lg border-2 border-dashed border-border overflow-hidden bg-muted">
@@ -745,8 +752,7 @@ export const PackageEditForm = ({ pkg }: { pkg: Package }) => {
                     alt="Package preview"
                     fill
                     className="object-cover"
-                    blurDataURL={BLURDATA}
-                    loading="eager"
+                    loading="lazy"
                   />
                 ) : (
                   <div className="flex items-center justify-center h-full">
@@ -793,8 +799,10 @@ export const PackageEditForm = ({ pkg }: { pkg: Package }) => {
             !draft?.title?.trim() ||
             !draft?.description?.trim() ||
             !draft?.price ||
+            !draft?.maxGroupSize ||
             !draft?.duration?.trim() ||
             !draft?.location?.trim() ||
+            !imagePreview ||
             included.filter((item) => item.trim() !== "").length === 0
           }
         >

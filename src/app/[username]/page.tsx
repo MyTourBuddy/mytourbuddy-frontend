@@ -5,7 +5,6 @@ import GuideProfileInfo from "@/components/profile/GuideProfileInfo";
 import PackagesSection from "@/components/profile/PackagesSection";
 import ProfileCompletion from "@/components/profile/ProfileCompletion";
 import ProfileHeader from "@/components/profile/ProfileHeader";
-import ReviewsSection from "@/components/profile/ReviewsSection";
 import TouristProfileInfo from "@/components/profile/TouristProfileInfo";
 import UserNotFound from "@/components/profile/UserNotFound";
 import {
@@ -17,22 +16,27 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Guide, Tourist, User } from "@/schemas/user.schema";
+import { Admin, Guide, Tourist, User } from "@/schemas/user.schema";
 import { useCurrentUser } from "@/hooks/useAuthQueries";
 import { useUserByUsername } from "@/hooks/useUserQueries";
 import { useParams } from "next/navigation";
 import LoadingUser from "@/components/profile/LoadingUser";
+import GuidesReviewsSection from "@/components/reviews/GuidesReviewsSection";
+import TouristReviewSection from "@/components/reviews/TouristReviewSection";
+import { useAuth } from "@/context/AuthContext";
+import AdminProfileInfo from "@/components/profile/AdminProfileInfo";
 
 const UserProfile = () => {
   const { username } = useParams<{ username: string }>();
   const { data: currentUser } = useCurrentUser();
+  const { isGuide, isTourist, isAdmin } = useAuth();
   const { data: userData, isLoading } = useUserByUsername(username);
 
   if (!username || isLoading) return <LoadingUser username={username} />;
   if (!userData) return <UserNotFound username={username} />;
 
   return (
-    <section className="max-w-4xl w-full mx-auto">
+    <section className="max-w-5xl w-full mx-auto pt-3 px-4">
       <div className="flex flex-col gap-6">
         <Breadcrumb>
           <BreadcrumbList>
@@ -45,6 +49,7 @@ const UserProfile = () => {
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
+
         <h1 className="text-3xl font-bold tracking-tight">My Profile</h1>
         <ProfileHeader user={userData} />
 
@@ -73,9 +78,11 @@ const UserProfile = () => {
           <TabsContent value="account">
             {userData?.role === "TOURIST" ? (
               <TouristProfileInfo user={userData as Tourist} />
-            ) : (
+            ) : userData?.role === "GUIDE" ? (
               <GuideProfileInfo user={userData as Guide} />
-            )}
+            ) : userData?.role === "ADMIN" ? (
+              <AdminProfileInfo user={userData as Admin} />
+            ) : null}
           </TabsContent>
           <TabsContent value="packages">
             <PackagesSection user={userData as Guide} />
@@ -84,7 +91,11 @@ const UserProfile = () => {
             <ExperiencesSection user={userData as Guide} />
           </TabsContent>
           <TabsContent value="reviews">
-            <ReviewsSection user={userData} />
+            {userData.role === "TOURIST" ? (
+              <TouristReviewSection user={userData as Tourist} />
+            ) : (
+              <GuidesReviewsSection user={userData as Guide} />
+            )}
           </TabsContent>
         </Tabs>
       </div>

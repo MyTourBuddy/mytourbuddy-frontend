@@ -22,6 +22,8 @@ export function useUsers() {
     queryFn: async () => {
       return await apiClient<User[]>("users");
     },
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
   });
 }
 

@@ -21,17 +21,17 @@ const EditProfileMenu = () => {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <Link href="/dashboard/settings">
-          <DropdownMenuItem>Settings</DropdownMenuItem>
-        </Link>
+        <DropdownMenuItem asChild>
+          <Link href="/dashboard/settings">Settings</Link>
+        </DropdownMenuItem>
         {data?.role === "GUIDE" && (
           <>
-            <Link href="/dashboard/packages">
-              <DropdownMenuItem>My Packages</DropdownMenuItem>
-            </Link>
-            <Link href="/dashboard/experiences">
-              <DropdownMenuItem>My Experiences</DropdownMenuItem>
-            </Link>
+            <DropdownMenuItem asChild>
+              <Link href="/dashboard/packages">My Packages</Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href="/dashboard/experiences">My Experiences</Link>
+            </DropdownMenuItem>
           </>
         )}
       </DropdownMenuContent>
