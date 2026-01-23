@@ -219,7 +219,6 @@ const PackagesPage = () => {
                           </Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem
-                          asChild
                           onClick={() => handleDeleteClick(pkg.id)}
                           className="text-destructive focus:text-destructive"
                         >
@@ -246,7 +245,8 @@ const PackagesPage = () => {
                         variant="outline"
                         className="text-xs border border-border text-center"
                       >
-                        {pkg.duration}
+                        {pkg.duration}&nbsp;
+                        {pkg.duration > 1 ? "Days" : "Day"}
                       </Badge>
                     )}
                     {pkg.location && (

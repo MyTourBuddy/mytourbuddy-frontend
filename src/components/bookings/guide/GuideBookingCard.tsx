@@ -69,18 +69,19 @@ const GuideBookingCard = ({ data }: { data: Booking }) => {
               data.bookingStatus === "PENDING"
                 ? "bg-amber-500 text-primary-foreground"
                 : data.bookingStatus === "CONFIRMED"
-                ? "bg-green-500 text-primary-foreground"
-                : data.bookingStatus === "COMPLETED"
-                ? "bg-primary text-primary-foreground"
-                : data.bookingStatus === "CANCELLED"
-                ? "bg-destructive text-primary-foreground"
-                : "bg-gray-500 text-white"
+                  ? "bg-green-500 text-primary-foreground"
+                  : data.bookingStatus === "COMPLETED"
+                    ? "bg-primary text-primary-foreground"
+                    : data.bookingStatus === "CANCELLED"
+                      ? "bg-destructive text-primary-foreground"
+                      : "bg-gray-500 text-white"
             }`}
           >
             {data.bookingStatus}
           </Badge>
         </div>
         <h2 className="md:text-lg font-semibold">{pkgData?.title}</h2>
+        <p className="text-sm text-muted-foreground">#{data.id}</p>
         <Separator className="my-2" />
       </CardHeader>
       <CardContent className="flex flex-col gap-3">
@@ -124,8 +125,8 @@ const GuideBookingCard = ({ data }: { data: Booking }) => {
             Complete Tour
           </Button>
         )}
-        <Button variant="outline" className="w-full">
-          Contact Tourist
+        <Button asChild variant="outline" className="w-full">
+          <a href={`tel:${touristData?.phone}`}>Contact Tourist</a>
         </Button>
       </CardFooter>
     </Card>

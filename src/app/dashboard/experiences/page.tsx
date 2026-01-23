@@ -199,10 +199,7 @@ const ExperiencesPage = () => {
                     </h3>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                        >
+                        <Button variant="outline" size="sm">
                           <TbDots className="text-lg" />
                         </Button>
                       </DropdownMenuTrigger>
@@ -219,7 +216,7 @@ const ExperiencesPage = () => {
                             Edit
                           </Link>
                         </DropdownMenuItem>
-                        <DropdownMenuItem asChild
+                        <DropdownMenuItem
                           onClick={() => handleDeleteClick(exp.id)}
                           className="text-destructive focus:text-destructive"
                         >

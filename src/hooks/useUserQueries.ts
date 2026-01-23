@@ -35,6 +35,8 @@ export function useUser(userId: string, enabled: boolean = true) {
       return await apiClient<User>(`users/${userId}`);
     },
     enabled: enabled && !!userId,
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
   });
 }
 
@@ -47,6 +49,8 @@ export function useUserByUsername(username: string, enabled: boolean = true) {
     },
     enabled: enabled && !!username,
     retry: false,
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
   });
 }
 

@@ -183,7 +183,7 @@ const PackagesPage = () => {
                   />
                 </ItemMedia>
                 <ItemContent>
-                  <ItemDescription>{pkg.id}</ItemDescription>
+                  <ItemDescription>#{pkg.id}</ItemDescription>
                   <ItemTitle>{pkg.title}</ItemTitle>
                 </ItemContent>
                 <ItemActions>

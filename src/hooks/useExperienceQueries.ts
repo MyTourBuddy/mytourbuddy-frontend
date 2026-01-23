@@ -20,6 +20,8 @@ export function useExperiences() {
     queryFn: async () => {
       return await apiClient<Experience[]>("experiences");
     },
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
   });
 }
 
@@ -31,18 +33,23 @@ export function useExperience(experienceId: string, enabled: boolean = true) {
       return await apiClient<Experience>(`experiences/${experienceId}`);
     },
     enabled: enabled && !!experienceId,
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
   });
 }
 
 // get exps by guide id
-export function useExperiencesByGuide(guideId: string, enabled: boolean = true) {
+export function useExperiencesByGuide(
+  guideId: string,
+  enabled: boolean = true,
+) {
   return useQuery({
     queryKey: experienceKeys.byGuide(guideId),
     queryFn: async () => {
       return await apiClient<Experience[]>(`experiences/guides/${guideId}`);
     },
     enabled: enabled && !!guideId,
-    refetchOnMount: "always",
+    refetchOnMount: true,
     refetchOnWindowFocus: true,
   });
 }
@@ -53,18 +60,15 @@ export function useCreateExperience() {
 
   return useMutation({
     mutationFn: async (
-      experienceData: Omit<Experience, "id" | "createdAt">
+      experienceData: Omit<Experience, "id" | "createdAt" | "guideId">,
     ) => {
       return await apiClient<Experience>("experiences", {
         method: "POST",
         body: JSON.stringify(experienceData),
       });
     },
-    onSuccess: async (newExperience) => {
+    onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: experienceKeys.lists() });
-      await queryClient.invalidateQueries({
-        queryKey: experienceKeys.byGuide(newExperience.guideId),
-      });
     },
     onError: (error) => {
       console.error("Create experience failed:", getErrorMessage(error));
@@ -92,13 +96,10 @@ export function useUpdateExperience() {
     onSuccess: async (updatedExperience, variables) => {
       queryClient.setQueryData(
         experienceKeys.detail(variables.experienceId),
-        updatedExperience
+        updatedExperience,
       );
 
       await queryClient.invalidateQueries({ queryKey: experienceKeys.lists() });
-      await queryClient.invalidateQueries({
-        queryKey: experienceKeys.byGuide(updatedExperience.guideId),
-      });
     },
     onError: (error) => {
       console.error("Update experience failed:", getErrorMessage(error));
@@ -117,7 +118,9 @@ export function useDeleteExperience() {
       });
     },
     onSuccess: async (_, experienceId) => {
-      queryClient.removeQueries({ queryKey: experienceKeys.detail(experienceId) });
+      queryClient.removeQueries({
+        queryKey: experienceKeys.detail(experienceId),
+      });
 
       await queryClient.invalidateQueries({ queryKey: experienceKeys.lists() });
       await queryClient.invalidateQueries({ queryKey: experienceKeys.all });

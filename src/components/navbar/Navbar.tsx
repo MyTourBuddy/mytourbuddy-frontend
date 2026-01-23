@@ -73,6 +73,7 @@ const Navbar = () => {
               src={logo}
               alt="mytourbuddy logo"
               className="h-14 w-14 md:h-16 md:w-16"
+              loading="eager"
             />
           </Link>
           <div className="relative">

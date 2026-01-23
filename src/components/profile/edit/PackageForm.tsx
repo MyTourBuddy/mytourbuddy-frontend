@@ -28,7 +28,7 @@ export const PackageCreateForm = () => {
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState<number | "">("");
   const [maxGroupSize, setMaxGroupSize] = useState<number | "">("");
-  const [duration, setDuration] = useState("");
+  const [duration, setDuration] = useState<number | "">("");
   const [location, setLocation] = useState("");
   const [note, setNote] = useState("");
   const [included, setIncluded] = useState<string[]>([""]);
@@ -40,7 +40,7 @@ export const PackageCreateForm = () => {
     index: number,
     value: string,
     list: string[],
-    setList: (v: string[]) => void
+    setList: (v: string[]) => void,
   ) => {
     const updated = [...list];
     updated[index] = value;
@@ -54,7 +54,7 @@ export const PackageCreateForm = () => {
   const removeItem = (
     index: number,
     list: string[],
-    setList: (v: string[]) => void
+    setList: (v: string[]) => void,
   ) => {
     setList(list.filter((_, i) => i !== index));
   };
@@ -108,13 +108,12 @@ export const PackageCreateForm = () => {
         description,
         price: Number(price),
         maxGroupSize: Number(maxGroupSize),
-        duration,
+        duration: Number(duration),
         location,
         image: imageUrl || "",
         included: included.filter((item) => item.trim() !== ""),
         notIncluded: notIncluded.filter((item) => item.trim() !== ""),
         note,
-        guideId: currentUser?.id || "",
       };
 
       await createPackageMutation.mutateAsync(packageData as any);
@@ -203,14 +202,14 @@ export const PackageCreateForm = () => {
 
           <Field>
             <FieldLabel htmlFor="duration" className="text-sm md:text-balance">
-              Duration&nbsp;<span className="text-destructive">*</span>
+              Duration (Days)&nbsp;<span className="text-destructive">*</span>
             </FieldLabel>
             <Input
-              type="text"
+              type="number"
               name="duration"
               value={duration}
-              onChange={(e) => setDuration(e.target.value)}
-              placeholder="e.g. 3 Days / 2 Nights"
+              onChange={(e) => setDuration(Number(e.target.value))}
+              placeholder="e.g. 3"
               className="text-sm md:text-balance h-9 md:h-10"
               required
             />
@@ -287,7 +286,7 @@ export const PackageCreateForm = () => {
                         index,
                         e.target.value,
                         notIncluded,
-                        setNotIncluded
+                        setNotIncluded,
                       )
                     }
                   />
@@ -394,7 +393,7 @@ export const PackageCreateForm = () => {
             !description.trim() ||
             !price ||
             !maxGroupSize ||
-            !duration.trim() ||
+            !duration ||
             !location.trim() ||
             !imagePreview ||
             included.filter((item) => item.trim() !== "").length === 0
@@ -432,7 +431,7 @@ export const PackageEditForm = ({ pkg }: { pkg: Package }) => {
     index: number,
     value: string,
     list: string[],
-    setList: (v: string[]) => void
+    setList: (v: string[]) => void,
   ) => {
     const updated = [...list];
     updated[index] = value;
@@ -446,7 +445,7 @@ export const PackageEditForm = ({ pkg }: { pkg: Package }) => {
   const removeItem = (
     index: number,
     list: string[],
-    setList: (v: string[]) => void
+    setList: (v: string[]) => void,
   ) => {
     setList(list.filter((_, i) => i !== index));
   };
@@ -502,7 +501,7 @@ export const PackageEditForm = ({ pkg }: { pkg: Package }) => {
         description: draft.description,
         price: draft.price,
         maxGroupSize: draft.maxGroupSize,
-        duration: draft.duration,
+        duration: Number(draft.duration),
         location: draft.location,
         image: imageUrl || "",
         included: included,
@@ -605,16 +604,16 @@ export const PackageEditForm = ({ pkg }: { pkg: Package }) => {
 
           <Field>
             <FieldLabel htmlFor="duration" className="text-sm md:text-balance">
-              Duration&nbsp;<span className="text-destructive">*</span>
+              Duration (Days)&nbsp;<span className="text-destructive">*</span>
             </FieldLabel>
             <Input
-              type="text"
+              type="number"
               name="duration"
               value={draft?.duration || ""}
               onChange={(e) =>
-                setDraft({ ...draft!, duration: e.target.value })
+                setDraft({ ...draft!, duration: Number(e.target.value) })
               }
-              placeholder="e.g. 3 Days / 2 Nights"
+              placeholder="e.g. 3"
               className="text-sm md:text-balance h-9 md:h-10"
               required
             />
@@ -693,7 +692,7 @@ export const PackageEditForm = ({ pkg }: { pkg: Package }) => {
                         index,
                         e.target.value,
                         notIncluded,
-                        setNotIncluded
+                        setNotIncluded,
                       )
                     }
                   />
@@ -800,7 +799,7 @@ export const PackageEditForm = ({ pkg }: { pkg: Package }) => {
             !draft?.description?.trim() ||
             !draft?.price ||
             !draft?.maxGroupSize ||
-            !draft?.duration?.trim() ||
+            !draft?.duration ||
             !draft?.location?.trim() ||
             !imagePreview ||
             included.filter((item) => item.trim() !== "").length === 0

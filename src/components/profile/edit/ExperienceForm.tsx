@@ -89,7 +89,6 @@ export const AddExperienceForm = () => {
         description,
         experiencedAt: date,
         image: imageUrl || "",
-        guideId: currentUser?.id || "",
       };
 
       await createExperienceMutation.mutateAsync(experienceData);

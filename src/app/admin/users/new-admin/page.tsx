@@ -131,8 +131,8 @@ const CreateAdminPage = () => {
       toast.success("Admin account created successfully!");
       router.push("/admin/users");
     } catch (error) {
-      // Error is already handled by the hook
       console.error("Failed to create admin:", error);
+      toast.error("Failed to create admin account. Please try again.");
     }
   };
   return (

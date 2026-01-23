@@ -53,7 +53,7 @@ export function useSearchPackages(query: string, enabled: boolean = true) {
     queryKey: packageKeys.search(query),
     queryFn: async () => {
       return await apiClient<Package[]>(
-        `packages/search?q=${encodeURIComponent(query)}`
+        `packages/search?q=${encodeURIComponent(query)}`,
       );
     },
     enabled: enabled && !!query && query.length >= 3,
@@ -65,7 +65,9 @@ export function useCreatePackage() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (packageData: Omit<Package, "id" | "createdAt">) => {
+    mutationFn: async (
+      packageData: Omit<Package, "id" | "createdAt" | "guideId">,
+    ) => {
       return await apiClient<Package>("packages", {
         method: "POST",
         body: JSON.stringify(packageData),
@@ -73,9 +75,6 @@ export function useCreatePackage() {
     },
     onSuccess: async (newPackage) => {
       await queryClient.invalidateQueries({ queryKey: packageKeys.lists() });
-      await queryClient.invalidateQueries({
-        queryKey: packageKeys.byGuide(newPackage.guideId),
-      });
     },
     onError: (error) => {
       console.error("Create package failed:", getErrorMessage(error));
@@ -103,13 +102,10 @@ export function useUpdatePackage() {
     onSuccess: async (updatedPackage, variables) => {
       queryClient.setQueryData(
         packageKeys.detail(variables.packageId),
-        updatedPackage
+        updatedPackage,
       );
 
       await queryClient.invalidateQueries({ queryKey: packageKeys.lists() });
-      await queryClient.invalidateQueries({
-        queryKey: packageKeys.byGuide(updatedPackage.guideId),
-      });
     },
     onError: (error) => {
       console.error("Update package failed:", getErrorMessage(error));

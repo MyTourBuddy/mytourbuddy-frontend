@@ -31,7 +31,7 @@ const CreateReviewForm = ({ booking, trigger }: ReviewFormProps) => {
   const { user } = useAuth();
 
   const { data: pkgData } = usePackage(booking.pkgId);
-  const { data: guideData } = useUser(pkgData?.guideId || "", !!pkgData);
+  const { data: guideData } = useUser(booking.guideId, !!booking.guideId);
 
   const createReviewMutation = useCreateReview();
 
@@ -42,8 +42,6 @@ const CreateReviewForm = ({ booking, trigger }: ReviewFormProps) => {
 
     try {
       await createReviewMutation.mutateAsync({
-        guideId: pkgData.guideId,
-        touristId: user.id,
         bookingId: booking.id,
         message: comment,
         rating,
