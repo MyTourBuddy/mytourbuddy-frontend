@@ -129,11 +129,15 @@ const ExperiencesPage = () => {
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink href="/">Home</BreadcrumbLink>
+              <BreadcrumbLink asChild>
+                <Link href="/">Home</Link>
+              </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbLink href="/dashboard">Dashboard</BreadcrumbLink>
+              <BreadcrumbLink asChild>
+                <Link href="/dashboard">Dashboard</Link>
+              </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
@@ -199,10 +203,7 @@ const ExperiencesPage = () => {
                     </h3>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                        >
+                        <Button variant="outline" size="sm">
                           <TbDots className="text-lg" />
                         </Button>
                       </DropdownMenuTrigger>
@@ -219,7 +220,7 @@ const ExperiencesPage = () => {
                             Edit
                           </Link>
                         </DropdownMenuItem>
-                        <DropdownMenuItem asChild
+                        <DropdownMenuItem
                           onClick={() => handleDeleteClick(exp.id)}
                           className="text-destructive focus:text-destructive"
                         >

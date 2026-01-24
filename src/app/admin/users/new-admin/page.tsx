@@ -28,6 +28,7 @@ import { TbCheck } from "react-icons/tb";
 import { Spinner } from "@/components/ui/spinner";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import Link from "next/link";
 
 const CreateAdminPage = () => {
   const router = useRouter();
@@ -131,8 +132,8 @@ const CreateAdminPage = () => {
       toast.success("Admin account created successfully!");
       router.push("/admin/users");
     } catch (error) {
-      // Error is already handled by the hook
       console.error("Failed to create admin:", error);
+      toast.error("Failed to create admin account. Please try again.");
     }
   };
   return (
@@ -141,11 +142,15 @@ const CreateAdminPage = () => {
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink href="/">Home</BreadcrumbLink>
+              <BreadcrumbLink asChild>
+                <Link href="/">Home</Link>
+              </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbLink href="/admin/users">Users</BreadcrumbLink>
+              <BreadcrumbLink asChild>
+                <Link href="/admin/users">Users</Link>
+              </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>

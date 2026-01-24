@@ -14,6 +14,7 @@ import { BLURDATA } from "@/data/constants";
 import { useExperience } from "@/hooks/useExperienceQueries";
 import { formatDate } from "@/utils/helpers";
 import Image from "next/image";
+import Link from "next/link";
 import { useParams } from "next/navigation";
 import { PiSmileySad } from "react-icons/pi";
 
@@ -64,12 +65,14 @@ const ExperiencePage = () => {
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink href="/">Home</BreadcrumbLink>
+              <BreadcrumbLink asChild>
+                <Link href="/">Home</Link>
+              </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbLink href="/dashboard/experiences">
-                Experiences
+              <BreadcrumbLink asChild>
+                <Link href="/dashboard/experiences">Experiences</Link>
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />

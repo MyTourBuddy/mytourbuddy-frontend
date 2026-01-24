@@ -44,7 +44,10 @@ const PackageCard = ({ pkg, pathname }: PackageCardProps) => {
               {formatCurrency(pkg.price)}/person
             </Badge>
             <Badge variant="outline">{pkg.location}</Badge>
-            <Badge variant="outline">{pkg.duration}</Badge>
+            <Badge variant="outline">
+              {pkg.duration}&nbsp;
+              {pkg.duration > 1 ? "Days" : "Day"}
+            </Badge>
           </div>
         </div>
       </Card>

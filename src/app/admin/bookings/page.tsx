@@ -77,22 +77,23 @@ const BookingsPage = () => {
   };
 
   // sort bookings - latest first
-  const sortedBookings = bookings?.sort((a, b) =>
-    new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-  ) || [];
+  const sortedBookings =
+    bookings?.sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+    ) || [];
 
   // filter bookings by search
-  const filteredBookings =
-    sortedBookings.filter((booking) => {
-      const packageName = getPackageName(booking.pkgId);
-      const bookingId = booking.id.toLowerCase();
-      const searchLower = searchTerm.toLowerCase();
+  const filteredBookings = sortedBookings.filter((booking) => {
+    const packageName = getPackageName(booking.pkgId);
+    const bookingId = booking.id.toLowerCase();
+    const searchLower = searchTerm.toLowerCase();
 
-      return (
-        packageName.toLowerCase().includes(searchLower) ||
-        bookingId.includes(searchLower)
-      );
-    });
+    return (
+      packageName.toLowerCase().includes(searchLower) ||
+      bookingId.includes(searchLower)
+    );
+  });
 
   // pagination calc
   const totalItems = filteredBookings.length;
@@ -151,11 +152,15 @@ const BookingsPage = () => {
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink href="/">Home</BreadcrumbLink>
+              <BreadcrumbLink asChild>
+                <Link href="/">Home</Link>
+              </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbLink href="/admin">Dashboard</BreadcrumbLink>
+              <BreadcrumbLink asChild>
+                <Link href="/admin">Dashboard</Link>
+              </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>

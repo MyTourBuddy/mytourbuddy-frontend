@@ -128,11 +128,15 @@ const PackagesPage = () => {
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink href="/">Home</BreadcrumbLink>
+              <BreadcrumbLink asChild>
+                <Link href="/">Home</Link>
+              </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbLink href="/dashboard">Dashboard</BreadcrumbLink>
+              <BreadcrumbLink asChild>
+                <Link href="/dashboard">Dashboard</Link>
+              </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
@@ -219,7 +223,6 @@ const PackagesPage = () => {
                           </Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem
-                          asChild
                           onClick={() => handleDeleteClick(pkg.id)}
                           className="text-destructive focus:text-destructive"
                         >
@@ -246,7 +249,8 @@ const PackagesPage = () => {
                         variant="outline"
                         className="text-xs border border-border text-center"
                       >
-                        {pkg.duration}
+                        {pkg.duration}&nbsp;
+                        {pkg.duration > 1 ? "Days" : "Day"}
                       </Badge>
                     )}
                     {pkg.location && (

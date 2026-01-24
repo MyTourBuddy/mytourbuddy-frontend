@@ -61,6 +61,8 @@ export function useTicket(ticketId: string, enabled: boolean = true) {
       return await apiClient<SupportTicket>(`tickets/${ticketId}`);
     },
     enabled: enabled && !!ticketId,
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
   });
 }
 
@@ -95,7 +97,7 @@ export function useCloseTicket() {
 
   return useMutation({
     mutationFn: async ({ ticketId, adminResponse }: CloseTicketData) => {
-      return await apiClient<SupportTicket>(`tickets/${ticketId}/close`, {
+      return await apiClient<SupportTicket>(`tickets/${ticketId}`, {
         method: "PUT",
         body: JSON.stringify({ adminResponse }),
       });

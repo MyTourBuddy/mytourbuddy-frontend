@@ -10,8 +10,7 @@ export const reviewKeys = {
     [...reviewKeys.lists(), { filters }] as const,
   details: () => [...reviewKeys.all, "detail"] as const,
   detail: (id: string) => [...reviewKeys.details(), id] as const,
-  byGuide: (guideId: string) =>
-    [...reviewKeys.all, "guide", guideId] as const,
+  byGuide: (guideId: string) => [...reviewKeys.all, "guide", guideId] as const,
   byTourist: (touristId: string) =>
     [...reviewKeys.all, "tourist", touristId] as const,
 };
@@ -23,6 +22,8 @@ export function useReviews() {
     queryFn: async () => {
       return await apiClient<Review[]>("reviews");
     },
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
   });
 }
 
@@ -34,6 +35,8 @@ export function useReview(reviewId: string, enabled: boolean = true) {
       return await apiClient<Review>(`reviews/${reviewId}`);
     },
     enabled: enabled && !!reviewId,
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
   });
 }
 
@@ -45,20 +48,23 @@ export function useReviewsByGuide(guideId: string, enabled: boolean = true) {
       return await apiClient<Review[]>(`reviews/guides/${guideId}`);
     },
     enabled: enabled && !!guideId,
-    refetchOnMount: "always",
+    refetchOnMount: true,
     refetchOnWindowFocus: true,
   });
 }
 
 // get reviews by tourist id
-export function useReviewsByTourist(touristId: string, enabled: boolean = true) {
+export function useReviewsByTourist(
+  touristId: string,
+  enabled: boolean = true,
+) {
   return useQuery({
     queryKey: reviewKeys.byTourist(touristId),
     queryFn: async () => {
       return await apiClient<Review[]>(`reviews/tourists/${touristId}`);
     },
     enabled: enabled && !!touristId,
-    refetchOnMount: "always",
+    refetchOnMount: true,
     refetchOnWindowFocus: true,
   });
 }
@@ -69,32 +75,16 @@ export function useCreateReview() {
 
   return useMutation({
     mutationFn: async (
-      reviewData: Omit<Review, "id" | "createdAt">
+      reviewData: Omit<Review, "id" | "createdAt" | "touristId" | "guideId">,
     ) => {
       return await apiClient<Review>("reviews", {
         method: "POST",
         body: JSON.stringify(reviewData),
       });
     },
-    onSuccess: async (newReview, reviewData) => {
+    onSuccess: async (newReview) => {
       await queryClient.invalidateQueries({ queryKey: reviewKeys.lists() });
       await queryClient.invalidateQueries({ queryKey: bookingKeys.my() });
-      if (newReview && newReview.guideId && newReview.touristId) {
-        await queryClient.invalidateQueries({
-          queryKey: reviewKeys.byGuide(newReview.guideId),
-        });
-        await queryClient.invalidateQueries({
-          queryKey: reviewKeys.byTourist(newReview.touristId),
-        });
-      } else if (reviewData.guideId && reviewData.touristId) {
-        // Fallback: use the data we sent if the response doesn't include it
-        await queryClient.invalidateQueries({
-          queryKey: reviewKeys.byGuide(reviewData.guideId),
-        });
-        await queryClient.invalidateQueries({
-          queryKey: reviewKeys.byTourist(reviewData.touristId),
-        });
-      }
     },
     onError: (error) => {
       console.error("Create review failed:", getErrorMessage(error));
@@ -122,16 +112,10 @@ export function useUpdateReview() {
     onSuccess: async (updatedReview, variables) => {
       queryClient.setQueryData(
         reviewKeys.detail(variables.reviewId),
-        updatedReview
+        updatedReview,
       );
 
       await queryClient.invalidateQueries({ queryKey: reviewKeys.lists() });
-      await queryClient.invalidateQueries({
-        queryKey: reviewKeys.byGuide(updatedReview.guideId),
-      });
-      await queryClient.invalidateQueries({
-        queryKey: reviewKeys.byTourist(updatedReview.touristId),
-      });
     },
     onError: (error) => {
       console.error("Update review failed:", getErrorMessage(error));
@@ -160,4 +144,3 @@ export function useDeleteReview() {
     },
   });
 }
-

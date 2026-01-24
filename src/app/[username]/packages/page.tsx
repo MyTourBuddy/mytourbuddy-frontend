@@ -13,6 +13,7 @@ import {
 import { Spinner } from "@/components/ui/spinner";
 import { usePackagesByGuide } from "@/hooks/usePackageQueries";
 import { useUserByUsername } from "@/hooks/useUserQueries";
+import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 import { PiSmileySad } from "react-icons/pi";
 
@@ -62,11 +63,15 @@ const PackagesPage = () => {
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink href="/">Home</BreadcrumbLink>
+              <BreadcrumbLink asChild>
+                <Link href="/">Home</Link>
+              </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbLink href={`/${username}`}>{username}</BreadcrumbLink>
+              <BreadcrumbLink asChild>
+                <Link href={`/${username}`}>{username}</Link>
+              </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>

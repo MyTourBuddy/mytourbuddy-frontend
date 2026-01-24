@@ -20,6 +20,7 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { useCurrentUser } from "@/hooks/useAuthQueries";
+import Link from "next/link";
 
 const ProfileSettingsPage = () => {
   const { data: user } = useCurrentUser();
@@ -30,11 +31,15 @@ const ProfileSettingsPage = () => {
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink href="/">Home</BreadcrumbLink>
+              <BreadcrumbLink asChild>
+                <Link href="/">Home</Link>
+              </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbLink href="/dashboard">Dashboard</BreadcrumbLink>
+              <BreadcrumbLink asChild>
+                <Link href="/dashboard">Dashboard</Link>
+              </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
@@ -42,7 +47,7 @@ const ProfileSettingsPage = () => {
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
-        
+
         <div className="flex flex-col gap-2 md:gap-3">
           <h1 className="text-3xl font-bold tracking-tight">Edit Profile</h1>
           <p className="text-sm sm:text-base text-muted-foreground mt-2">

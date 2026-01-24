@@ -27,7 +27,15 @@ const EditProfileMenu = () => {
         {data?.role === "GUIDE" && (
           <>
             <DropdownMenuItem asChild>
-              <Link href="/dashboard/packages">My Packages</Link>
+              <Link
+                href={
+                  data.isProfileComplete
+                    ? "/dashboard/packages"
+                    : "/dashboard/settings"
+                }
+              >
+                My Packages
+              </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
               <Link href="/dashboard/experiences">My Experiences</Link>

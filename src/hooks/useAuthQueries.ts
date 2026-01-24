@@ -57,6 +57,15 @@ export function useLogin() {
         method: "POST",
         body: JSON.stringify(credentials),
       });
+
+      if (response === null) {
+        throw new Error("Invalid username or password");
+      }
+
+      if (!response.user) {
+        throw new Error("Account not found or deactivated");
+      }
+
       return response.user;
     },
     onSuccess: (user) => {
@@ -97,6 +106,15 @@ export function useRegister() {
         method: "POST",
         body: JSON.stringify(userData),
       });
+
+      if (response === null) {
+        throw new Error("Registration failed. Try again");
+      }
+
+      if (!response.user) {
+        throw new Error("Could not create account");
+      }
+
       return response.user;
     },
     onSuccess: (user) => {
@@ -136,6 +154,15 @@ export function useRegisterAdmin() {
         method: "POST",
         body: JSON.stringify(userData),
       });
+
+      if (response === null) {
+        throw new Error("Admin registration failed");
+      }
+
+      if (!response.user) {
+        throw new Error("Could not create admin account");
+      }
+
       return response.user;
     },
     onSuccess: (user) => {

@@ -25,6 +25,7 @@ import GuidesReviewsSection from "@/components/reviews/GuidesReviewsSection";
 import TouristReviewSection from "@/components/reviews/TouristReviewSection";
 import { useAuth } from "@/context/AuthContext";
 import AdminProfileInfo from "@/components/profile/AdminProfileInfo";
+import Link from "next/link";
 
 const UserProfile = () => {
   const { username } = useParams<{ username: string }>();
@@ -41,7 +42,9 @@ const UserProfile = () => {
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink href="/">Home</BreadcrumbLink>
+              <BreadcrumbLink asChild>
+                <Link href="/">Home</Link>
+              </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>

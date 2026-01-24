@@ -20,6 +20,8 @@ export function useBookings() {
     queryFn: async () => {
       return await apiClient<Booking[]>("bookings");
     },
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
   });
 }
 
@@ -30,6 +32,8 @@ export function useMyBookings() {
     queryFn: async () => {
       return await apiClient<Booking[]>("bookings/my");
     },
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
   });
 }
 
@@ -40,6 +44,8 @@ export function useGuideBookings() {
     queryFn: async () => {
       return await apiClient<Booking[]>("bookings/guide");
     },
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
   });
 }
 
@@ -51,6 +57,8 @@ export function useBooking(bookingId: string, enabled: boolean = true) {
       return await apiClient<Booking>(`bookings/${bookingId}`);
     },
     enabled: enabled && !!bookingId,
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
   });
 }
 

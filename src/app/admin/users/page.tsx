@@ -57,6 +57,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { PiSmileySad } from "react-icons/pi";
 import { User } from "@/schemas/user.schema";
 import Link from "next/link";
+import toast from "react-hot-toast";
 
 type Role = "ALL" | "ADMIN" | "GUIDE" | "TOURIST";
 
@@ -139,19 +140,17 @@ const UsersPage = () => {
     );
   }
 
-  const handleDeleteUser = () => {
+  const handleDeleteUser = async () => {
     if (selectedUser) {
-      console.log("Deleting user:", selectedUser.id);
-      deleteUser.mutate(selectedUser.id, {
-        onSuccess: () => {
-          console.log("User deleted successfully");
-          setDeleteDialog(false);
-          setSelectedUser(null);
-        },
-        onError: (error) => {
-          console.error("Failed to delete user:", error);
-        },
-      });
+      try {
+        await deleteUser.mutateAsync(selectedUser.id);
+        toast.success("User deleted successfully!");
+        setDeleteDialog(false);
+        setSelectedUser(null);
+      } catch (error) {
+        console.error("Failed to delete user:", error);
+        toast.error("Failed to delete user. Please try again.");
+      }
     }
   };
 
@@ -174,11 +173,15 @@ const UsersPage = () => {
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem>
-            <BreadcrumbLink href="/">Home</BreadcrumbLink>
+            <BreadcrumbLink asChild>
+              <Link href="/">Home</Link>
+            </BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
-            <BreadcrumbLink href="/admin">Dashboard</BreadcrumbLink>
+            <BreadcrumbLink asChild>
+              <Link href="/admin">Dashboard</Link>
+            </BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>

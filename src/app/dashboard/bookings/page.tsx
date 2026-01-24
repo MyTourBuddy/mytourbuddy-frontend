@@ -22,6 +22,7 @@ import PendingGuideBookings from "@/components/bookings/guide/PendingGuideBookin
 import AcceptedGuideBookings from "@/components/bookings/guide/AcceptedGuideBookings";
 import CompletedGuideBookings from "@/components/bookings/guide/CompletedGuideBookings";
 import CanceledGuideBookings from "@/components/bookings/guide/CanceledGuideBookings";
+import Link from "next/link";
 
 const BookingsPage = () => {
   const { isGuide, isTourist } = useAuth();
@@ -31,11 +32,15 @@ const BookingsPage = () => {
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink href="/">Home</BreadcrumbLink>
+              <BreadcrumbLink asChild>
+                <Link href="/">Home</Link>
+              </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbLink href="/dashboard">Dashboard</BreadcrumbLink>
+              <BreadcrumbLink asChild>
+                <Link href="/dashboard">Dashboard</Link>
+              </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>

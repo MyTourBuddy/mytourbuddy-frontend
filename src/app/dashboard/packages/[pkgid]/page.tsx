@@ -86,12 +86,14 @@ const PackagePage = () => {
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink href="/">Home</BreadcrumbLink>
+              <BreadcrumbLink asChild>
+                <Link href="/">Home</Link>
+              </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbLink href="/dashboard/packages">
-                Packages
+              <BreadcrumbLink asChild>
+                <Link href="/dashboard/packages">Packages</Link>
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
@@ -166,7 +168,10 @@ const PackagePage = () => {
 
                     <div className="flex md:hidden items-center gap-2">
                       <LuAlarmClock className="text-primary" />
-                      <span>{pkgDetails.duration}</span>
+                      <span>
+                        {pkgDetails.duration}&nbsp;
+                        {pkgDetails.duration > 1 ? "Days" : "Day"}
+                      </span>
                     </div>
 
                     <div className="flex md:hidden items-center gap-2 sm:col-span-2">
@@ -249,7 +254,10 @@ const PackagePage = () => {
 
                 <div className="flex flex-col gap-1">
                   <p className="text-muted-foreground text-sm">Duration</p>
-                  <p>{pkgDetails.duration}</p>
+                  <p>
+                    {pkgDetails.duration}&nbsp;
+                    {pkgDetails.duration > 1 ? "Days" : "Day"}
+                  </p>
                 </div>
 
                 <div className="flex flex-col gap-1">

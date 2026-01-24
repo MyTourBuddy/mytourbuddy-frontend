@@ -68,6 +68,7 @@ const TouristBookingCard = ({ data }: { data: Booking }) => {
             </Badge>
           </div>
         </div>
+        <p className="text-sm text-muted-foreground">#{data.id}</p>
         <Separator />
       </CardHeader>
       {/* card content */}

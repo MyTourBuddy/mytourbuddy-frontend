@@ -21,6 +21,7 @@ import { FaFlagCheckered } from "react-icons/fa";
 
 import { useGenerateGuide } from "@/hooks/useBuddyAiQueries";
 import { BuddyAiRequest } from "@/schemas/buddy-ai.schema";
+import Link from "next/link";
 
 const BuddyAi = () => {
   const [startLocation, setStartLocation] = useState("");
@@ -39,7 +40,7 @@ const BuddyAi = () => {
       firstName: user.firstName,
       lastName: user.lastName,
       age: user.age,
-      travelPrefs: user.role === "TOURIST" ? (user.travelPreferences || []) : [],
+      travelPrefs: user.role === "TOURIST" ? user.travelPreferences || [] : [],
       startLocation,
       endDestination,
     };
@@ -63,11 +64,15 @@ const BuddyAi = () => {
       <Breadcrumb className="mt-3">
         <BreadcrumbList>
           <BreadcrumbItem>
-            <BreadcrumbLink href="/">Home</BreadcrumbLink>
+            <BreadcrumbLink asChild>
+              <Link href="/">Home</Link>
+            </BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
-            <BreadcrumbLink href="/dashboard">Dashboard</BreadcrumbLink>
+            <BreadcrumbLink asChild>
+              <Link href="/dashboard">Dashboard</Link>
+            </BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
