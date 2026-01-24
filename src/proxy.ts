@@ -3,15 +3,17 @@ import { NextResponse, type NextRequest } from "next/server";
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8080/api/v1";
 
-const protectedRoutes = ["/dashboard", "/admin"];
-const publicRoutes = ["/signin", "/signup", "/"];
-const adminOnlyRoutes = ["/admin"];
-
-// only can access when the profiles are completed
-const guideProfileRequiredRoutes = [
-  "/dashboard/packages",
-  "/dashboard/experiences",
-];
+const ROUTE_CONFIG = {
+  protected: ["/dashboard", "/admin"],
+  public: ["/signin", "/signup", "/"],
+  adminOnly: ["/admin"],
+  guideProfileRequired: ["/dashboard/packages", "/dashboard/experiences"],
+  allowedIncomplete: [
+    "/dashboard",
+    "/dashboard/settings",
+    "/dashboard/support",
+  ],
+} as const;
 
 interface UserResponse {
   user: {
@@ -31,104 +33,123 @@ async function validateToken(token: string): Promise<UserResponse | null> {
       },
     });
 
+    if (response.status === 401) {
+      // Token invalid/expired
+      return null;
+    }
+
+    if (response.status === 403) {
+      // Token valid but insufficient permissions
+      return null;
+    }
+
     if (!response.ok) {
+      // Other server errors
+      console.error(
+        `Token validation failed: ${response.status} ${response.statusText}`,
+      );
       return null;
     }
 
     return await response.json();
   } catch (error) {
-    console.error("Token validation failed:", error);
+    console.error("Token validation network error:", error);
     return null;
   }
 }
 
-export async function proxy(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+const isRouteProtected = (pathname: string): boolean =>
+  ROUTE_CONFIG.protected.some((route) => pathname.startsWith(route));
 
-  const token = request.cookies.get("token")?.value;
-
-  const isProtectedRoute = protectedRoutes.some((route) =>
-    pathname.startsWith(route),
-  );
-  const isPublicRoute = publicRoutes.some(
+const isRoutePublic = (pathname: string): boolean =>
+  ROUTE_CONFIG.public.some(
     (route) => pathname === route || pathname.startsWith(route),
   );
-  const isAdminRoute = adminOnlyRoutes.some((route) =>
-    pathname.startsWith(route),
+
+const isAdminRoute = (pathname: string): boolean =>
+  ROUTE_CONFIG.adminOnly.some((route) => pathname.startsWith(route));
+
+const isGuideProfileRequired = (pathname: string): boolean =>
+  ROUTE_CONFIG.guideProfileRequired.some((route) => pathname.startsWith(route));
+
+const isAllowedIncompleteRoute = (pathname: string): boolean =>
+  ROUTE_CONFIG.allowedIncomplete.some((route) => pathname === route);
+
+const shouldRedirectIncompleteUser = (
+  user: UserResponse["user"],
+  pathname: string,
+): boolean => {
+  if (!user || user.isProfileComplete) return false;
+
+  return (
+    !pathname.startsWith(`/${user.username}`) &&
+    !isGuideProfileRequired(pathname) &&
+    !isAllowedIncompleteRoute(pathname)
   );
-  const isGuideProfileRequiredRoute = guideProfileRequiredRoutes.some((route) =>
-    pathname.startsWith(route),
-  );
+};
 
-  // If it's a protected route, validate the token
-  if (isProtectedRoute) {
-    if (!token) {
-      return NextResponse.redirect(new URL("/signin", request.url));
-    }
+export async function proxy(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+  const token = request.cookies.get("token")?.value;
 
-    const authData = await validateToken(token);
-
-    if (!authData || !authData.user) {
-      const response = NextResponse.redirect(new URL("/signin", request.url));
-      response.cookies.delete("token");
-      return response;
-    }
-
-    const user = authData.user;
-
-    if (isAdminRoute && user.role !== "ADMIN") {
-      return NextResponse.redirect(new URL("/dashboard", request.url));
-    }
-
-    // buddy ai - tourists only
-    if (pathname === "/dashboard/buddy-ai") {
-      return user.role === "TOURIST"
-        ? NextResponse.next()
-        : NextResponse.redirect(new URL("/dashboard", request.url));
-    }
-
+  if (!isRouteProtected(pathname)) {
     if (
-      isGuideProfileRequiredRoute &&
-      user.role === "GUIDE" &&
-      !user.isProfileComplete
+      isRoutePublic(pathname) &&
+      token &&
+      (pathname === "/signin" || pathname === "/signup")
     ) {
-      return NextResponse.redirect(new URL("/dashboard/settings", request.url));
-    }
+      const authData = await validateToken(token);
 
-    if (
-      !user.isProfileComplete &&
-      !pathname.startsWith(`/${user.username}`) &&
-      !isGuideProfileRequiredRoute &&
-      !(
-        pathname === "/dashboard" ||
-        pathname === "/dashboard/settings" ||
-        pathname === "/dashboard/support"
-      )
-    ) {
-      return NextResponse.redirect(new URL("/dashboard/settings", request.url));
+      if (authData?.user) {
+        const user = authData.user;
+
+        if (user.role === "ADMIN") {
+          return NextResponse.redirect(new URL("/admin", request.url));
+        } else if (user.isProfileComplete) {
+          return NextResponse.redirect(new URL("/dashboard", request.url));
+        } else {
+          return NextResponse.redirect(
+            new URL(`/${user.username}`, request.url),
+          );
+        }
+      }
     }
 
     return NextResponse.next();
   }
 
+  if (!token) {
+    return NextResponse.redirect(new URL("/signin", request.url));
+  }
+
+  const authData = await validateToken(token);
+
+  if (!authData?.user) {
+    const response = NextResponse.redirect(new URL("/signin", request.url));
+    response.cookies.delete("token");
+    return response;
+  }
+
+  const user = authData.user;
+
+  if (isAdminRoute(pathname) && user.role !== "ADMIN") {
+    return NextResponse.redirect(new URL("/dashboard", request.url));
+  }
+
+  if (pathname === "/dashboard/buddy-ai" && user.role !== "TOURIST") {
+    return NextResponse.redirect(new URL("/dashboard", request.url));
+  }
+
   if (
-    isPublicRoute &&
-    token &&
-    (pathname === "/signin" || pathname === "/signup")
+    isGuideProfileRequired(pathname) &&
+    user.role === "GUIDE" &&
+    !user.isProfileComplete
   ) {
-    const authData = await validateToken(token);
+    return NextResponse.redirect(new URL("/dashboard/settings", request.url));
+  }
 
-    if (authData && authData.user) {
-      const user = authData.user;
-
-      if (user.role === "ADMIN") {
-        return NextResponse.redirect(new URL("/admin", request.url));
-      } else if (user.isProfileComplete) {
-        return NextResponse.redirect(new URL("/dashboard", request.url));
-      } else {
-        return NextResponse.redirect(new URL(`/${user.username}`, request.url));
-      }
-    }
+  if (shouldRedirectIncompleteUser(user, pathname)) {
+    return NextResponse.redirect(new URL("/dashboard/settings", request.url));
   }
 
   return NextResponse.next();
