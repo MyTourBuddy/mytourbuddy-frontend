@@ -34,7 +34,7 @@ const OnboardingFlow = () => {
         setStep((prev) => prev + 1);
       }
     },
-    [step, router, formData]
+    [step, router, formData],
   );
 
   const handleSubmit = () => {
@@ -66,7 +66,7 @@ const OnboardingFlow = () => {
       } as ProfileData);
       setStep(2);
     },
-    []
+    [],
   );
 
   const handleBack = useCallback(() => {

@@ -1,14 +1,17 @@
 import { z } from "zod";
 
 export const roleSelectionSchema = z.object({
-  role: z.enum(["TOURIST", "GUIDE", "ADMIN"]),
+  role: z.enum(["TOURIST", "GUIDE"]),
 });
 
 export const personalInfoSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
   lastName: z.string().min(1, "Last name is required"),
   email: z.email("Please enter a valid email"),
-  age: z.number().min(12, "Must be at least 12 years old").max(150, "Age must be less than 150"),
+  age: z
+    .number()
+    .min(12, "Must be at least 12 years old")
+    .max(150, "Age must be less than 150"),
 });
 
 export const accountInfoSchema = z
@@ -19,7 +22,7 @@ export const accountInfoSchema = z
       .max(20, "Username must be at most 20 characters")
       .regex(
         /^[a-zA-Z0-9_]+$/,
-        "Only letters, numbers, and underscores allowed"
+        "Only letters, numbers, and underscores allowed",
       ),
     password: z
       .string()
@@ -44,7 +47,9 @@ export const guideDetailsSchema = z.object({
 
 export const touristDetailsSchema = z.object({
   country: z.string().min(1, "Country is required"),
-  travelPreferences: z.array(z.string()).min(1, "Select at least one travel preference"),
+  travelPreferences: z
+    .array(z.string())
+    .min(1, "Select at least one travel preference"),
 });
 
 export type RoleSelectionInput = z.infer<typeof roleSelectionSchema>;
@@ -62,8 +67,4 @@ export type GuideProfile = RoleSelectionInput &
   AccountInfoInput &
   GuideDetailsInput;
 
-export type AdminProfile = RoleSelectionInput &
-  PersonalInfoInput &
-  Omit<AccountInfoInput, "confirmPassword">;
-
-export type ProfileData = TouristProfile | GuideProfile | AdminProfile;
+export type ProfileData = TouristProfile | GuideProfile;

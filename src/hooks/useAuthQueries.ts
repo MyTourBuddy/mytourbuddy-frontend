@@ -1,11 +1,12 @@
 import { apiClient, getErrorMessage, isApiError } from "@/lib/api/client";
 import { SigninInput } from "@/schemas/auth.schema";
-import { ProfileData, AdminProfile } from "@/schemas/onboarding.schema";
+import { ProfileData } from "@/schemas/onboarding.schema";
 import { User } from "@/schemas/user.schema";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { userKeys } from "./useUserQueries";
+import { AdminProfile } from "@/schemas/admin.schema";
 
 interface AuthResponse {
   user: User;
@@ -150,29 +151,21 @@ export function useRegisterAdmin() {
 
   return useMutation({
     mutationFn: async (userData: AdminProfile) => {
-      const response = await apiClient<AuthResponse>("auth/register-admin", {
-        method: "POST",
-        body: JSON.stringify(userData),
-      });
+      const response = await apiClient<{ message: string }>(
+        "auth/register-admin",
+        {
+          method: "POST",
+          body: JSON.stringify(userData),
+        },
+      );
 
       if (response === null) {
         throw new Error("Admin registration failed");
       }
 
-      if (!response.user) {
-        throw new Error("Could not create admin account");
-      }
-
-      return response.user;
+      return response;
     },
-    onSuccess: (user) => {
-      if (typeof window !== "undefined") {
-        localStorage.setItem("user", JSON.stringify(user));
-      }
-
-      queryClient.setQueryData(authKeys.currentUser(), user);
-
-      // Invalidate users list to update the admin users page
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: userKeys.lists() });
     },
     onError: (error) => {
