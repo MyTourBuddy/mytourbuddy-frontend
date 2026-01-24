@@ -7,13 +7,13 @@ import { Separator } from "./ui/separator";
 import { useAuth } from "@/context/AuthContext";
 
 const Footer = () => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isAdmin, isTourist } = useAuth();
   return (
     <footer className="flex flex-col border-t mt-4 text-sm bg-white">
       <section className="max-w-5xl mx-auto w-full px-4 py-6 md:py-8 flex flex-col gap-4">
-        <div className="flex flex-col md:flex-row justify-between gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-5 w-full gap-3">
           {/* logo and description */}
-          <div className="flex flex-col gap-4 items-center md:items-start">
+          <div className="col-span-1 md:col-span-2 flex flex-col gap-4 items-center md:items-start">
             <div className="flex flex-col items-start">
               <Image
                 src={logo}
@@ -28,30 +28,46 @@ const Footer = () => {
             </p>
           </div>
 
-          <Separator className="flex md:hidden" />
+          <Separator className="flex md:hidden col-span-1" />
 
           {/* quick urls */}
-          <div className="flex-1 grid grid-cols-2 md:grid-cols-3 w-full place-items-center md:place-items-end md:place-content-center gap-y-6">
+          <div className="col-span-1 md:col-span-3 grid grid-cols-2 md:grid-cols-3 place-items-center gap-y-6 md:items-start w-full">
             <div className="flex flex-col gap-3">
               <h2 className="font-semibold">Quick Links</h2>
               <div className="flex flex-col gap-1">
                 <Link href="/">Home</Link>
                 <Link href="/packages">Packages</Link>
-                <Link
-                  href={isAuthenticated ? "/dashboard/buddy-ai" : "/signin"}
-                >
-                  TourBuddy Ai
-                </Link>
+                {(!isAuthenticated || isTourist) && (
+                  <Link
+                    href={isAuthenticated ? "/dashboard/buddy-ai" : "/signin"}
+                  >
+                    TourBuddy Ai
+                  </Link>
+                )}
               </div>
             </div>
             <div className="flex flex-col gap-3">
               <h2 className="font-semibold">Support</h2>
               <div className="flex flex-col gap-1">
-                <Link href={isAuthenticated ? "/dashboard" : "/signin"}>
+                <Link
+                  href={
+                    isAuthenticated
+                      ? isAdmin
+                        ? "/admin"
+                        : "/dashboard"
+                      : "/signin"
+                  }
+                >
                   Dashboard
                 </Link>
                 <Link
-                  href={isAuthenticated ? "/dashboard/settings" : "/signin"}
+                  href={
+                    isAuthenticated
+                      ? isAdmin
+                        ? "/admin/settings"
+                        : "/dashboard/settings"
+                      : "/signin"
+                  }
                 >
                   Settings
                 </Link>
@@ -61,8 +77,8 @@ const Footer = () => {
             <div className="flex flex-col gap-3 col-span-2 md:col-span-1">
               <h2 className="font-semibold">Legal</h2>
               <div className="flex flex-col gap-1">
-                <Link href="/terms">Terms of Service</Link>
-                <Link href="/privacy">Privacy Policy</Link>
+                <Link href="/terms-of-service">Terms of Service</Link>
+                <Link href="/privacy-policy">Privacy Policy</Link>
                 <Link href="/about">About Us</Link>
               </div>
             </div>
