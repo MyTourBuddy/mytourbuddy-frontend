@@ -10,6 +10,7 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { useExperience } from "@/hooks/useExperienceQueries";
+import Link from "next/link";
 import { useParams } from "next/navigation";
 
 const EditExperience = () => {
@@ -25,12 +26,14 @@ const EditExperience = () => {
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink href="/">Home</BreadcrumbLink>
+              <BreadcrumbLink asChild>
+                <Link href="/">Home</Link>
+              </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbLink href={`/dashboard/experiences/${expid}`}>
-                {expid}
+              <BreadcrumbLink asChild>
+                <Link href={`/dashboard/experiences/${expid}`}>{expid}</Link>
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />

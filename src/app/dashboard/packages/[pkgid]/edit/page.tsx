@@ -10,6 +10,7 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { usePackage } from "@/hooks/usePackageQueries";
+import Link from "next/link";
 import { useParams } from "next/navigation";
 
 const EditPackage = () => {
@@ -18,19 +19,21 @@ const EditPackage = () => {
   const { data: pkgDetails, isLoading: loading, error } = usePackage(pkgid);
 
   if (!pkgDetails) return <div>Package not found</div>;
-  
+
   return (
     <section className="max-w-5xl mx-auto w-full pt-3 px-4">
       <div className="flex flex-col gap-6">
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink href="/">Home</BreadcrumbLink>
+              <BreadcrumbLink asChild>
+                <Link href="/">Home</Link>
+              </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbLink href={`/dashboard/packages/${pkgid}`}>
-                {pkgid}
+              <BreadcrumbLink asChild>
+                <Link href={`/dashboard/packages/${pkgid}`}>{pkgid}</Link>
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />

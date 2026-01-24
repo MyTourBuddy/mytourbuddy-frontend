@@ -138,11 +138,15 @@ const PackagesPage = () => {
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink href="/">Home</BreadcrumbLink>
+              <BreadcrumbLink asChild>
+                <Link href="/">Home</Link>
+              </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbLink href="/admin">Dashboard</BreadcrumbLink>
+              <BreadcrumbLink asChild>
+                <Link href="/admin">Dashboard</Link>
+              </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
@@ -201,14 +205,14 @@ const PackagesPage = () => {
                           View Package
                         </Link>
                       </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() => handleDeletePackage(pkg.id)}
-                      disabled={deletePackageMutation.isPending}
-                    >
-                      <TbTrash className="text-destructive" />
-                      {deletePackageMutation.isPending
-                        ? "Deleting..."
-                        : "Delete Package"}
+                      <DropdownMenuItem
+                        onClick={() => handleDeletePackage(pkg.id)}
+                        disabled={deletePackageMutation.isPending}
+                      >
+                        <TbTrash className="text-destructive" />
+                        {deletePackageMutation.isPending
+                          ? "Deleting..."
+                          : "Delete Package"}
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>

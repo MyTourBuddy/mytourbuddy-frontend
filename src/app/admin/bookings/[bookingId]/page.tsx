@@ -16,6 +16,7 @@ import { useUser } from "@/hooks/useUserQueries";
 import { usePackage } from "@/hooks/usePackageQueries";
 import { Spinner } from "@/components/ui/spinner";
 import { PiSmileySad } from "react-icons/pi";
+import Link from "next/link";
 
 const BookingPage = () => {
   const { bookingId } = useParams<{ bookingId: string }>();
@@ -127,7 +128,9 @@ const BookingPage = () => {
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink href="/">Home</BreadcrumbLink>
+              <BreadcrumbLink asChild>
+                <Link href="/">Home</Link>
+              </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>

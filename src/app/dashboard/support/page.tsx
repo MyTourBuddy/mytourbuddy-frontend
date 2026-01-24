@@ -36,12 +36,7 @@ import { useTickets } from "@/hooks/useTicketQueries";
 import Link from "next/link";
 import { useState } from "react";
 import { PiSmileySad } from "react-icons/pi";
-import {
-  TbCircleCheck,
-  TbCircleDot,
-  TbDots,
-  TbPlus,
-} from "react-icons/tb";
+import { TbCircleCheck, TbCircleDot, TbDots, TbPlus } from "react-icons/tb";
 
 const SupportPage = () => {
   const { data: tickets, isLoading: loading, error } = useTickets();
@@ -109,11 +104,15 @@ const SupportPage = () => {
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink href="/">Home</BreadcrumbLink>
+              <BreadcrumbLink asChild>
+                <Link href="/">Home</Link>
+              </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbLink href="/dashboard">Dashboard</BreadcrumbLink>
+              <BreadcrumbLink asChild>
+                <Link href="/dashboard">Dashboard</Link>
+              </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
@@ -138,36 +137,42 @@ const SupportPage = () => {
             <Separator />
           </div>
 
-          <div className="flex flex-col gap-3">
-            {paginatedTickets.map((ticket) => {
-              return (
-                <Item variant="outline" key={ticket.id}>
-                  <ItemMedia className="text-lg">
-                    {ticket.status === "OPEN" ? (
-                      <TbCircleDot className="text-amber-500" />
-                    ) : (
-                      <TbCircleCheck className="text-primary" />
-                    )}
-                  </ItemMedia>
-                  <ItemContent>
-                    <ItemTitle>{ticket.subject}</ItemTitle>
-                  </ItemContent>
-                  <ItemActions>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <TbDots className="text-lg" />
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <Link href={`/dashboard/support/${ticket.id}`}>
-                          <DropdownMenuItem>View Ticket</DropdownMenuItem>
-                        </Link>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </ItemActions>
-                </Item>
-              );
-            })}
-          </div>
+          {tickets.length === 0 ? (
+            <div className="text-center py-12 text-muted-foreground">
+              No tickets yet. Create your first one to get started.
+            </div>
+          ) : (
+            <div className="flex flex-col gap-3">
+              {paginatedTickets.map((ticket) => {
+                return (
+                  <Item variant="outline" key={ticket.id}>
+                    <ItemMedia className="text-lg">
+                      {ticket.status === "OPEN" ? (
+                        <TbCircleDot className="text-amber-500" />
+                      ) : (
+                        <TbCircleCheck className="text-primary" />
+                      )}
+                    </ItemMedia>
+                    <ItemContent>
+                      <ItemTitle>{ticket.subject}</ItemTitle>
+                    </ItemContent>
+                    <ItemActions>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <TbDots className="text-lg" />
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <Link href={`/dashboard/support/${ticket.id}`}>
+                            <DropdownMenuItem>View Ticket</DropdownMenuItem>
+                          </Link>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </ItemActions>
+                  </Item>
+                );
+              })}
+            </div>
+          )}
           {/* Pagination Controls */}
           {totalPages > 1 && (
             <Pagination>

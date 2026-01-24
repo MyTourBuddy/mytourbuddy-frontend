@@ -34,12 +34,7 @@ import { useAllTickets } from "@/hooks/useTicketQueries";
 import Link from "next/link";
 import { useState } from "react";
 import { PiSmileySad } from "react-icons/pi";
-import {
-  TbCircleCheck,
-  TbCircleDot,
-  TbDots,
-  TbEye,
-} from "react-icons/tb";
+import { TbCircleCheck, TbCircleDot, TbDots, TbEye } from "react-icons/tb";
 
 const SupportTickets = () => {
   const { data: tickets, isLoading: loading, error } = useAllTickets();
@@ -82,7 +77,7 @@ const SupportTickets = () => {
       </section>
     );
   }
-  
+
   const sortedTickets = [...tickets].sort((a, b) => {
     if (a.createdAt && b.createdAt) {
       return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
@@ -106,11 +101,15 @@ const SupportTickets = () => {
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink href="/">Home</BreadcrumbLink>
+              <BreadcrumbLink asChild>
+                <Link href="/">Home</Link>
+              </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbLink href="/admin">Dashboard</BreadcrumbLink>
+              <BreadcrumbLink asChild>
+                <Link href="/admin">Dashboard</Link>
+              </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
@@ -165,23 +164,35 @@ const SupportTickets = () => {
                 <PaginationItem>
                   <PaginationPrevious
                     onClick={handlePrev}
-                    className={page === 1 ? "pointer-events-none opacity-50" : ""}
+                    className={
+                      page === 1 ? "pointer-events-none opacity-50" : ""
+                    }
                   />
                 </PaginationItem>
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
-                  <PaginationItem key={pageNum}>
-                    <PaginationLink
-                      onClick={() => setPage(pageNum)}
-                      className={page === pageNum ? "bg-primary text-primary-foreground" : ""}
-                    >
-                      {pageNum}
-                    </PaginationLink>
-                  </PaginationItem>
-                ))}
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                  (pageNum) => (
+                    <PaginationItem key={pageNum}>
+                      <PaginationLink
+                        onClick={() => setPage(pageNum)}
+                        className={
+                          page === pageNum
+                            ? "bg-primary text-primary-foreground"
+                            : ""
+                        }
+                      >
+                        {pageNum}
+                      </PaginationLink>
+                    </PaginationItem>
+                  ),
+                )}
                 <PaginationItem>
                   <PaginationNext
                     onClick={handleNext}
-                    className={page === totalPages ? "pointer-events-none opacity-50" : ""}
+                    className={
+                      page === totalPages
+                        ? "pointer-events-none opacity-50"
+                        : ""
+                    }
                   />
                 </PaginationItem>
               </PaginationContent>

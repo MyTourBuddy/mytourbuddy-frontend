@@ -208,8 +208,8 @@ const Navbar = () => {
                       <Link
                         href={
                           user?.isProfileComplete
-                            ? "/dashboard/reviews"
-                            : "/dashboard/experiences"
+                            ? "/dashboard/revexperiencesiews"
+                            : "/dashboard/settings"
                         }
                       >
                         <TbNote className="mr-2" /> My Experiences
