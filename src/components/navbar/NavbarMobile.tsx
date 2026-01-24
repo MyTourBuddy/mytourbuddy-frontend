@@ -84,17 +84,6 @@ const NavbarMobile = () => {
             </SheetClose>
           )}
 
-          {isAuthenticated && (isGuide || isAdmin) && (
-            <SheetClose asChild>
-              <Link
-                href={isGuide ? "/dashboard" : "/admin"}
-                className="font-medium"
-              >
-                Dashboard
-              </Link>
-            </SheetClose>
-          )}
-
           <Separator />
 
           {isAuthenticated ? (
