@@ -9,6 +9,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import { Separator } from "@/components/ui/separator";
 import { Spinner } from "@/components/ui/spinner";
 import { useAuth } from "@/context/AuthContext";
 import { useReviewsByTourist } from "@/hooks/useReviewQueries";
@@ -90,12 +91,19 @@ const MyReviews = () => {
               View and manage your reviews
             </p>
           </div>
+          <Separator />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {reviews?.map((review) => (
-              <ReviewsListCard key={review.id} data={review} />
-            ))}
-          </div>
+          {reviews.length === 0 ? (
+            <div className="text-center py-12 text-muted-foreground">
+              No reviews yet.
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              {reviews?.map((review) => (
+                <ReviewsListCard key={review.id} data={review} />
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </section>
