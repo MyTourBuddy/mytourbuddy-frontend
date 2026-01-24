@@ -2,7 +2,7 @@
 <img src="./public/mytourbuddy-bg.svg" alt="tourbuddylogo" height="100">
 </div>
 
-# MyTourBuddy
+# MyTourBuddy - Frontend
 
 **Your Personal Tour Buddy 🦧**
 
