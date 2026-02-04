@@ -1,0 +1,230 @@
+"use client";
+
+import React, { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { Separator } from "@/components/ui/separator";
+import { TbPencil, TbPlus, TbX } from "react-icons/tb";
+import { ButtonGroup } from "@/components/ui/button-group";
+import { Guide } from "@/schemas/user.schema";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
+import { useCurrentUser } from "@/hooks/useAuthQueries";
+import { useUpdateUser } from "@/hooks/useUserQueries";
+
+const ContactDetailsForm = () => {
+  const router = useRouter();
+  const { data: currentUser, isLoading: isLoadingUser } = useCurrentUser();
+  const updateUserMutation = useUpdateUser();
+
+  const [isEditing, setIsEditing] = useState(false);
+  const [draft, setDraft] = useState<Guide | null>(null);
+  const [original, setOriginal] = useState<Guide | null>(null);
+
+  // Sync currentUser to state during render
+  const guide = currentUser?.role === "GUIDE" ? (currentUser as Guide) : null;
+  if (guide && draft !== guide) {
+    setDraft(guide);
+    setOriginal(guide);
+  }
+
+  if (isLoadingUser || !draft) {
+    return (
+      <p className="text-sm text-muted-foreground">
+        Loading contact details...
+      </p>
+    );
+  }
+
+  const handleEdit = () => setIsEditing(true);
+
+  const handleCancel = () => {
+    if (original) setDraft({ ...original });
+    setIsEditing(false);
+    toast("Changes discarded", { icon: "🗑️" });
+  };
+
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!currentUser || !draft) return;
+
+    try {
+      const updateData = {
+        emergencyContact: draft.emergencyContact,
+        website: draft.website || "",
+        socialMedia: draft.socialMedia || [],
+      };
+
+      const updatedUser = await updateUserMutation.mutateAsync({
+        userId: currentUser.id,
+        userData: updateData,
+      });
+      
+      setOriginal(updatedUser as Guide);
+      setDraft(updatedUser as Guide);
+      setIsEditing(false);
+      router.refresh();
+
+      toast.success("Contact details updated successfully!");
+    } catch (error) {
+      console.error("Update failed:", error);
+      toast.error("Failed to update contact details. Please try again.");
+    }
+  };
+
+  return (
+    <div className="flex flex-col gap-4 w-full">
+      <div className="flex items-center justify-between">
+        <p className="text-sm text-muted-foreground">
+          Manage your contact details
+        </p>
+
+        {!isEditing && (
+          <Button variant="outline" size="icon" onClick={handleEdit}>
+            <TbPencil />
+          </Button>
+        )}
+      </div>
+
+      <Separator />
+
+      {/* Form */}
+      <form onSubmit={handleSave}>
+        <FieldGroup className="max-w-md">
+          {/* Emergency Contact */}
+          <Field>
+            <FieldLabel htmlFor="emergencyContact">
+              Emergency Contact&nbsp;
+              <span className="text-destructive">*</span>
+            </FieldLabel>
+            {!draft.emergencyContact && !isEditing ? (
+              "--"
+            ) : (
+              <Input
+                id="emergencyContact"
+                name="emergencyContact"
+                type="text"
+                placeholder="Enter phone number (e.g. +94 77 123 4567)"
+                value={draft.emergencyContact ?? ""}
+                readOnly={!isEditing}
+                onChange={(e) =>
+                  setDraft((prev) => ({
+                    ...prev!,
+                    emergencyContact: e.target.value,
+                  }))
+                }
+              />
+            )}
+          </Field>
+
+          {/* Website */}
+          <Field>
+            <FieldLabel htmlFor="website">Website</FieldLabel>
+            {!draft.website && !isEditing ? (
+              "--"
+            ) : (
+              <Input
+                id="website"
+                name="website"
+                type="text"
+                placeholder="Enter Website URL"
+                value={draft.website || ""}
+                readOnly={!isEditing}
+                onChange={(e) =>
+                  setDraft((prev) => ({
+                    ...prev!,
+                    website: e.target.value || undefined,
+                  }))
+                }
+              />
+            )}
+          </Field>
+
+          {/* Social Media */}
+          <Field>
+            <FieldLabel>Social Media</FieldLabel>
+
+            {(draft.socialMedia || []).length === 0 && !isEditing ? (
+              "--"
+            ) : (
+              <div className="flex flex-col gap-2">
+                {(draft.socialMedia || []).map((item, index) => (
+                  <div key={index} className="flex gap-2">
+                    <Input
+                      value={item}
+                      placeholder="Copy your profile URL and paste here"
+                      readOnly={!isEditing}
+                      onChange={(e) => {
+                        if (!isEditing) return;
+                        const updated = [...(draft.socialMedia || [])];
+                        updated[index] = e.target.value;
+                        setDraft((prev) => ({
+                          ...prev!,
+                          socialMedia: updated,
+                        }));
+                      }}
+                    />
+
+                    {isEditing && (draft.socialMedia || []).length > 0 && (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="icon"
+                        onClick={() => {
+                          setDraft((prev) => ({
+                            ...prev!,
+                            socialMedia: (draft.socialMedia || []).filter(
+                              (_, i) => i !== index
+                            ),
+                          }));
+                        }}
+                      >
+                        <TbX />
+                      </Button>
+                    )}
+                  </div>
+                ))}
+
+                {isEditing && (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    className="w-fit"
+                    onClick={() =>
+                      setDraft((prev) => ({
+                        ...prev!,
+                        socialMedia: [...(draft.socialMedia || []), ""],
+                      }))
+                    }
+                  >
+                    <TbPlus className="mr-2" />
+                    Add social media
+                  </Button>
+                )}
+              </div>
+            )}
+          </Field>
+        </FieldGroup>
+
+        {/* actions */}
+        {isEditing && (
+          <ButtonGroup className="ml-auto">
+            <Button type="button" variant="outline" onClick={handleCancel}>
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              disabled={updateUserMutation.isPending || !draft.emergencyContact}
+            >
+              {updateUserMutation.isPending ? "Updating..." : "Update"}
+            </Button>
+          </ButtonGroup>
+        )}
+      </form>
+    </div>
+  );
+};
+
+export default ContactDetailsForm;

@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { poppins } from "@/utils/fonts";
-import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { AuthProvider } from "@/context/AuthContext";
+import { Toaster } from "react-hot-toast";
+import { QueryProvider } from "@/lib/query/provider";
+import Navbar from "@/components/navbar/Navbar";
 
 export const metadata: Metadata = {
   title: "MyTourBuddy",
@@ -15,11 +18,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${poppins.variable}`}>
-      <body className="flex flex-col min-h-screen antialiased">
-        <Navbar />
-        <main className="flex-1">{children}</main>
-        <Footer />
+    <html lang="en" className={`${poppins.variable}`} suppressHydrationWarning>
+      <body className="flex flex-col bg-background dark:bg-primary-foreground min-h-screen antialiased">
+        <QueryProvider>
+          <AuthProvider>
+            <Navbar />
+            <main className="flex-1">{children}</main>
+            <Footer />
+            <Toaster position="bottom-right" reverseOrder={false} />
+          </AuthProvider>
+        </QueryProvider>
       </body>
     </html>
   );

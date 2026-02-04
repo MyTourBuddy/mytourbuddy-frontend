@@ -1,11 +1,10 @@
-import Link from "next/link";
+import SigninForm from "@/components/SigninForm";
 
 const SigninPage = () => {
   return (
-    <div className="flex flex-col items-center gap-6 py-10 max-w-md mx-auto w-full">
-      <h1>SigninPage</h1>
-      <Link href="/">Back to home</Link>
-    </div>
+    <section className="max-w-md w-full mx-auto navbar-offset flex items-center justify-center px-4">
+      <SigninForm />
+    </section>
   );
 };
 
