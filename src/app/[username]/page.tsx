@@ -16,21 +16,19 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Admin, Guide, Tourist, User } from "@/schemas/user.schema";
+import { Admin, Guide, Tourist } from "@/schemas/user.schema";
 import { useCurrentUser } from "@/hooks/useAuthQueries";
 import { useUserByUsername } from "@/hooks/useUserQueries";
 import { useParams } from "next/navigation";
 import LoadingUser from "@/components/profile/LoadingUser";
 import GuidesReviewsSection from "@/components/reviews/GuidesReviewsSection";
 import TouristReviewSection from "@/components/reviews/TouristReviewSection";
-import { useAuth } from "@/context/AuthContext";
 import AdminProfileInfo from "@/components/profile/AdminProfileInfo";
 import Link from "next/link";
 
 const UserProfile = () => {
   const { username } = useParams<{ username: string }>();
   const { data: currentUser } = useCurrentUser();
-  const { isGuide, isTourist, isAdmin } = useAuth();
   const { data: userData, isLoading } = useUserByUsername(username);
 
   if (!username || isLoading) return <LoadingUser username={username} />;

@@ -21,19 +21,6 @@ import Link from "next/link";
 const BookingPage = () => {
   const { bookingId } = useParams<{ bookingId: string }>();
 
-  if (!bookingId || bookingId.trim() === "") {
-    return (
-      <section className="max-w-5xl mx-auto w-full px-4">
-        <div className="text-center text-muted-foreground max-w-md flex md:flex-row flex-col justify-center items-center gap-3 md:gap-2 mx-auto py-8">
-          <p className="text-2xl md:text-lg">
-            <PiSmileySad />
-          </p>
-          Invalid booking ID
-        </div>
-      </section>
-    );
-  }
-
   const {
     data: booking,
     isLoading: bookingLoading,
@@ -51,6 +38,19 @@ const BookingPage = () => {
     booking?.pkgId || "",
     !!booking?.pkgId,
   );
+
+  if (!bookingId || bookingId.trim() === "") {
+    return (
+      <section className="max-w-5xl mx-auto w-full px-4">
+        <div className="text-center text-muted-foreground max-w-md flex md:flex-row flex-col justify-center items-center gap-3 md:gap-2 mx-auto py-8">
+          <p className="text-2xl md:text-lg">
+            <PiSmileySad />
+          </p>
+          Invalid booking ID
+        </div>
+      </section>
+    );
+  }
 
   const isLoading =
     bookingLoading ||

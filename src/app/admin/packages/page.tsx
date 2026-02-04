@@ -37,7 +37,7 @@ import { useDeletePackage } from "@/hooks/usePackageQueries";
 import { Separator } from "@/components/ui/separator";
 import Image from "next/image";
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import toast from "react-hot-toast";
 import { PiSmileySad } from "react-icons/pi";
 import { TbDots, TbEye, TbTrash } from "react-icons/tb";
@@ -88,12 +88,13 @@ const PackagesPage = () => {
   const endIndex = startIndex + itemsPerPage;
   const currentPackages = filteredPackages.slice(startIndex, endIndex);
 
-  // reset page on filter
-  useEffect(() => {
-    if (currentPage > totalPages && totalPages > 0) {
-      setCurrentPage(1);
-    }
-  }, [currentPage, totalPages]);
+  // adjust page if out of bounds
+  const adjustedPage =
+    currentPage > totalPages && totalPages > 0 ? 1 : currentPage;
+
+  if (adjustedPage !== currentPage) {
+    setCurrentPage(adjustedPage);
+  }
 
   if (loading) {
     return (

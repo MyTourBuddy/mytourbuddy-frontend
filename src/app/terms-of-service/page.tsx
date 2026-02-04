@@ -99,7 +99,7 @@ const TermsOfServicePage = () => {
           <div>
             <h2 className="text-2xl font-semibold mb-3">Disclaimer</h2>
             <p className="text-gray-700">
-              The information on this website is provided on an 'as is' basis.
+              The information on this website is provided on an &apos;as is&apos; basis.
               To the fullest extent permitted by law, this Company excludes all
               representations and warranties.
             </p>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Field, FieldLabel } from "@/components/ui/field";
@@ -16,10 +16,10 @@ import { Spinner } from "@/components/ui/spinner";
 import { COUNTRIES } from "@/data/constants";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { TbCamera, TbPencil, TbX } from "react-icons/tb";
+import { TbCamera, TbPencil } from "react-icons/tb";
 import { ButtonGroup } from "@/components/ui/button-group";
 import toast from "react-hot-toast";
-import { User } from "@/schemas/user.schema";
+import { Tourist, User } from "@/schemas/user.schema";
 import { useCurrentUser } from "@/hooks/useAuthQueries";
 import { useUpdateUser, useUploadAvatar } from "@/hooks/useUserQueries";
 import { capitalizeFirstLetter } from "@/utils/helpers";
@@ -30,19 +30,20 @@ const PersonalInfoForm = () => {
   const updateUserMutation = useUpdateUser();
   const uploadAvatarMutation = useUploadAvatar();
 
-  const [draft, setDraft] = useState<User | null>(null);
-  const [original, setOriginal] = useState<User | null>(null);
+  const [draft, setDraft] = useState<User | null>(() => currentUser || null);
+  const [original, setOriginal] = useState<User | null>(
+    () => currentUser || null,
+  );
   const [isEditing, setIsEditing] = useState(false);
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    if (currentUser) {
-      setDraft(currentUser);
-      setOriginal(currentUser);
-    }
-  }, [currentUser]);
+  // Sync currentUser changes to state
+  if (currentUser && draft !== currentUser) {
+    setDraft(currentUser);
+    setOriginal(currentUser);
+  }
 
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -66,7 +67,7 @@ const PersonalInfoForm = () => {
       const reader = new FileReader();
       reader.onloadend = () => {
         setDraft((prev) =>
-          prev ? { ...prev, avatar: reader.result as string } : null
+          prev ? { ...prev, avatar: reader.result as string } : null,
         );
         setIsUploadingAvatar(false);
       };
@@ -112,7 +113,7 @@ const PersonalInfoForm = () => {
         phone: draft.phone,
         avatar: avatarUrl,
         ...(currentUser.role === "TOURIST" && {
-          country: (draft as any).country,
+          country: (draft as Tourist)?.country,
         }),
       };
 
@@ -165,7 +166,10 @@ const PersonalInfoForm = () => {
                     setDraft({ ...draft, firstName: e.target.value })
                   }
                   onBlur={(e) =>
-                    setDraft({ ...draft, firstName: capitalizeFirstLetter(e.target.value) })
+                    setDraft({
+                      ...draft,
+                      firstName: capitalizeFirstLetter(e.target.value),
+                    })
                   }
                 />
               </Field>
@@ -184,7 +188,10 @@ const PersonalInfoForm = () => {
                     setDraft({ ...draft, lastName: e.target.value })
                   }
                   onBlur={(e) =>
-                    setDraft({ ...draft, lastName: capitalizeFirstLetter(e.target.value) })
+                    setDraft({
+                      ...draft,
+                      lastName: capitalizeFirstLetter(e.target.value),
+                    })
                   }
                 />
               </Field>
@@ -236,21 +243,21 @@ const PersonalInfoForm = () => {
                 <FieldLabel>
                   Country&nbsp;<span className="text-destructive">*</span>
                 </FieldLabel>
-                {!(draft as any).country ? (
+                {!(draft as Tourist)?.country ? (
                   "--"
                 ) : (
                   <>
                     {!isEditing ? (
                       <Input
                         name="country"
-                        value={(draft as any).country ?? ""}
+                        value={(draft as Tourist)?.country ?? ""}
                         readOnly
                       />
                     ) : (
                       <Select
-                        value={(draft as any).country ?? ""}
+                        value={(draft as Tourist)?.country ?? ""}
                         onValueChange={(value) =>
-                          setDraft({ ...draft, country: value } as any)
+                          setDraft({ ...draft, country: value } as User)
                         }
                       >
                         <SelectTrigger>
@@ -332,7 +339,8 @@ const PersonalInfoForm = () => {
                 !draft.lastName ||
                 draft.age < 1 ||
                 !draft.phone ||
-                (currentUser?.role === "TOURIST" && !(draft as any).country)
+                (currentUser?.role === "TOURIST" &&
+                  !(draft as Tourist)?.country)
               }
             >
               {updateUserMutation.isPending ? "Updating..." : "Update"}

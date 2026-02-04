@@ -1,13 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardTitle,
-} from "@/components/ui/card";
-import { Experience } from "@/schemas/experience.schema";
 import { User } from "@/schemas/user.schema";
 import ExperienceCard from "../ExperienceCard";
 import { Spinner } from "../ui/spinner";

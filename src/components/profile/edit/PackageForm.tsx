@@ -7,19 +7,16 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Package } from "@/schemas/package.schema";
 import { useCreatePackage, useUpdatePackage } from "@/hooks/usePackageQueries";
-import { useCurrentUser } from "@/hooks/useAuthQueries";
 import { useUploadAvatar } from "@/hooks/useUserQueries";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { TbCamera, TbPlus, TbX } from "react-icons/tb";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Spinner } from "@/components/ui/spinner";
-import { BLURDATA } from "@/data/constants";
 
 export const PackageCreateForm = () => {
   const router = useRouter();
-  const { data: currentUser } = useCurrentUser();
   const createPackageMutation = useCreatePackage();
   const uploadImageMutation = useUploadAvatar();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -114,9 +111,9 @@ export const PackageCreateForm = () => {
         included: included.filter((item) => item.trim() !== ""),
         notIncluded: notIncluded.filter((item) => item.trim() !== ""),
         note,
-      };
+      } as Omit<Package, 'id' | 'createdAt' | 'guideId'>;
 
-      await createPackageMutation.mutateAsync(packageData as any);
+      await createPackageMutation.mutateAsync(packageData);
 
       toast.success("Package created successfully!");
       router.push("/dashboard/packages");
@@ -412,20 +409,15 @@ export const PackageEditForm = ({ pkg }: { pkg: Package }) => {
   const uploadImageMutation = useUploadAvatar();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const [draft, setDraft] = useState<Package | null>(null);
-  const [included, setIncluded] = useState<string[]>([]);
-  const [notIncluded, setNotIncluded] = useState<string[]>([]);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [draft, setDraft] = useState<Package | null>(() => pkg);
+  const [included, setIncluded] = useState<string[]>(() => pkg.included || []);
+  const [notIncluded, setNotIncluded] = useState<string[]>(
+    () => pkg.notIncluded || [],
+  );
+  const [imagePreview, setImagePreview] = useState<string | null>(
+    () => pkg.image || null,
+  );
   const [isUploadingImage, setIsUploadingImage] = useState(false);
-
-  useEffect(() => {
-    if (pkg) {
-      setDraft(pkg);
-      setIncluded(pkg.included || []);
-      setNotIncluded(pkg.notIncluded || []);
-      setImagePreview(pkg.image || null);
-    }
-  }, [pkg]);
 
   const updateItem = (
     index: number,
@@ -507,7 +499,7 @@ export const PackageEditForm = ({ pkg }: { pkg: Package }) => {
         included: included,
         notIncluded: notIncluded,
         note: draft.note,
-      };
+      } as Omit<Package, "id" | "createdAt" | "guideId">;
 
       await updatePackageMutation.mutateAsync({
         packageId: pkg.id,

@@ -12,19 +12,16 @@ import {
   useCreateExperience,
   useUpdateExperience,
 } from "@/hooks/useExperienceQueries";
-import { useCurrentUser } from "@/hooks/useAuthQueries";
 import { useUploadAvatar } from "@/hooks/useUserQueries";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { TbCamera } from "react-icons/tb";
 import Image from "next/image";
 import { Spinner } from "@/components/ui/spinner";
-import { useEffect, useRef, useState } from "react";
-import { BLURDATA } from "@/data/constants";
+import { useRef, useState } from "react";
 
 export const AddExperienceForm = () => {
   const router = useRouter();
-  const { data: currentUser } = useCurrentUser();
   const createExperienceMutation = useCreateExperience();
   const uploadImageMutation = useUploadAvatar();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -235,7 +232,6 @@ export const AddExperienceForm = () => {
 
 export const EditExperienceForm = ({ data }: { data: Experience }) => {
   const router = useRouter();
-  const { data: currentUser } = useCurrentUser();
   const updateExperienceMutation = useUpdateExperience();
   const uploadImageMutation = useUploadAvatar();
   const fileInputRef = useRef<HTMLInputElement>(null);

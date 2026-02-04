@@ -96,7 +96,7 @@ const AboutPage = () => {
           <div className="space-y-6">
             <div>
               <p className="text-lg leading-relaxed text-foreground/80">
-                MyTourBuddy connects travelers with Sri Lanka's best local
+                MyTourBuddy connects travelers with Sri Lanka&apos;s best local
                 guides. Discover authentic experiences, hidden gems, and create
                 unforgettable memories.
               </p>
@@ -130,7 +130,7 @@ const AboutPage = () => {
               {features.map((feature, index) => {
                 const Icon = feature.icon;
                 return (
-                  <Card key={feature.title}>
+                  <Card key={index}>
                     <CardContent className="flex gap-3">
                       <div className="shrink-0">
                         <div className="p-3 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
@@ -173,9 +173,9 @@ const AboutPage = () => {
                   </CardHeader>
                   <CardContent>
                     <p className="text-foreground/70 leading-relaxed">
-                      Discover Sri Lanka's real magic through local experts.
-                      From ancient temples to hidden beaches, experience the
-                      island like a local.
+                      Discover Sri Lanka&apos;s real magic through local
+                      experts. From ancient temples to hidden beaches,
+                      experience the island like a local.
                     </p>
                   </CardContent>
                 </Card>

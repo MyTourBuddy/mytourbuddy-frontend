@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import SelectableButtons from "@/components/SelectableButtons";
@@ -18,16 +18,25 @@ const TravelPrefForm = () => {
   const { data: currentUser, isLoading: isLoadingUser } = useCurrentUser();
   const updateUserMutation = useUpdateUser();
 
-  const [draft, setDraft] = useState<Tourist | null>(null);
-  const [original, setOriginal] = useState<Tourist | null>(null);
+  const [draft, setDraft] = useState<Tourist | null>(() => {
+    if (currentUser && currentUser.role === "TOURIST") {
+      return currentUser as Tourist;
+    }
+    return null;
+  });
+  const [original, setOriginal] = useState<Tourist | null>(() => {
+    if (currentUser && currentUser.role === "TOURIST") {
+      return currentUser as Tourist;
+    }
+    return null;
+  });
   const [isEditing, setIsEditing] = useState(false);
 
-  useEffect(() => {
-    if (currentUser && currentUser.role === "TOURIST") {
-      setDraft(currentUser as Tourist);
-      setOriginal(currentUser as Tourist);
-    }
-  }, [currentUser]);
+  // Sync currentUser changes to state
+  if (currentUser && currentUser.role === "TOURIST" && draft !== currentUser) {
+    setDraft(currentUser as Tourist);
+    setOriginal(currentUser as Tourist);
+  }
 
   if (isLoadingUser || !draft) {
     return (

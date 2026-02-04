@@ -25,7 +25,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Separator } from "@/components/ui/separator";
 import { Spinner } from "@/components/ui/spinner";
-import { BLURDATA } from "@/data/constants";
 import { useCurrentUser } from "@/hooks/useAuthQueries";
 import {
   useDeleteExperience,

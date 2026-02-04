@@ -8,21 +8,18 @@ import {
   CardHeader,
   CardTitle,
 } from "./ui/card";
-import { Field, FieldLabel, FieldDescription } from "./ui/field";
+import { Field, FieldLabel } from "./ui/field";
 import { Input } from "./ui/input";
 import Link from "next/link";
 import { Button } from "./ui/button";
 import Image from "next/image";
 import img3 from "@/../public/img3.svg";
 import { TbArrowRight } from "react-icons/tb";
-import { useRouter } from "next/navigation";
-import { useAuth } from "@/context/AuthContext";
 import { useState } from "react";
 import { Alert, AlertDescription } from "./ui/alert";
 import { useLogin } from "@/hooks/useAuthQueries";
 
 const SigninForm = () => {
-  const router = useRouter();
   const loginMutation = useLogin();
 
   const [error, setError] = useState<string | null>(null);
@@ -46,8 +43,10 @@ const SigninForm = () => {
 
     try {
       await loginMutation.mutateAsync(formData);
-    } catch (err: any) {
-      setError(err.message || "Login failed");
+    } catch (err: unknown) {
+      setError(
+        err instanceof Error ? err.message : "Login failed"
+      );
     }
   };
 

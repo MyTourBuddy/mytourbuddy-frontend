@@ -89,7 +89,7 @@ const HomePage = () => {
               <div className="flex flex-col gap-1.5">
                 <h3 className="font-semibold text-lg">Local Expertise</h3>
                 <p className="text-foreground/70 text-sm">
-                  Connect with guides who know Sri Lanka's hidden gems and local
+                  Connect with guides who know Sri Lanka&apos;s hidden gems and local
                   culture
                 </p>
               </div>

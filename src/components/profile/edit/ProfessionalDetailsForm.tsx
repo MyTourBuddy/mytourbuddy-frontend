@@ -11,7 +11,7 @@ import { useCurrentUser } from "@/hooks/useAuthQueries";
 import { useUpdateUser } from "@/hooks/useUserQueries";
 import { Guide } from "@/schemas/user.schema";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import toast from "react-hot-toast";
 import { TbPencil, TbPlus, TbX } from "react-icons/tb";
 
@@ -21,16 +21,29 @@ const ProfessionalDetailsForm = () => {
   const updateUserMutation = useUpdateUser();
 
   const [isEditing, setIsEditing] = useState(false);
-  const [draft, setDraft] = useState<Guide | null>(null);
-  const [original, setOriginal] = useState<Guide | null>(null);
-
-  useEffect(() => {
+  const [draft, setDraft] = useState<Guide | null>(() => {
     if (currentUser && currentUser.role === "GUIDE") {
-      const guide = currentUser as Guide;
-      setDraft(guide);
-      setOriginal(guide);
+      return currentUser as Guide;
     }
-  }, [currentUser]);
+    return null;
+  });
+  const [original, setOriginal] = useState<Guide | null>(() => {
+    if (currentUser && currentUser.role === "GUIDE") {
+      return currentUser as Guide;
+    }
+    return null;
+  });
+
+  // Sync currentUser changes to state
+  if (
+    currentUser &&
+    currentUser.role === "GUIDE" &&
+    draft !== currentUser
+  ) {
+    const guide = currentUser as Guide;
+    setDraft(guide);
+    setOriginal(guide);
+  }
 
   if (isLoadingUser || !draft) {
     return (

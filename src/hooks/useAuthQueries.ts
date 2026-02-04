@@ -29,7 +29,7 @@ export function useCurrentUser(enabled: boolean = true) {
       try {
         const response = await apiClient<AuthResponse>("auth/me");
         return response.user;
-      } catch (error: any) {
+      } catch (error: unknown) {
         // 401 is expected when session expired - don't throw
         if (isApiError(error) && error.status === 401) {
           // Clear stale localStorage

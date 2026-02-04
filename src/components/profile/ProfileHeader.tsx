@@ -6,7 +6,6 @@ import { User } from "@/schemas/user.schema";
 import { useAuth } from "@/context/AuthContext";
 import EditProfileMenu from "./EditProfileMenu";
 import Image from "next/image";
-import { BLURDATA } from "@/data/constants";
 import { formatDate } from "@/utils/helpers";
 
 const ProfileHeader = ({ user }: { user: User }) => {

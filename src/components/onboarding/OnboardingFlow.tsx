@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { useRouter } from "next/navigation";
 import { TbArrowLeft } from "react-icons/tb";
 import { Button } from "@/components/ui/button";
 import RoleSelection from "./RoleSelection";
@@ -16,7 +15,6 @@ import { capitalizeFirstLetter } from "@/utils/helpers";
 
 const OnboardingFlow = () => {
   const { mutate: register, isPending: loading } = useRegister();
-  const router = useRouter();
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState<ProfileData | null>(null);
 
@@ -34,7 +32,7 @@ const OnboardingFlow = () => {
         setStep((prev) => prev + 1);
       }
     },
-    [step, router, formData],
+    [step, formData],
   );
 
   const handleSubmit = () => {
@@ -42,7 +40,7 @@ const OnboardingFlow = () => {
     setError(null);
 
     register(formData, {
-      onError: (error: any) => {
+      onError: (error: Error) => {
         setError(error.message || "Registration failed. Please try again.");
       },
     });

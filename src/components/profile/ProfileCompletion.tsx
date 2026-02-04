@@ -32,7 +32,6 @@ const ProfileCompletion = ({ user }: ProfileCompletionProps) => {
   };
 
   const missingFields = getMissingFields();
-  const isComplete = missingFields.length === 0;
 
   // calc percentage
   const totalFields = "languages" in user ? 9 : 7;

@@ -24,7 +24,6 @@ import { usePackage } from "@/hooks/usePackageQueries";
 import { useUser } from "@/hooks/useUserQueries";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Link from "next/link";
-import { BLURDATA } from "@/data/constants";
 
 const PackagePage = () => {
   const { pkgid } = useParams<{ pkgid: string }>();
@@ -196,7 +195,7 @@ const PackagePage = () => {
                 {pkgDetails.included && pkgDetails.included.length > 0 && (
                   <div className="flex flex-col gap-2">
                     <h2 className="font-semibold text-lg md:text-xl">
-                      What's Included
+                      What&apos;s Included
                     </h2>
                     <ul className="space-y-2">
                       {pkgDetails.included.map((item, index) => (

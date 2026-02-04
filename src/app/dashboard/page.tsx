@@ -261,7 +261,7 @@ const UserDashboard = () => {
                 <div>
                   <p className="font-medium">My Reviews</p>
                   <p className="text-sm text-muted-foreground">
-                    See reviews you've written
+                    See reviews you&apos;ve written
                   </p>
                 </div>
               </Link>

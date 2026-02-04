@@ -36,7 +36,7 @@ import { usePackages } from "@/hooks/usePackageQueries";
 import { useUpdateBooking } from "@/hooks/useBookingQueries";
 import { formatDate } from "@/utils/helpers";
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import toast from "react-hot-toast";
 import { PiSmileySad } from "react-icons/pi";
 import {
@@ -102,12 +102,13 @@ const BookingsPage = () => {
   const endIndex = startIndex + itemsPerPage;
   const currentBookings = filteredBookings.slice(startIndex, endIndex);
 
-  // reset page on filter
-  useEffect(() => {
-    if (currentPage > totalPages && totalPages > 0) {
-      setCurrentPage(1);
-    }
-  }, [currentPage, totalPages]);
+  // adjust page if out of bounds
+  const adjustedPage =
+    currentPage > totalPages && totalPages > 0 ? 1 : currentPage;
+
+  if (adjustedPage !== currentPage) {
+    setCurrentPage(adjustedPage);
+  }
 
   if (loading) {
     return (

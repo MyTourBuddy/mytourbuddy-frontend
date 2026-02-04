@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -73,15 +73,10 @@ const UsersPage = () => {
   const { data: usersList, isLoading: loading, error } = useUsers();
   const deleteUser = useDeleteUser();
 
-  useEffect(() => {
-    if (usersList) {
-      setUsers(usersList);
-    }
-  }, [usersList]);
-
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [searchQuery, roleFilter]);
+  // sync users state when usersList changes
+  if (usersList && usersList !== users) {
+    setUsers(usersList);
+  }
 
   const filteredUsers = useMemo(() => {
     return users.filter((user) => {
@@ -98,6 +93,13 @@ const UsersPage = () => {
   }, [users, searchQuery, roleFilter]);
 
   const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
+
+  // adjust page if filters changed
+  const adjustedPage = currentPage > totalPages && totalPages > 0 ? 1 : currentPage;
+
+  if (adjustedPage !== currentPage) {
+    setCurrentPage(adjustedPage);
+  }
   const paginatedUsers = useMemo(() => {
     const startIndex = (currentPage - 1) * itemsPerPage;
     return filteredUsers.slice(startIndex, startIndex + itemsPerPage);

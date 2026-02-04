@@ -2,7 +2,6 @@ import Link from "next/link";
 import { Card } from "./ui/card";
 import Image from "next/image";
 import { Experience } from "@/schemas/experience.schema";
-import { BLURDATA } from "@/data/constants";
 import { formatDate } from "@/utils/helpers";
 
 interface ExperienceCardProps {

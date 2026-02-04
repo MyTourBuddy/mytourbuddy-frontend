@@ -30,6 +30,18 @@ import BookingForm from "@/components/bookings/BookingForm";
 const PackagePage = () => {
   const { pkgid, username } = useParams<{ pkgid: string; username: string }>();
 
+  const {
+    data: pkgDetails,
+    isLoading: pkgLoading,
+    error: pkgError,
+  } = usePackage(pkgid);
+
+  const {
+    data: userDetails,
+    isLoading: userLoading,
+    error: userError,
+  } = useUser(pkgDetails?.guideId || "", !!pkgDetails?.guideId);
+
   if (!pkgid) {
     return (
       <section className="max-w-5xl mx-auto w-full px-4">
@@ -42,18 +54,6 @@ const PackagePage = () => {
       </section>
     );
   }
-
-  const {
-    data: pkgDetails,
-    isLoading: pkgLoading,
-    error: pkgError,
-  } = usePackage(pkgid);
-
-  const {
-    data: userDetails,
-    isLoading: userLoading,
-    error: userError,
-  } = useUser(pkgDetails?.guideId || "", !!pkgDetails?.guideId);
 
   if (pkgLoading) {
     return (
@@ -246,7 +246,7 @@ const PackagePage = () => {
                 {pkgDetails.included && pkgDetails.included.length > 0 && (
                   <div className="flex flex-col gap-2">
                     <h2 className="font-semibold text-lg md:text-xl">
-                      What's Included
+                      What&apos;s Included
                     </h2>
                     <ul className="space-y-2">
                       {pkgDetails.included.map((item, index) => (
@@ -342,7 +342,7 @@ const PackagePage = () => {
               </div>
 
               <p className="text-center text-muted-foreground text-sm">
-                You won't be charged yet
+                You won&apos;t be charged yet
               </p>
             </CardContent>
           </Card>

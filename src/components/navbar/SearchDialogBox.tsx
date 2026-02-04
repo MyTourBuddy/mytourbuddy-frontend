@@ -110,7 +110,7 @@ const SearchDialogBox = () => {
                 </div>
               ) : (
                 <div className="text-center py-8 text-gray-500">
-                  No packages found for "{debouncedQuery}"
+                  No packages found for &quot;{debouncedQuery}&quot;
                 </div>
               )}
             </div>

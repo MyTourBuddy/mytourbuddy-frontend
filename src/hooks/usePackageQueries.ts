@@ -5,7 +5,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 export const packageKeys = {
   all: ["packages"] as const,
   lists: () => [...packageKeys.all, "list"] as const,
-  list: (filters?: Record<string, any>) =>
+  list: (filters?: Record<string, unknown>) =>
     [...packageKeys.lists(), { filters }] as const,
   details: () => [...packageKeys.all, "detail"] as const,
   detail: (id: string) => [...packageKeys.details(), id] as const,
@@ -73,7 +73,7 @@ export function useCreatePackage() {
         body: JSON.stringify(packageData),
       });
     },
-    onSuccess: async (newPackage) => {
+    onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: packageKeys.lists() });
     },
     onError: (error) => {

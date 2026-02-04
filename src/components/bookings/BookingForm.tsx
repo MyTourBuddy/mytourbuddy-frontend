@@ -39,9 +39,15 @@ const BookingForm = ({
   const [adults, setAdults] = useState(1);
   const [children, setChildren] = useState(0);
   const [bookingDate, setBookingDate] = useState("");
+  const [minDate] = useState(() =>
+    new Date(Date.now() + 2 * 24 * 60 * 60 * 1000)
+      .toISOString()
+      .split("T")[0]
+  );
+
+  const { isAdmin, isGuide } = useAuth();
 
   const createBooking = useCreateBooking();
-  const { isAuthenticated, isGuide, isAdmin } = useAuth();
 
   const totalCount = adults + children;
   const isFormComplete = bookingDate.trim() !== "" && totalCount > 0;
@@ -52,7 +58,7 @@ const BookingForm = ({
     if (!isFormComplete) return;
 
     try {
-      const result = await createBooking.mutateAsync({
+      await createBooking.mutateAsync({
         pkgId: packageId,
         bookingDate,
         totalCount,
@@ -60,9 +66,11 @@ const BookingForm = ({
       });
 
       toast.success("Booking created successfully!");
-    } catch (error: any) {
+    } catch (error: unknown) {
       const errorMessage =
-        error?.message || "Failed to create booking. Please try again.";
+        error instanceof Error
+          ? error.message
+          : "Failed to create booking. Please try again.";
       toast.error(errorMessage);
     }
   };
@@ -150,11 +158,7 @@ const BookingForm = ({
             name="bookingDate"
             value={bookingDate}
             onChange={(e) => setBookingDate(e.target.value)}
-            min={
-              new Date(Date.now() + 2 * 24 * 60 * 60 * 1000)
-                .toISOString()
-                .split("T")[0]
-            }
+            min={minDate}
             required
           />
         </Field>

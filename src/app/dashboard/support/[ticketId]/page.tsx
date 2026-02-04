@@ -11,11 +11,7 @@ import {
 } from "@/components/ui/breadcrumb";
 import {
   Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
+  CardContent
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Spinner } from "@/components/ui/spinner";
@@ -48,7 +44,7 @@ const TicketPage = () => {
           <p className="text-2xl md:text-lg">
             <PiSmileySad />
           </p>
-          Sorry, we couldn't find this support ticket.
+          Sorry, we couldn&apos;t find this support ticket.
         </div>
       </section>
     );

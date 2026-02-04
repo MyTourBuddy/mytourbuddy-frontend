@@ -10,7 +10,6 @@ import {
 } from "@/components/ui/breadcrumb";
 import { Card, CardContent } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
-import { BLURDATA } from "@/data/constants";
 import { useExperience } from "@/hooks/useExperienceQueries";
 import { formatDate } from "@/utils/helpers";
 import Image from "next/image";
@@ -27,7 +26,7 @@ const ExperiencePage = () => {
       <section className="max-w-5xl mx-auto w-full px-4">
         <div className="text-center text-muted-foreground flex justify-center md:flex-row flex-col items-center gap-3 md:gap-2 py-8">
           <Spinner className="size-6 md:size-4" />
-          Loading {username}'s experience
+          Loading {username}&apos;s experience
         </div>
       </section>
     );

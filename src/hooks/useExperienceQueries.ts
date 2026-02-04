@@ -5,7 +5,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 export const experienceKeys = {
   all: ["experiences"] as const,
   lists: () => [...experienceKeys.all, "list"] as const,
-  list: (filters?: Record<string, any>) =>
+  list: (filters?: Record<string, unknown>) =>
     [...experienceKeys.lists(), { filters }] as const,
   details: () => [...experienceKeys.all, "detail"] as const,
   detail: (id: string) => [...experienceKeys.details(), id] as const,

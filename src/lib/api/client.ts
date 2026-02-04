@@ -5,7 +5,7 @@ export class ApiError extends Error {
   constructor(
     public status: number,
     message: string,
-    public errors?: Record<string, string>
+    public errors?: Record<string, string>,
   ) {
     super(message);
     this.name = "ApiError";
@@ -30,7 +30,7 @@ export class TimeoutError extends Error {
 
 export async function apiClient<T>(
   endpoint: string,
-  options: RequestInit = {}
+  options: RequestInit = {},
 ): Promise<T> {
   const url = `${API_CONFIG.baseURL}/${endpoint}`;
 
@@ -80,15 +80,15 @@ export async function apiClient<T>(
         }
         throw new ApiError(
           response.status,
-          `Request failed with status ${response.status}`
+          `Request failed with status ${response.status}`,
         );
       }
     }
 
-    let data: any;
+    let data: unknown;
     try {
       data = JSON.parse(text);
-    } catch (parseError) {
+    } catch {
       if (response.ok) {
         if (API_CONFIG.features.enableLogging) {
           console.warn("⚠️ Response is not valid JSON, returning text as data");
@@ -97,36 +97,52 @@ export async function apiClient<T>(
       } else {
         throw new ApiError(
           response.status,
-          text || "Invalid JSON response from server"
+          text || "Invalid JSON response from server",
         );
       }
     }
 
     if (!response.ok) {
+      let errorMessage = "Something went wrong";
+      let errors: Record<string, string> | undefined;
+
+      if (typeof data === "object" && data !== null) {
+        const errorData = data as Record<string, unknown>;
+        if (typeof errorData.error === "string") {
+          errorMessage = errorData.error;
+        } else if (typeof errorData.message === "string") {
+          errorMessage = errorData.message;
+        }
+
+        if (typeof errorData.errors === "object" && errorData.errors !== null) {
+          errors = errorData.errors as Record<string, string>;
+        }
+      }
+
       if (response.status === 403) {
         if (API_CONFIG.features.enableLogging) {
           console.error(
             "🚫 API Error 403:",
-            data.error || data.message || "Forbidden"
+            errorMessage === "Something went wrong"
+              ? "Forbidden"
+              : errorMessage,
           );
         }
         return null as T;
       }
-      if (response.status === 403 || response.status === 404) {
+
+      if (response.status === 404) {
         return null as T;
       }
-      throw new ApiError(
-        response.status,
-        data.error || data.message || "Something went wrong",
-        data.errors
-      );
+
+      throw new ApiError(response.status, errorMessage, errors);
     }
 
     if (API_CONFIG.features.enableLogging) {
       console.log(`🟢 API Response: ${options.method || "GET"} ${url}`, data);
     }
 
-    return data;
+    return data as T;
   } catch (error) {
     clearTimeout(timeoutId);
 

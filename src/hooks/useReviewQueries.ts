@@ -6,7 +6,7 @@ import { bookingKeys } from "./useBookingQueries";
 export const reviewKeys = {
   all: ["reviews"] as const,
   lists: () => [...reviewKeys.all, "list"] as const,
-  list: (filters?: Record<string, any>) =>
+  list: (filters?: Record<string, unknown>) =>
     [...reviewKeys.lists(), { filters }] as const,
   details: () => [...reviewKeys.all, "detail"] as const,
   detail: (id: string) => [...reviewKeys.details(), id] as const,
@@ -82,7 +82,7 @@ export function useCreateReview() {
         body: JSON.stringify(reviewData),
       });
     },
-    onSuccess: async (newReview) => {
+    onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: reviewKeys.lists() });
       await queryClient.invalidateQueries({ queryKey: bookingKeys.my() });
     },

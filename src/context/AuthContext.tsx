@@ -9,7 +9,7 @@ import {
 import { getErrorMessage, isApiError } from "@/lib/api/client";
 import { SigninInput } from "@/schemas/auth.schema";
 import { ProfileData } from "@/schemas/onboarding.schema";
-import { User } from "@/schemas/user.schema";
+import { User, userSchema } from "@/schemas/user.schema";
 import {
   createContext,
   ReactNode,
@@ -81,8 +81,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
       if (storedUser) {
         try {
           const parsed = JSON.parse(storedUser);
-          setUser(parsed);
-          setShouldCheckAuth(true);
+          const result = userSchema.safeParse(parsed);
+          if (result.success) {
+            setUser(result.data);
+            setShouldCheckAuth(true);
+          } else {
+            console.warn("Invalid user data in localStorage, clearing.");
+            localStorage.removeItem("user");
+            setUser(null);
+          }
         } catch {
           localStorage.removeItem("user");
           setUser(null);
@@ -96,7 +103,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       const user = await registerMutation.mutateAsync(userData);
       setUser(user);
       return { success: true, user };
-    } catch (error: any) {
+    } catch (error: unknown) {
       return {
         success: false,
         error: getErrorMessage(error),
@@ -110,7 +117,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       const user = await loginMutation.mutateAsync(credentials);
       setUser(user);
       return { success: true, user };
-    } catch (error: any) {
+    } catch (error: unknown) {
       return {
         success: false,
         error: getErrorMessage(error),

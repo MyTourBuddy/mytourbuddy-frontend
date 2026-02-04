@@ -2,7 +2,7 @@ import notfound from "@/../public/user-not-found.svg";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { TbHome, TbPackage, TbPackages } from "react-icons/tb";
+import { TbHome, TbPackage } from "react-icons/tb";
 
 interface UsernamePropes {
   username: string;
@@ -23,7 +23,7 @@ const UserNotFound = ({ username }: UsernamePropes) => {
           User Not Found
         </h1>
         <p className="text-muted-foreground text-base md:text-lg">
-          We couldn't find a user with the username&nbsp;
+          We couldn&apos;t find a user with the username&nbsp;
           <span className="font-semibold text-foreground">@{username}</span>
         </p>
       </div>

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback } from "react";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
@@ -33,7 +33,6 @@ const SelectableButtons: React.FC<SelectableButtonsProps> = ({
   onChange,
   onOptionsChange,
   className = "",
-  multiple = true,
   addMoreLabel = "Other",
   allowAddMore = false,
   placeholder = "Enter option",
@@ -42,8 +41,6 @@ const SelectableButtons: React.FC<SelectableButtonsProps> = ({
   const [internalOptions, setInternalOptions] = useState(initialOptions);
   const [showInput, setShowInput] = useState(false);
   const [inputValue, setInputValue] = useState("");
-
-  const baseOptionsRef = useRef(initialOptions);
 
   const options = onOptionsChange ? initialOptions : internalOptions;
 
@@ -75,7 +72,7 @@ const SelectableButtons: React.FC<SelectableButtonsProps> = ({
     setShowInput(false);
   }, [inputValue, options, selected, onChange, onOptionsChange]);
 
-  const visibleOptions = baseOptionsRef.current.filter(
+  const visibleOptions = options.filter(
     (option) => !selected.includes(getOptionValue(option))
   );
 

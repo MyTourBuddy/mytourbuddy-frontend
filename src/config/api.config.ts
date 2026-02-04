@@ -3,7 +3,7 @@ export const API_CONFIG = {
     process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8080/api/v1",
 
   // timeout requests in 30s
-  timeout: 3000,
+  timeout: 30000,
 
   headers: {
     "Content-Type": "application/json",

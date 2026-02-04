@@ -62,7 +62,7 @@ const TicketPage = () => {
           <p className="text-2xl md:text-lg">
             <PiSmileySad />
           </p>
-          Sorry, we couldn't find this support ticket.
+          Sorry, we couldn&apos;t find this support ticket.
         </div>
       </section>
     );

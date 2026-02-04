@@ -4,7 +4,6 @@ import Image from "next/image";
 import { Badge } from "./ui/badge";
 import { formatCurrency } from "@/utils/helpers";
 import { Package } from "@/schemas/package.schema";
-import { BLURDATA } from "@/data/constants";
 
 interface PackageCardProps {
   pkg: Package;

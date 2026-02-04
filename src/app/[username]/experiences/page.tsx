@@ -10,19 +10,11 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { Card } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
-import { BLURDATA } from "@/data/constants";
-import {
-  useExperiences,
-  useExperiencesByGuide,
-} from "@/hooks/useExperienceQueries";
+import { useExperiencesByGuide } from "@/hooks/useExperienceQueries";
 import { useUserByUsername } from "@/hooks/useUserQueries";
-import { Experience } from "@/schemas/experience.schema";
-import Image from "next/image";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
 import { PiSmileySad } from "react-icons/pi";
 
 const GuideExpsPage = () => {
@@ -47,7 +39,7 @@ const GuideExpsPage = () => {
       <section className="max-w-5xl mx-auto w-full flex justify-center px-4">
         <div className="text-center text-muted-foreground flex md:flex-row flex-col items-center gap-3 md:gap-2 mx-auto py-8">
           <Spinner className="size-6 md:size-4" />
-          Loading {username}'s experiences...
+          Loading {username}&apos;s experiences...
         </div>
       </section>
     );
@@ -59,7 +51,7 @@ const GuideExpsPage = () => {
       <section className="max-w-5xl mx-auto w-full flex justify-center px-4">
         <div className="text-center text-muted-foreground flex md:flex-row flex-col items-center gap-3 md:gap-2 mx-auto py-8">
           <Spinner className="size-6 md:size-4" />
-          Loading {username}'s experiences...
+          Loading {username}&apos;s experiences...
         </div>
       </section>
     );
@@ -90,7 +82,7 @@ const GuideExpsPage = () => {
 
         {/* header */}
         <h1 className="text-3xl font-bold tracking-tight">
-          {username}'s Experiences
+          {username}&apos;s Experiences
         </h1>
 
         {error ? (

@@ -82,7 +82,7 @@ const PackagesPage = () => {
 
         {/* header */}
         <h1 className="text-3xl font-bold tracking-tight">
-          {username}'s Packages
+          {username}&apos;s Packages
         </h1>
 
         {error ? (

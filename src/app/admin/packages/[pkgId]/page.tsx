@@ -195,7 +195,7 @@ const PackagePage = () => {
                 {pkgDetails.included && pkgDetails.included.length > 0 && (
                   <div className="flex flex-col gap-2">
                     <h2 className="font-semibold text-lg md:text-xl">
-                      What's Included
+                      What&apos;s Included
                     </h2>
                     <ul className="space-y-2">
                       {pkgDetails.included.map((item, index) => (

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
@@ -22,13 +22,12 @@ const ContactDetailsForm = () => {
   const [draft, setDraft] = useState<Guide | null>(null);
   const [original, setOriginal] = useState<Guide | null>(null);
 
-  useEffect(() => {
-    if (currentUser && currentUser.role === "GUIDE") {
-      const guide = currentUser as Guide;
-      setDraft(guide);
-      setOriginal(guide);
-    }
-  }, [currentUser]);
+  // Sync currentUser to state during render
+  const guide = currentUser?.role === "GUIDE" ? (currentUser as Guide) : null;
+  if (guide && draft !== guide) {
+    setDraft(guide);
+    setOriginal(guide);
+  }
 
   if (isLoadingUser || !draft) {
     return (

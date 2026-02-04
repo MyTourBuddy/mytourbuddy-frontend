@@ -15,7 +15,6 @@ import {
   TbPackage,
   TbTicket,
   TbSettings,
-  TbChartBar,
 } from "react-icons/tb";
 
 const AdminDashboard = () => {
