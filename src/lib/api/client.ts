@@ -43,7 +43,9 @@ export async function apiClient<T>(
       ...API_CONFIG.headers,
       ...options.headers,
     },
-    credentials: API_CONFIG.credentials,
+    // CRITICAL: Always include credentials for cross-origin authentication
+    // This allows the server to set the HTTP-only cookie
+    credentials: "include", 
     signal: controller.signal,
   };
 
